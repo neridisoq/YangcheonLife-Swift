@@ -60,7 +60,7 @@ struct InitialSetupView: View {
                 }
             }
             .navigationBarTitle("초기 설정")
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
     
     private func saveSettings() {
