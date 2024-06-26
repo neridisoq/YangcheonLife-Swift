@@ -59,7 +59,7 @@ struct InitialSetupView: View {
                     Text(NSLocalizedString("Done", comment: ""))
                 }
             }
-            .navigationBarTitle("초기 설정")
+            .navigationBarTitle(NSLocalizedString("Initial Setup",comment: ""))
         }.navigationViewStyle(StackNavigationViewStyle())
     }
     
