@@ -19,22 +19,22 @@ struct SettingsTab: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("설정")) {
-                    NavigationLink("학년 반 설정", destination: ClassAndGradeView(defaultGrade: $defaultGrade, defaultClass: $defaultClass, notificationsEnabled: $notificationsEnabled))
-                    NavigationLink("탐구 과목 선택 (2학년만 해당)", destination: SubjectSelectionView(selectedSubjectB: $selectedSubjectB, selectedSubjectC: $selectedSubjectC, selectedSubjectD: $selectedSubjectD))
-                    ColorPicker("현재 시간 강조 색", selection: $cellBackgroundColor)
+                Section(header: Text(NSLocalizedString("Settings", comment: ""))) {
+                    NavigationLink(NSLocalizedString("ClassSettings", comment: ""), destination: ClassAndGradeView(defaultGrade: $defaultGrade, defaultClass: $defaultClass, notificationsEnabled: $notificationsEnabled))
+                    NavigationLink(NSLocalizedString("SubjectSelection", comment: ""), destination: SubjectSelectionView(selectedSubjectB: $selectedSubjectB, selectedSubjectC: $selectedSubjectC, selectedSubjectD: $selectedSubjectD))
+                    ColorPicker(NSLocalizedString("ColorPicker", comment: ""), selection: $cellBackgroundColor)
                         .onChange(of: cellBackgroundColor) { newColor in
                             saveCellBackgroundColor(newColor)
                         }
                 }
                 
                 Section(header: Text("링크")) {
-                    Link("개인정보처리방침", destination: URL(string: "https://yangcheon.sen.hs.kr/dggb/module/policy/selectPolicyDetail.do?policyTypeCode=PLC002&menuNo=75574")!)
-                    Link("학교 웹사이트 바로가기", destination: URL(string: "https://yangcheon.sen.hs.kr")!)
+                    Link(NSLocalizedString("Privacy Policy", comment: ""), destination: URL(string: "https://yangcheon.sen.hs.kr/dggb/module/policy/selectPolicyDetail.do?policyTypeCode=PLC002&menuNo=75574")!)
+                    Link(NSLocalizedString("Goto School Web", comment: ""), destination: URL(string: "https://yangcheon.sen.hs.kr")!)
                 }
                 
-                Section(header: Text("알림")) {
-                    Toggle("알림 설정", isOn: $notificationsEnabled)
+                Section(header: Text(NSLocalizedString("Alert", comment: ""))) {
+                    Toggle(NSLocalizedString("Alert Settings", comment: ""), isOn: $notificationsEnabled)
                         .onChange(of: notificationsEnabled) { value in
                             UserDefaults.standard.set(value, forKey: "notificationsEnabled")
                             if value {
@@ -45,12 +45,12 @@ struct SettingsTab: View {
                         }
                 }
                 
-                Section(header: Text("문의")) {
+                Section(header: Text(NSLocalizedString("Support", comment: ""))) {
                     Button(action: {
                         sendEmail()
                     }) {
                         HStack {
-                            Text("개발자 문의하기")
+                            Text(NSLocalizedString("Supportto", comment: ""))
                             Spacer()
                             Image(systemName: "envelope")
                         }

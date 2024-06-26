@@ -15,7 +15,7 @@ struct TimeTableTab: View {
         return Color.yellow.opacity(0.3)
     }()
     
-    let daysOfWeek = ["월", "화", "수", "목", "금"]
+    let daysOfWeek = [NSLocalizedString("Mon", comment: ""), NSLocalizedString("Tue", comment: ""), NSLocalizedString("Wed", comment: ""), NSLocalizedString("Thu", comment: ""), NSLocalizedString("Fri", comment: "")]
     let periodTimes = [
         ("08:20", "09:10"), ("09:20", "10:10"), ("10:20", "11:10"), ("11:20", "12:10"),
         ("13:10", "14:00"), ("14:10", "15:00"), ("15:10", "16:00")
@@ -25,9 +25,9 @@ struct TimeTableTab: View {
         NavigationView {
             VStack {
                 HStack {
-                    Picker("학년", selection: $currentGrade) {
+                    Picker(NSLocalizedString("Grade", comment: ""), selection: $currentGrade) {
                         ForEach(1..<4) { grade in
-                            Text("\(grade)학년").tag(grade)
+                            Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
@@ -36,9 +36,9 @@ struct TimeTableTab: View {
                         viewModel.loadSchedule(grade: currentGrade, classNumber: currentClass)
                     }
 
-                    Picker("반", selection: $currentClass) {
+                    Picker(NSLocalizedString("Class", comment: ""), selection: $currentClass) {
                         ForEach(1..<12) { classNumber in
-                            Text("\(classNumber)반").tag(classNumber)
+                            Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
@@ -98,7 +98,7 @@ struct TimeTableTab: View {
                                                     .border(Color.primary)
                                             } else if col == 0 {
                                                 VStack {
-                                                    Text("\(row)교시")
+                                                    Text(String(format: NSLocalizedString("period", comment: ""), row))
                                                         .font(.system(size: 14))
                                                     Text(self.periodTimes[row - 1].0)
                                                         .font(.system(size: 8))
@@ -140,7 +140,7 @@ struct TimeTableTab: View {
 
                 Spacer()
             }
-            .navigationBarTitle("시간표", displayMode: .inline)
+            .navigationBarTitle(NSLocalizedString("TimeTable", comment: ""), displayMode: .inline)
             .onAppear {
                 viewModel.loadSchedule(grade: currentGrade, classNumber: currentClass)
                 loadCellBackgroundColor()

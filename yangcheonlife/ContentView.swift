@@ -17,15 +17,15 @@ struct MainView: View {
         TabView {
             TimeTableTab()
                 .tabItem {
-                    Label("시간표", systemImage: "calendar")
+                    Label(NSLocalizedString("TimeTable", comment: ""), systemImage: "calendar")
                 }
             LunchTab()
                 .tabItem {
-                    Label("급식", systemImage: "fork.knife")
+                    Label(NSLocalizedString("Meal", comment: ""), systemImage: "fork.knife")
                 }
             SettingsTab()
                 .tabItem {
-                    Label("설정", systemImage: "gear")
+                    Label(NSLocalizedString("Settings", comment: ""), systemImage: "gear")
                 }
         }
     }

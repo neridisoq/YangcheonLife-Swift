@@ -17,46 +17,46 @@ struct InitialSetupView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("학년 반 설정")) {
-                    Picker("학년", selection: $defaultGrade) {
+                Section(header: Text(NSLocalizedString("ClassSettings", comment: ""))) {
+                    Picker(NSLocalizedString("Grade", comment: ""), selection: $defaultGrade) {
                         ForEach(1..<4) { grade in
-                            Text("\(grade)학년").tag(grade)
+                            Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                         }
                     }
                     
-                    Picker("반", selection: $defaultClass) {
+                    Picker(NSLocalizedString("Class", comment: ""), selection: $defaultClass) {
                         ForEach(1..<12) { classNumber in
-                            Text("\(classNumber)반").tag(classNumber)
+                            Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                         }
                     }
                 }
                 
-                Section(header: Text("탐구 과목 선택 (2학년만 해당)")) {
-                    Picker("탐구B", selection: $selectedSubjectB) {
+                Section(header: Text(NSLocalizedString("SubjectSelection", comment: ""))) {
+                    Picker(NSLocalizedString("Subject B", comment: ""), selection: $selectedSubjectB) {
                         ForEach(subjects, id: \.self) { subject in
                             Text(subject).tag(subject)
                         }
                     }
                     
-                    Picker("탐구C", selection: $selectedSubjectC) {
+                    Picker(NSLocalizedString("Subject C", comment: ""), selection: $selectedSubjectC) {
                         ForEach(subjects, id: \.self) { subject in
                             Text(subject).tag(subject)
                         }
                     }
                     
-                    Picker("탐구D", selection: $selectedSubjectD) {
+                    Picker(NSLocalizedString("Subject D", comment: ""), selection: $selectedSubjectD) {
                         ForEach(subjects, id: \.self) { subject in
                             Text(subject).tag(subject)
                         }
                     }
                 }
                 
-                Section(header: Text("알림 설정")) {
-                    Toggle("알림 설정", isOn: $notificationsEnabled)
+                Section(header: Text(NSLocalizedString("Alert", comment: ""))) {
+                    Toggle(NSLocalizedString("Alert Settings", comment: ""), isOn: $notificationsEnabled)
                 }
                 
                 Button(action: saveSettings) {
-                    Text("설정 완료")
+                    Text(NSLocalizedString("Done", comment: ""))
                 }
             }
             .navigationBarTitle("초기 설정")
@@ -94,6 +94,16 @@ struct InitialSetupView: View {
 
 struct InitialSetupView_Previews: PreviewProvider {
     static var previews: some View {
-        InitialSetupView(showInitialSetup: .constant(true))
+        Group {
+            InitialSetupView(showInitialSetup: .constant(true))
+                .preferredColorScheme(.light)
+                .environment(\.locale, .init(identifier: "en"))
+                .previewDisplayName("English - Dark Mode")
+
+            InitialSetupView(showInitialSetup: .constant(true))
+                .preferredColorScheme(.dark)
+                .environment(\.locale, .init(identifier: "ko"))
+                .previewDisplayName("Korean - Dark Mode")
+        }
     }
 }
