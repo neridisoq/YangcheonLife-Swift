@@ -2,8 +2,8 @@ import SwiftUI
 
 struct TimeTableTab: View {
     @StateObject private var viewModel = ScheduleViewModel()
-    @State private var currentGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
-    @State private var currentClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
+    @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
+    @State private var selectedClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
     @State private var selectedSubjectB: String = UserDefaults.standard.string(forKey: "selectedSubjectB") ?? "탐구B"
     @State private var selectedSubjectC: String = UserDefaults.standard.string(forKey: "selectedSubjectC") ?? "탐구C"
     @State private var selectedSubjectD: String = UserDefaults.standard.string(forKey: "selectedSubjectD") ?? "탐구D"
@@ -25,30 +25,28 @@ struct TimeTableTab: View {
         NavigationView {
             VStack {
                 HStack {
-                    Picker(NSLocalizedString("Grade", comment: ""), selection: $currentGrade) {
+                    Picker(NSLocalizedString("Grade", comment: ""), selection: $selectedGrade) {
                         ForEach(1..<4) { grade in
                             Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .onChange(of: currentGrade) { _ in
-                        UserDefaults.standard.set(currentGrade, forKey: "defaultGrade")
-                        viewModel.loadSchedule(grade: currentGrade, classNumber: currentClass)
+                    .onChange(of: selectedGrade) { _ in
+                        viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
                     }
 
-                    Picker(NSLocalizedString("Class", comment: ""), selection: $currentClass) {
+                    Picker(NSLocalizedString("Class", comment: ""), selection: $selectedClass) {
                         ForEach(1..<12) { classNumber in
                             Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .onChange(of: currentClass) { _ in
-                        UserDefaults.standard.set(currentClass, forKey: "defaultClass")
-                        viewModel.loadSchedule(grade: currentGrade, classNumber: currentClass)
+                    .onChange(of: selectedClass) { _ in
+                        viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
                     }
                     
                     Button(action: {
-                        viewModel.loadSchedule(grade: currentGrade, classNumber: currentClass)
+                        viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
                         loadCellBackgroundColor()
                     }) {
                         Image(systemName: "arrow.clockwise")
@@ -142,7 +140,7 @@ struct TimeTableTab: View {
             }
             .navigationBarTitle(NSLocalizedString("TimeTable", comment: ""), displayMode: .inline)
             .onAppear {
-                viewModel.loadSchedule(grade: currentGrade, classNumber: currentClass)
+                viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
                 loadCellBackgroundColor()
             }
         }
