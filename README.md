@@ -49,7 +49,7 @@
 
 본 프로젝트는 [Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)](https://creativecommons.org/licenses/by-nd/4.0/deed.ko) 라이선스에 따라 배포됩니다.
 
-## 감사의 글
+## 사용 소스
 
 - 백엔드 지원을 위한 [Firebase](https://firebase.google.com/).
 - 사용자 인터페이스 프레임워크를 위한 [SwiftUI](https://developer.apple.com/xcode/swiftui/).
