@@ -1,35 +1,35 @@
-/* 
+/*
   Localizable.strings
   yangcheonlife
 
   Created by Woohyun Jin on 6/26/24.
   
 */
-"TimeTable" = "시간표";
-"GradeP" = "%d학년";
-"Grade" = "학년";
-"Class" = "반";
-"ClassP" = "%d반";
-"Meal" = "급식";
-"ClassSettings" = "학년 반 설정";
-"SubjectSelection" = "탐구 과목 선택 (2학년)";
-"ColorPicker" = "현재 시간 강조 색";
-"Privacy Policy" = "개인정보처리방침";
-"Goto School Web" = "학교 웹사이트 바로가기";
-"Alert Settings" = "알림 설정";
-"Link" = "링크";
-"Settings" = "설정";
-"Support" = "문의";
-"Supportto" = "개발자 문의하기";
-"Alert" = "알림";
-"Mon" = "월";
-"Tue" = "화";
-"Wed" = "수";
-"Thu" = "목";
-"Fri" = "금";
-"Time" = "교시";
-"Subject B" = "탐구B";
-"Subject C" = "탐구C";
-"Subject D" = "탐구D";
-"Done" = "설정 완료";
-"period" = "%d교시";
+"TimeTable" = "课程表";
+"GradeP" = "%d年级";
+"Grade" = "年级";
+"Class" = "班级";
+"ClassP" = "%d班";
+"Meal" = "膳食";
+"ClassSettings" = "班级设置";
+"SubjectSelection" = "科目选择（高二）";
+"ColorPicker" = "高亮颜色选择";
+"Privacy Policy" = "隐私政策";
+"Goto School Web" = "学校网站";
+"Alert Settings" = "通知设置";
+"Link" = "链接到";
+"Settings" = "设置";
+"Support" = "支持";
+"Supportto" = "邮件给开发者";
+"Alert" = "通知";
+"Mon" = "周一";
+"Tue" = "周二";
+"Wed" = "周三";
+"Thu" = "周四";
+"Fri" = "周五";
+"Time" = "课时";
+"Subject B" = "科目B";
+"Subject C" = "科目C";
+"Subject D" = "科目D";
+"Done" = "完成";
+"period" = "%d课时";
