@@ -28,7 +28,7 @@ struct SettingsTab: View {
                         }
                 }
                 
-                Section(header: Text("링크")) {
+                Section(header: Text(NSLocalizedString("Link", comment: ""))) {
                     Link(NSLocalizedString("Privacy Policy", comment: ""), destination: URL(string: "https://yangcheon.sen.hs.kr/dggb/module/policy/selectPolicyDetail.do?policyTypeCode=PLC002&menuNo=75574")!)
                     Link(NSLocalizedString("Goto School Web", comment: ""), destination: URL(string: "https://yangcheon.sen.hs.kr")!)
                 }
@@ -124,19 +124,19 @@ struct ClassAndGradeView: View {
 
     var body: some View {
         Form {
-            Picker("학년", selection: $defaultGrade) {
+            Picker(NSLocalizedString("Grade", comment: ""), selection: $defaultGrade) {
                 ForEach(1..<4) { grade in
-                    Text("\(grade)학년").tag(grade)
+                    Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                 }
             }
             
-            Picker("반", selection: $defaultClass) {
+            Picker(NSLocalizedString("Class", comment: ""), selection: $defaultClass) {
                 ForEach(1..<12) { classNumber in
-                    Text("\(classNumber)반").tag(classNumber)
+                    Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                 }
             }
         }
-        .navigationBarTitle("학년 반 설정", displayMode: .inline)
+        .navigationBarTitle(NSLocalizedString("ClassSettings", comment: ""), displayMode: .inline)
         .onDisappear {
             let oldGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
             let oldClass = UserDefaults.standard.integer(forKey: "defaultClass")
@@ -182,8 +182,8 @@ struct SubjectSelectionView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("탐구B 과목 선택")) {
-                Picker("탐구B", selection: $selectedSubjectB) {
+            Section(header: Text(NSLocalizedString("SubjectSelection", comment: ""))) {
+                Picker(NSLocalizedString("Subject B", comment: ""), selection: $selectedSubjectB) {
                     ForEach(subjects, id: \.self) { subject in
                         Text(subject).tag(subject)
                     }
@@ -191,10 +191,7 @@ struct SubjectSelectionView: View {
                 .onChange(of: selectedSubjectB) { newValue in
                     UserDefaults.standard.set(newValue, forKey: "selectedSubjectB")
                 }
-            }
-            
-            Section(header: Text("탐구C 과목 선택")) {
-                Picker("탐구C", selection: $selectedSubjectC) {
+                Picker(NSLocalizedString("Subject C", comment: ""), selection: $selectedSubjectC) {
                     ForEach(subjects, id: \.self) { subject in
                         Text(subject).tag(subject)
                     }
@@ -202,10 +199,7 @@ struct SubjectSelectionView: View {
                 .onChange(of: selectedSubjectC) { newValue in
                     UserDefaults.standard.set(newValue, forKey: "selectedSubjectC")
                 }
-            }
-            
-            Section(header: Text("탐구D 과목 선택")) {
-                Picker("탐구D", selection: $selectedSubjectD) {
+                Picker(NSLocalizedString("Subject D", comment: ""), selection: $selectedSubjectD) {
                     ForEach(subjects, id: \.self) { subject in
                         Text(subject).tag(subject)
                     }
