@@ -13,6 +13,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         }
         application.registerForRemoteNotifications()
         
+        checkAndUpdateTopicSubscription()
+        
         return true
     }
 
@@ -22,6 +24,24 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("Firebase registration token: \(String(describing: fcmToken))")
+        checkAndUpdateTopicSubscription()
+    }
+
+    func checkAndUpdateTopicSubscription() {
+        let currentGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        let currentClass = UserDefaults.standard.integer(forKey: "defaultClass")
+        
+        // 모든 가능한 토픽에서 구독 해제
+        for grade in 1...3 {
+            for classNum in 1...11 {
+                if grade != currentGrade || classNum != currentClass {
+                    unsubscribeFromTopic(grade: grade, classNumber: classNum)
+                }
+            }
+        }
+        
+        // 현재 토픽 구독
+        subscribeToTopic(grade: currentGrade, classNumber: currentClass)
     }
 
     func subscribeToTopic(grade: Int, classNumber: Int) {
