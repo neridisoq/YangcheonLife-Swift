@@ -55,10 +55,3 @@
 - 사용자 인터페이스 프레임워크를 위한 [SwiftUI](https://developer.apple.com/xcode/swiftui/).
 - 위젯 구현을 위한 [WidgetKit](https://developer.apple.com/documentation/widgetkit/).
 
----
-
-문의 사항이나 지원이 필요하면 리포지토리에 이슈를 제기하거나 프로젝트 관리자인 neridisoq@icloud.com 으로 연락주세요.
-
----
-
-양천라이프를 사용해 주셔서 감사합니다! 학교 생활을 더 효과적으로 관리할 수 있기를 바랍니다.
