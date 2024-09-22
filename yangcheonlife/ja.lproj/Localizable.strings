@@ -1,0 +1,36 @@
+/*
+  Localizable.strings
+  yangcheonlife
+
+  Created by Woohyun Jin on 6/26/24.
+  
+*/
+"TimeTable" = "時間割";
+"GradeP" = "%d年";
+"Grade" = "学年";
+"Class" = "クラス";
+"ClassP" = "%d組";
+"Meal" = "給食";
+"ClassSettings" = "クラス設定";
+"SubjectSelection" = "科目選択（2年生）";
+"ColorPicker" = "ハイライトカラー選択";
+"Privacy Policy" = "プライバシーポリシー";
+"Goto School Web" = "学校ウェブサイト";
+"Alert Settings" = "通知設定";
+"Link" = "リンク";
+"Settings" = "設定";
+"Support" = "サポート";
+"Supportto" = "開発者にメール";
+"Alert" = "通知";
+"Mon" = "月";
+"Tue" = "火";
+"Wed" = "水";
+"Thu" = "木";
+"Fri" = "金";
+"Time" = "時限";
+"Subject B" = "科目B";
+"Subject C" = "科目C";
+"Subject D" = "科目D";
+"Done" = "完了";
+"period" = "%d時限";
+"Initial Setup" = "初期設定";
