@@ -2,11 +2,9 @@ import SwiftUI
 
 struct TimeTableTab: View {
     @StateObject private var viewModel = ScheduleViewModel()
+    @ObservedObject private var notificationManager = LocalNotificationManager.shared
     @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
     @State private var selectedClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
-    @State private var selectedSubjectB: String = UserDefaults.standard.string(forKey: "selectedSubjectB") ?? "탐구B"
-    @State private var selectedSubjectC: String = UserDefaults.standard.string(forKey: "selectedSubjectC") ?? "탐구C"
-    @State private var selectedSubjectD: String = UserDefaults.standard.string(forKey: "selectedSubjectD") ?? "탐구D"
     @State private var cellBackgroundColor: Color = {
         if let data = UserDefaults.standard.data(forKey: "cellBackgroundColor"),
            let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) {
@@ -53,7 +51,7 @@ struct TimeTableTab: View {
                     }
                 }
                 .padding()
-                .background(Color(UIColor.systemBackground)) // 배경색 설정으로 SafeArea 벗어나지 않도록
+                .background(Color(UIColor.systemBackground))
                 .cornerRadius(10)
                 .shadow(radius: 5)
                 .padding()
@@ -99,7 +97,7 @@ struct TimeTableTab: View {
                                                     Text(String(format: NSLocalizedString("period", comment: ""), row))
                                                         .font(.system(size: 14))
                                                     Text(self.periodTimes[row - 1].0)
-                                                        .font(.system(size: 8))
+                                                        .font(.system(size: 10))
                                                 }
                                                 .frame(width: cellSize, height: cellSize)
                                                 .foregroundColor(textColor)
@@ -107,17 +105,45 @@ struct TimeTableTab: View {
                                             } else {
                                                 let schedule = viewModel.schedules[safe: col - 1]?[safe: row - 1]
                                                 VStack {
-                                                    if schedule?.subject == "탐구B" {
-                                                        Text(selectedSubjectB)
-                                                    } else if schedule?.subject == "탐구C" {
-                                                        Text(selectedSubjectC)
-                                                    } else if schedule?.subject == "탐구D" {
-                                                        Text(selectedSubjectD)
+                                                    // 시간표 셀 내용 표시 부분
+                                                    if let subject = schedule?.subject {
+                                                        if subject.contains("반") {
+                                                            // A반, B반 등의 반으로 표시된 과목은 UserDefaults에서 선택한 과목으로 대체
+                                                            let selectedSubject = UserDefaults.standard.string(forKey: "selected\(subject)Subject") ?? subject
+                                                            
+                                                            if selectedSubject != subject && selectedSubject != "선택 없음" {
+                                                                // 과목명/장소 분리하여 표시
+                                                                let components = selectedSubject.components(separatedBy: "/")
+                                                                if components.count == 2 {
+                                                                    Text(components[0])
+                                                                        .font(.system(size: 16))
+                                                                        .lineLimit(1)
+                                                                    Text(components[1])
+                                                                        .font(.system(size: 12))
+                                                                        .lineLimit(1)
+                                                                } else {
+                                                                    Text(selectedSubject)
+                                                                }
+                                                            } else {
+                                                                Text(subject)
+                                                                    .font(.system(size: 16))
+                                                                    .lineLimit(1)
+                                                                Text(schedule?.teacher ?? "")
+                                                                    .font(.system(size: 12))
+                                                                    .lineLimit(1)
+                                                            }
+                                                        } else {
+                                                            // 기존의 과목명 표시 유지
+                                                            Text(subject)
+                                                                .font(.system(size: 16))
+                                                                .lineLimit(1)
+                                                            Text(schedule?.teacher ?? "")
+                                                                .font(.system(size: 12))
+                                                                .lineLimit(1)
+                                                        }
                                                     } else {
-                                                        Text(schedule?.subject ?? "")
+                                                        Text("")
                                                     }
-                                                    Text(schedule?.teacher ?? "")
-                                                        .font(.caption)
                                                 }
                                                 .frame(width: cellSize, height: cellSize)
                                                 .border(Color.primary)
@@ -142,6 +168,11 @@ struct TimeTableTab: View {
             .onAppear {
                 viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
                 loadCellBackgroundColor()
+                
+                // 로컬 저장된 시간표 확인 및 필요시 서버에서 새로 가져오기
+                if LocalNotificationManager.shared.loadLocalSchedule() == nil {
+                    LocalNotificationManager.shared.fetchAndSaveSchedule(grade: selectedGrade, classNumber: selectedClass)
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())

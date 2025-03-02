@@ -30,7 +30,7 @@ struct WebViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator
-        if let url = URL(string: "https://meal.dkqq.me") {
+        if let url = URL(string: "https://meal.helgisnw.com") {
             let request = URLRequest(url: url)
             webView.load(request)
         }

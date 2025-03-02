@@ -1,13 +1,11 @@
 import SwiftUI
 import Firebase
+import UserNotifications
 
 struct SettingsTab: View {
     @State private var defaultGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
     @State private var defaultClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
     @State private var notificationsEnabled: Bool = UserDefaults.standard.bool(forKey: "notificationsEnabled")
-    @State private var selectedSubjectB: String = UserDefaults.standard.string(forKey: "selectedSubjectB") ?? "없음"
-    @State private var selectedSubjectC: String = UserDefaults.standard.string(forKey: "selectedSubjectC") ?? "없음"
-    @State private var selectedSubjectD: String = UserDefaults.standard.string(forKey: "selectedSubjectD") ?? "없음"
     @State private var cellBackgroundColor: Color = {
         if let data = UserDefaults.standard.data(forKey: "cellBackgroundColor"),
            let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) {
@@ -21,7 +19,10 @@ struct SettingsTab: View {
             List {
                 Section(header: Text(NSLocalizedString("Settings", comment: ""))) {
                     NavigationLink(NSLocalizedString("ClassSettings", comment: ""), destination: ClassAndGradeView(defaultGrade: $defaultGrade, defaultClass: $defaultClass, notificationsEnabled: $notificationsEnabled))
-                    NavigationLink(NSLocalizedString("SubjectSelection", comment: ""), destination: SubjectSelectionView(selectedSubjectB: $selectedSubjectB, selectedSubjectC: $selectedSubjectC, selectedSubjectD: $selectedSubjectD))
+                    
+                    // 기존 탐구 과목 선택 대신 새로운 과목 선택 뷰로 연결
+                    NavigationLink("탐구/기초 과목 선택", destination: SubjectSelectionView())
+                    
                     ColorPicker(NSLocalizedString("ColorPicker", comment: ""), selection: $cellBackgroundColor)
                         .onChange(of: cellBackgroundColor) { newColor in
                             saveCellBackgroundColor(newColor)
@@ -38,9 +39,11 @@ struct SettingsTab: View {
                         .onChange(of: notificationsEnabled) { value in
                             UserDefaults.standard.set(value, forKey: "notificationsEnabled")
                             if value {
-                                subscribeToCurrentTopic()
+                                // 알림 활성화시 로컬 알림 설정
+                                updateLocalScheduleAndNotifications()
                             } else {
-                                unsubscribeFromCurrentTopic()
+                                // 알림 비활성화시 모든 알림 제거
+                                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
                             }
                         }
                 }
@@ -63,7 +66,8 @@ struct SettingsTab: View {
         .onAppear {
             loadSettings()
             if notificationsEnabled {
-                subscribeToCurrentTopic()
+                // 설정 화면 진입시 알림 설정 확인
+                updateLocalScheduleAndNotifications()
             }
         }
     }
@@ -72,9 +76,6 @@ struct SettingsTab: View {
         defaultGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
         defaultClass = UserDefaults.standard.integer(forKey: "defaultClass")
         notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
-        selectedSubjectB = UserDefaults.standard.string(forKey: "selectedSubjectB") ?? "없음"
-        selectedSubjectC = UserDefaults.standard.string(forKey: "selectedSubjectC") ?? "없음"
-        selectedSubjectD = UserDefaults.standard.string(forKey: "selectedSubjectD") ?? "없음"
     }
     
     private func sendEmail() {
@@ -86,25 +87,13 @@ struct SettingsTab: View {
         }
     }
 
-    private func subscribeToCurrentTopic() {
-        let topic = "\(defaultGrade)-\(defaultClass)"
-        Messaging.messaging().subscribe(toTopic: topic) { error in
-            if let error = error {
-                print("Failed to subscribe to topic \(topic): \(error)")
-            } else {
-                print("Subscribed to topic \(topic)")
-            }
-        }
-    }
-
-    private func unsubscribeFromCurrentTopic() {
-        let topic = "\(defaultGrade)-\(defaultClass)"
-        Messaging.messaging().unsubscribe(fromTopic: topic) { error in
-            if let error = error {
-                print("Failed to unsubscribe from topic \(topic): \(error)")
-            } else {
-                print("Unsubscribed from topic \(topic)")
-            }
+    // Firebase 토픽 구독 함수는 제거하고 대신 로컬 시간표와 알림을 관리하는 함수로 변경
+    private func updateLocalScheduleAndNotifications() {
+        // 시간표 데이터 가져오기 및 알림 설정 업데이트
+        if notificationsEnabled {
+            LocalNotificationManager.shared.fetchAndSaveSchedule(grade: defaultGrade, classNumber: defaultClass)
+        } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
     }
 
@@ -143,78 +132,13 @@ struct ClassAndGradeView: View {
             UserDefaults.standard.set(defaultGrade, forKey: "defaultGrade")
             UserDefaults.standard.set(defaultClass, forKey: "defaultClass")
             if notificationsEnabled {
-                unsubscribeFromOldTopic(oldGrade: oldGrade, oldClass: oldClass)
-                subscribeToCurrentTopic()
-            }
-        }
-    }
-
-    private func subscribeToCurrentTopic() {
-        let topic = "\(defaultGrade)-\(defaultClass)"
-        Messaging.messaging().subscribe(toTopic: topic) { error in
-            if let error = error {
-                print("Failed to subscribe to topic \(topic): \(error)")
+                // 시간표와 알림 설정 업데이트
+                LocalNotificationManager.shared.fetchAndSaveSchedule(grade: defaultGrade, classNumber: defaultClass)
             } else {
-                print("Subscribed to topic \(topic)")
+                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             }
         }
     }
-
-    private func unsubscribeFromOldTopic(oldGrade: Int, oldClass: Int) {
-        let topic = "\(oldGrade)-\(oldClass)"
-        Messaging.messaging().unsubscribe(fromTopic: topic) { error in
-            if let error = error {
-                print("Failed to unsubscribe from topic \(topic): \(error)")
-            } else {
-                print("Unsubscribed from topic \(topic)")
-            }
-        }
-    }
-}
-
-struct SubjectSelectionView: View {
-    @Binding var selectedSubjectB: String
-    @Binding var selectedSubjectC: String
-    @Binding var selectedSubjectD: String
-    let subjects = [
-        "없음", "물리", "화학", "생명과학", "지구과학", "윤사", "정치와 법", "경제", "세계사", "한국지리", "탐구B", "탐구C", "탐구D"
-    ]
     
-    var body: some View {
-        Form {
-            Section(header: Text(NSLocalizedString("SubjectSelection", comment: ""))) {
-                Picker(NSLocalizedString("Subject B", comment: ""), selection: $selectedSubjectB) {
-                    ForEach(subjects, id: \.self) { subject in
-                        Text(subject).tag(subject)
-                    }
-                }
-                .onChange(of: selectedSubjectB) { newValue in
-                    UserDefaults.standard.set(newValue, forKey: "selectedSubjectB")
-                }
-                Picker(NSLocalizedString("Subject C", comment: ""), selection: $selectedSubjectC) {
-                    ForEach(subjects, id: \.self) { subject in
-                        Text(subject).tag(subject)
-                    }
-                }
-                .onChange(of: selectedSubjectC) { newValue in
-                    UserDefaults.standard.set(newValue, forKey: "selectedSubjectC")
-                }
-                Picker(NSLocalizedString("Subject D", comment: ""), selection: $selectedSubjectD) {
-                    ForEach(subjects, id: \.self) { subject in
-                        Text(subject).tag(subject)
-                    }
-                }
-                .onChange(of: selectedSubjectD) { newValue in
-                    UserDefaults.standard.set(newValue, forKey: "selectedSubjectD")
-                }
-            }
-        }
-        .navigationBarTitle("탐구 과목 선택", displayMode: .inline)
-    }
-}
-
-struct SettingsTab_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsTab()
-    }
+    // 로컬 알림 관련 함수로 대체
 }

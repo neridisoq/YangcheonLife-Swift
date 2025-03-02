@@ -1,7 +1,6 @@
-// ScheduleItem.swift
 import Foundation
 
-struct ScheduleItem: Decodable {
+struct ScheduleItem: Codable {
     var grade: Int
     var `class`: Int
     var weekday: Int

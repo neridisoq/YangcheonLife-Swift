@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		08B30CAAB05D77B62693589B /* Pods_yangcheonlife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */; };
+		0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */; };
+		0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */; };
 		0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */; };
 		0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFEF2C2A7C04002C4F44 /* ContentView.swift */; };
 		0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0969EFF12C2A7C05002C4F44 /* Assets.xcassets */; };
@@ -48,6 +50,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectSelectionView.swift; sourceTree = "<group>"; };
+		0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
 		0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = yangcheonlife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = yangcheonlifeApp.swift; sourceTree = "<group>"; };
 		0969EFEF2C2A7C04002C4F44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -108,6 +112,7 @@
 		0969EFEC2C2A7C04002C4F44 /* yangcheonlife */ = {
 			isa = PBXGroup;
 			children = (
+				0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */,
 				0990FEC52C2AA31E008EF97D /* InitialSetup.swift */,
 				0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */,
 				0969F0032C2A7DFD002C4F44 /* ScheduleViewModel.swift */,
@@ -123,6 +128,7 @@
 				0969F0212C2A8887002C4F44 /* GoogleService-Info.plist */,
 				0969EFF32C2A7C05002C4F44 /* Preview Content */,
 				0969F01D2C2A843C002C4F44 /* AppDelegate.swift */,
+				0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */,
 				096DE6922C2B8DA900651DE1 /* Localizable.strings */,
 			);
 			path = yangcheonlife;
@@ -282,6 +288,8 @@
 				0969F0002C2A7DB8002C4F44 /* LunchTab.swift in Sources */,
 				0969F0012C2A7DB8002C4F44 /* SettingsTab.swift in Sources */,
 				0969F0022C2A7DB8002C4F44 /* TimeTableTab.swift in Sources */,
+				0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */,
+				0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */,
 				0969F0052C2A7DFD002C4F44 /* ScheduleItem.swift in Sources */,
 				0969F0062C2A7DFD002C4F44 /* ScheduleViewModel.swift in Sources */,
 				0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */,
@@ -436,7 +444,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -455,7 +463,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -473,7 +481,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -492,7 +500,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

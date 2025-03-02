@@ -11,6 +11,11 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
     private override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
+        
+        // 초기화 시 로컬에 저장된 시간표 로드
+        if let savedSchedules = loadLocalSchedule() {
+            self.schedules = savedSchedules
+        }
     }
     
     func requestNotificationPermission(completion: @escaping (Bool) -> Void) {
@@ -22,6 +27,17 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
     }
     
     func fetchAndSaveSchedule(grade: Int, classNumber: Int) {
+        // 먼저 로컬에 저장된 시간표 확인
+        if let savedSchedules = loadLocalSchedule(), !savedSchedules.isEmpty {
+            self.schedules = savedSchedules
+            
+            // 알림이 활성화된 경우 현재 시간표로 알림 설정
+            if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
+                scheduleNotifications(schedules: savedSchedules, grade: grade, classNumber: classNumber)
+            }
+        }
+        
+        // 서버에서 최신 시간표 가져오기 시도
         let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
@@ -35,14 +51,19 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
-                    print("Schedule fetch completed successfully")
+                    print("시간표 갱신 완료")
                 case .failure(let error):
-                    print("Failed to fetch schedule: \(error)")
+                    print("시간표 갱신 실패: \(error)")
                 }
             }, receiveValue: { [weak self] schedules in
-                self?.schedules = schedules
-                self?.saveScheduleLocally(schedules)
-                self?.scheduleNotifications(schedules: schedules, grade: grade, classNumber: classNumber)
+                guard let self = self else { return }
+                self.schedules = schedules
+                self.saveScheduleLocally(schedules)
+                
+                // 알림이 활성화된 경우 새 시간표로 알림 재설정
+                if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
+                    self.scheduleNotifications(schedules: schedules, grade: grade, classNumber: classNumber)
+                }
             })
             .store(in: &cancellables)
     }
@@ -50,13 +71,14 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
     private func saveScheduleLocally(_ schedules: [[ScheduleItem]]) {
         if let encoded = try? JSONEncoder().encode(schedules) {
             UserDefaults.standard.set(encoded, forKey: "savedSchedule")
+            // 마지막 업데이트 시간 기록
+            UserDefaults.standard.set(Date(), forKey: "lastScheduleUpdateTime")
         }
     }
     
     func loadLocalSchedule() -> [[ScheduleItem]]? {
         if let savedData = UserDefaults.standard.data(forKey: "savedSchedule"),
            let decodedSchedule = try? JSONDecoder().decode([[ScheduleItem]].self, from: savedData) {
-            self.schedules = decodedSchedule
             return decodedSchedule
         }
         return nil
