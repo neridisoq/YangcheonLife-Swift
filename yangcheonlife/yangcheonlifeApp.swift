@@ -1,6 +1,5 @@
 //yangcheonlifeApp.swift
 import SwiftUI
-import Firebase
 
 @main
 struct yangcheonlifeApp: App {

@@ -1,11 +1,10 @@
+//AppDelegate.swift
 import UIKit
-import Firebase
 import UserNotifications
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        FirebaseApp.configure()
         
         // 알림 권한 요청
         UNUserNotificationCenter.current().delegate = self

@@ -1,5 +1,4 @@
 import SwiftUI
-import Firebase
 import UserNotifications
 
 struct InitialSetupView: View {
