@@ -1,11 +1,3 @@
-//
-//  SubjectSelectionView.swift
-//  yangcheonlife
-//
-//  Created by Woohyun Jin on 3/3/25.
-//
-
-
 import SwiftUI
 
 struct SubjectSelectionView: View {
@@ -41,82 +33,91 @@ struct SubjectSelectionView: View {
                 Section(header: Text("세부 반 선택")) {
                     if selectedGrade == 2 {
                         if selectedGroupType == "h반" {
-                            NavigationLink("A반", destination: ClassSubjectSelectionView(className: "A반", subjects: grade2ClassASubjects))
-                            NavigationLink("B반", destination: ClassSubjectSelectionView(className: "B반", subjects: grade2ClassBSubjects))
-                            NavigationLink("C반", destination: ClassSubjectSelectionView(className: "C반", subjects: grade2ClassCSubjects))
-                            NavigationLink("D반", destination: ClassSubjectSelectionView(className: "D반", subjects: grade2ClassDSubjects))
+                            NavigationLink("A 반", destination: ClassSubjectSelectionView(className: "A 반", subjects: grade2ClassASubjects))
+                            NavigationLink("B 반", destination: ClassSubjectSelectionView(className: "B 반", subjects: grade2ClassBSubjects))
+                            NavigationLink("C 반", destination: ClassSubjectSelectionView(className: "C 반", subjects: grade2ClassCSubjects))
+                            NavigationLink("D 반", destination: ClassSubjectSelectionView(className: "D 반", subjects: grade2ClassDSubjects))
                         } else if selectedGroupType == "t반" {
-                            NavigationLink("E반", destination: ClassSubjectSelectionView(className: "E반", subjects: grade2ClassESubjects))
-                            NavigationLink("F반", destination: ClassSubjectSelectionView(className: "F반", subjects: grade2ClassFSubjects))
-                            NavigationLink("G반", destination: ClassSubjectSelectionView(className: "G반", subjects: grade2ClassGSubjects))
-                            NavigationLink("H반", destination: ClassSubjectSelectionView(className: "H반", subjects: grade2ClassHSubjects))
+                            NavigationLink("E 반", destination: ClassSubjectSelectionView(className: "E 반", subjects: grade2ClassESubjects))
+                            NavigationLink("F 반", destination: ClassSubjectSelectionView(className: "F 반", subjects: grade2ClassFSubjects))
+                            NavigationLink("G 반", destination: ClassSubjectSelectionView(className: "G 반", subjects: grade2ClassGSubjects))
+                            NavigationLink("H 반", destination: ClassSubjectSelectionView(className: "H 반", subjects: grade2ClassHSubjects))
                         } else if selectedGroupType == "나머지반" {
-                            NavigationLink("I반", destination: ClassSubjectSelectionView(className: "I반", subjects: grade2ClassISubjects))
-                            NavigationLink("J반", destination: ClassSubjectSelectionView(className: "J반", subjects: grade2ClassJSubjects))
-                            NavigationLink("K반", destination: ClassSubjectSelectionView(className: "K반", subjects: grade2ClassKSubjects))
-                            NavigationLink("L반", destination: ClassSubjectSelectionView(className: "L반", subjects: grade2ClassLSubjects))
-                            NavigationLink("M반", destination: ClassSubjectSelectionView(className: "M반", subjects: grade2ClassMSubjects))
-                            NavigationLink("N반", destination: ClassSubjectSelectionView(className: "N반", subjects: grade2ClassNSubjects))
+                            NavigationLink("I 반", destination: ClassSubjectSelectionView(className: "I 반", subjects: grade2ClassISubjects))
+                            NavigationLink("J 반", destination: ClassSubjectSelectionView(className: "J 반", subjects: grade2ClassJSubjects))
+                            NavigationLink("K 반", destination: ClassSubjectSelectionView(className: "K 반", subjects: grade2ClassKSubjects))
+                            NavigationLink("L 반", destination: ClassSubjectSelectionView(className: "L 반", subjects: grade2ClassLSubjects))
+                            NavigationLink("M 반", destination: ClassSubjectSelectionView(className: "M 반", subjects: grade2ClassMSubjects))
+                            NavigationLink("N 반", destination: ClassSubjectSelectionView(className: "N 반", subjects: grade2ClassNSubjects))
                         }
                     } else if selectedGrade == 3 {
                         if selectedGroupType == "h반" {
-                            NavigationLink("A반", destination: ClassSubjectSelectionView(className: "A반", subjects: grade3ClassASubjects))
-                            NavigationLink("B반", destination: ClassSubjectSelectionView(className: "B반", subjects: grade3ClassBSubjects))
-                            NavigationLink("C반", destination: ClassSubjectSelectionView(className: "C반", subjects: grade3ClassCSubjects))
-                            NavigationLink("G반", destination: ClassSubjectSelectionView(className: "G반", subjects: grade3ClassGSubjects))
-                            NavigationLink("H반", destination: ClassSubjectSelectionView(className: "H반", subjects: grade3ClassHSubjects))
-                            NavigationLink("I반", destination: ClassSubjectSelectionView(className: "I반", subjects: grade3ClassISubjects))
+                            NavigationLink("A 반", destination: ClassSubjectSelectionView(className: "A 반", subjects: grade3ClassASubjects))
+                            NavigationLink("B 반", destination: ClassSubjectSelectionView(className: "B 반", subjects: grade3ClassBSubjects))
+                            NavigationLink("C 반", destination: ClassSubjectSelectionView(className: "C 반", subjects: grade3ClassCSubjects))
+                            NavigationLink("G 반", destination: ClassSubjectSelectionView(className: "G 반", subjects: grade3ClassGSubjects))
+                            NavigationLink("H 반", destination: ClassSubjectSelectionView(className: "H 반", subjects: grade3ClassHSubjects))
+                            NavigationLink("I 반", destination: ClassSubjectSelectionView(className: "I 반", subjects: grade3ClassISubjects))
                         } else if selectedGroupType == "t반" {
-                            NavigationLink("D반", destination: ClassSubjectSelectionView(className: "D반", subjects: grade3ClassDSubjects))
-                            NavigationLink("E반", destination: ClassSubjectSelectionView(className: "E반", subjects: grade3ClassESubjects))
-                            NavigationLink("F반", destination: ClassSubjectSelectionView(className: "F반", subjects: grade3ClassFSubjects))
-                            NavigationLink("J반", destination: ClassSubjectSelectionView(className: "J반", subjects: grade3ClassJSubjects))
-                            NavigationLink("K반", destination: ClassSubjectSelectionView(className: "K반", subjects: grade3ClassKSubjects))
-                            NavigationLink("L반", destination: ClassSubjectSelectionView(className: "L반", subjects: grade3ClassLSubjects))
-                            NavigationLink("M반", destination: ClassSubjectSelectionView(className: "M반", subjects: grade3ClassMSubjects))
+                            NavigationLink("D 반", destination: ClassSubjectSelectionView(className: "D 반", subjects: grade3ClassDSubjects))
+                            NavigationLink("E 반", destination: ClassSubjectSelectionView(className: "E 반", subjects: grade3ClassESubjects))
+                            NavigationLink("F 반", destination: ClassSubjectSelectionView(className: "F 반", subjects: grade3ClassFSubjects))
+                            NavigationLink("J 반", destination: ClassSubjectSelectionView(className: "J 반", subjects: grade3ClassJSubjects))
+                            NavigationLink("K 반", destination: ClassSubjectSelectionView(className: "K 반", subjects: grade3ClassKSubjects))
+                            NavigationLink("L 반", destination: ClassSubjectSelectionView(className: "L 반", subjects: grade3ClassLSubjects))
+                            NavigationLink("M 반", destination: ClassSubjectSelectionView(className: "M 반", subjects: grade3ClassMSubjects))
                         } else if selectedGroupType == "나머지반" {
-                            NavigationLink("N반", destination: ClassSubjectSelectionView(className: "N반", subjects: grade3ClassNSubjects))
-                            NavigationLink("O반", destination: ClassSubjectSelectionView(className: "O반", subjects: grade3ClassOSubjects))
+                            NavigationLink("N 반", destination: ClassSubjectSelectionView(className: "N 반", subjects: grade3ClassNSubjects))
+                            NavigationLink("O 반", destination: ClassSubjectSelectionView(className: "O 반", subjects: grade3ClassOSubjects))
                         }
                     }
                 }
             }
             .navigationBarTitle("탐구/기초 과목 선택")
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+        .onAppear {
+            loadSettings()
+        }
+    }
+    
+    private func loadSettings() {
+        selectedGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        selectedGroupType = UserDefaults.standard.string(forKey: "selectedGroupType") ?? "h반"
     }
     
     // 2학년 각 반별 과목 리스트
-    let grade2ClassASubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"]
-    let grade2ClassBSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"]
-    let grade2ClassCSubjects = ["선택 없음", "물리I/202", "여지/201", "지구I/205", "화학I/203"]
-    let grade2ClassDSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/210"]
-    let grade2ClassESubjects = ["선택 없음", "물리I/209", "생과/211", "여지/다목A", "윤사/208", "정법/207", "지구I/210", "한지/206"]
-    let grade2ClassFSubjects = ["선택 없음", "물리I/209", "생과/211", "여지/다목A", "윤사/208", "정법/207", "지구I/210", "한지/206"]
-    let grade2ClassGSubjects = ["선택 없음", "경제/209", "생명I/211", "생과/다목A", "세계사/206", "윤사/208", "정법/207", "화학I/210"]
-    let grade2ClassHSubjects = ["선택 없음", "경제/209", "생명I/211", "생과/207", "세계사/206", "여지/다목A", "윤사/208"]
-    let grade2ClassISubjects = ["선택 없음", "기하/207", "심화국어/206"]
-    let grade2ClassJSubjects = ["선택 없음", "기하/209", "심화국어/208", "영어권문화/다목B"]
-    let grade2ClassKSubjects = ["선택 없음", "기하/211", "심화국어/홈베B", "영어권문화/210"]
-    let grade2ClassLSubjects = ["선택 없음", "일본어I/206", "중국어I/207"]
-    let grade2ClassMSubjects = ["선택 없음", "일본어I/208", "중국어I/209"]
-    let grade2ClassNSubjects = ["선택 없음", "일본어I/210", "중국어I/홈베B"]
+    let grade2ClassASubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"];
+    let grade2ClassBSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"];
+    let grade2ClassCSubjects = ["선택 없음", "물리I/202", "여지/201", "지구I/205", "화학I/203"];
+    let grade2ClassDSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/210"];
+    let grade2ClassESubjects = ["선택 없음", "물리I/209", "생활과학/211", "여지/다목적실A", "윤사/208", "정법/207", "지구I/210", "한지/206"];
+    let grade2ClassFSubjects = ["선택 없음", "물리I/209", "생활과학/211", "여지/다목적실A", "윤사/208", "정법/207", "지구I/210", "한지/206"];
+    let grade2ClassGSubjects = ["선택 없음", "경제/209", "생명I/211", "생활과학/다목적실A", "세계사/206", "윤사/208", "정법/207", "화학I/210"];
+    let grade2ClassHSubjects = ["선택 없음", "경제/209", "생명I/211", "생활과학/207", "세계사/206", "여지/다목적실A", "윤사/208"];
+    let grade2ClassISubjects = ["선택 없음", "기하/207", "심화국어/206"];
+    let grade2ClassJSubjects = ["선택 없음", "기하/209", "심화국어/208", "영어문화/다목적실B"];
+    let grade2ClassKSubjects = ["선택 없음", "기하/211", "심화국어/홈베이스B", "영어문화/210"];
+    let grade2ClassLSubjects = ["선택 없음", "일본어I/206", "중국어I/207"];
+    let grade2ClassMSubjects = ["선택 없음", "일본어I/208", "중국어I/209"];
+    let grade2ClassNSubjects = ["선택 없음", "일본어I/210", "중국어I/다목적실B"];
     
     // 3학년 각 반별 과목 리스트
-    let grade3ClassASubjects = ["선택 없음", "과학사/꿈담카페B", "물리/304", "사문/302", "사문탐/303", "생명/305", "세계지리/301", "지구/306"]
-    let grade3ClassBSubjects = ["선택 없음", "고전읽기/301", "과학사/꿈담카페B", "물리/304", "사문/302", "사문탐/303", "생윤/301", "지구/306", "화학/305"]
-    let grade3ClassCSubjects = ["선택 없음", "물리/304", "사문/302", "사문탐/303", "생명/306", "생윤/301", "화학/305"]
-    let grade3ClassDSubjects = ["선택 없음", "과학사/홈베이스B", "사문탐/309", "생명/310", "생윤/308", "세계지리/307", "지구/311"]
-    let grade3ClassESubjects = ["선택 없음", "과학사/홈베이스B", "물리/310", "사문/307", "사문탐/309", "생윤/308", "지구/311"]
-    let grade3ClassFSubjects = ["선택 없음", "동아시아사/홈베이스B", "물리/309", "사문/307", "생명/310", "지구/311", "화학/308"]
-    let grade3ClassGSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "AI수학/304", "진로영어/306"]
-    let grade3ClassHSubjects = ["선택 없음", "미적분/302", "수과탐/303", "영독작/305", "영어회화/304", "진로영어H1/306", "진로영어H2/꿈담카페B"]
-    let grade3ClassISubjects = ["선택 없음", "경제수학/301", "미적분I1/302", "미적분I2/304", "수과탐/303", "영독작/305", "AI수학/꿈담카페B", "진로영어/306"]
-    let grade3ClassJSubjects = ["선택 없음", "미적분/307", "수과탐/308", "영독작/310", "영어회화/309", "진로영어/311"]
-    let grade3ClassKSubjects = ["선택 없음", "경제수학/308", "미적분/307", "영독작/310", "AI수학/309", "진로영어/311"]
-    let grade3ClassLSubjects = ["선택 없음", "고전읽기/311", "미적분/307", "수과탐/308", "영독작/310", "AI수학/홈베이스B", "확통/309"]
-    let grade3ClassMSubjects = ["선택 없음", "고전읽기/310", "미적분/307", "수과탐/308", "AI수학/309", "진로영어/311", "확통/홈베이스B"]
-    let grade3ClassNSubjects = ["선택 없음", "언매/307", "화작N1/308", "화작N2/홈베이스B"]
-    let grade3ClassOSubjects = ["선택 없음", "언매/311", "화작/310"]
+    let grade3ClassASubjects = ["선택 없음", "과학사/꿈담카페B", "물리/302", "사문/304", "사문탐/303", "생명/305", "세지/306", "지구/301"];
+    let grade3ClassBSubjects = ["선택 없음", "과학사/꿈담카페B", "물리/302", "사문/305", "사문탐/306", "생윤/301", "지구/303", "화학/304"];
+    let grade3ClassCSubjects = ["선택 없음", "물리/302", "사문/305", "사문탐/303", "생명/306", "생윤/301", "화학/304"];
+    let grade3ClassDSubjects = ["선택 없음", "과학사/홈베이스B", "사문탐/309", "생명/310", "생윤/308", "세지/307", "지구/311"];
+    let grade3ClassESubjects = ["선택 없음", "과학사/홈베이스B", "물리/310", "사문/308", "사문탐/309", "생윤/307", "지구/311"];
+    let grade3ClassFSubjects = ["선택 없음", "동아사/홈베이스B", "물리/309", "사문/308", "생명/310", "지구/311", "화학/307"];
+    let grade3ClassGSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "AI수학/304", "진로영어/306"];
+    let grade3ClassHSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "영어회화/304", "진로영어H1/306", "진로영어H2/꿈담카페B"];
+    let grade3ClassISubjects = ["선택 없음", "경제수학/301", "미적분I1/302", "미적분I2/304", "수과탐/303", "영독작/305", "AI수학/꿈담카페B", "진로영어/306"];
+    let grade3ClassJSubjects = ["선택 없음", "미적분/310", "수과탐/309", "영독작/307", "영어회화/308", "진로영어/311"];
+    let grade3ClassKSubjects = ["선택 없음", "경제수학/308", "미적분/309", "영독작/310", "AI수학/307", "진로영어/311"];
+    let grade3ClassLSubjects = ["선택 없음", "고전읽기/311", "미적분/310", "수과탐/309", "영독작/308", "AI수학/홈베이스B", "확통/307"];
+    let grade3ClassMSubjects = ["선택 없음", "고전읽기/308", "미적분/309", "수과탐/310", "AI수학/홈베이스B", "진로영어/311", "확통/307"];
+    let grade3ClassNSubjects = ["선택 없음", "언매/307", "화작N1/308", "화작N2/홈베이스B"];
+    let grade3ClassOSubjects = ["선택 없음", "언매/311", "화작/310"];
 }
 
 struct ClassSubjectSelectionView: View {

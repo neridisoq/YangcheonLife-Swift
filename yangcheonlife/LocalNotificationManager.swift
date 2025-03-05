@@ -1,4 +1,3 @@
-//LocalNotificationManager.swift
 import Foundation
 import UserNotifications
 import Combine
@@ -107,28 +106,36 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
             
             // 해당 요일의 모든 수업에 대해 알림 설정
             for schedule in daySchedule {
-                scheduleClassNotification(
-                    weekday: weekday,
-                    classTime: schedule.classTime,
-                    subject: schedule.subject,
-                    teacher: schedule.teacher,
-                    grade: grade,
-                    classNumber: classNumber
-                )
+                // 수업이 없는 시간(subject와 teacher가 모두 빈 문자열)은 알림 설정 제외
+                if !schedule.subject.isEmpty || !schedule.teacher.isEmpty {
+                    scheduleClassNotification(
+                        weekday: weekday,
+                        classTime: schedule.classTime,
+                        subject: schedule.subject,
+                        teacher: schedule.teacher,
+                        grade: grade,
+                        classNumber: classNumber
+                    )
+                }
             }
         }
     }
     
     private func scheduleClassNotification(weekday: Int, classTime: Int, subject: String, teacher: String, grade: Int, classNumber: Int) {
+        // 빈 수업은 알림 설정하지 않음 (추가 안전장치)
+        if subject.isEmpty && teacher.isEmpty {
+            return
+        }
+        
         // 알림이 발생할 요일과 시간 계산
         let periodTimes: [(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int))] = [
             ((8, 20), (9, 10)),   // 1교시
             ((9, 20), (10, 10)),  // 2교시
             ((10, 20), (11, 10)), // 3교시
             ((11, 20), (12, 10)), // 4교시
-            ((13, 10), (14, 0)),  // 5교시
-            ((14, 10), (15, 0)),  // 6교시
-            ((15, 10), (16, 0))   // 7교시
+            ((13, 10), (14, 00)),  // 5교시
+            ((14, 10), (15, 00)),  // 6교시
+            ((15, 10), (16, 00))   // 7교시
         ]
         
         guard classTime >= 1 && classTime <= periodTimes.count else { return }
@@ -136,10 +143,20 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
         let periodTime = periodTimes[classTime - 1]
         let startTime = periodTime.start
         
+        // 알림은 수업 시작 10분 전에 발생하도록 설정
+        var notificationHour = startTime.hour
+        var notificationMinute = startTime.minute - 10
+        
+        // 분이 음수가 되는 경우 시간 조정
+        if notificationMinute < 0 {
+            notificationHour -= 1
+            notificationMinute += 60
+        }
+        
         // 현재 시간 기준으로 다음 해당 요일의 해당 시간 계산
         var dateComponents = DateComponents()
-        dateComponents.hour = startTime.hour
-        dateComponents.minute = startTime.minute
+        dateComponents.hour = notificationHour
+        dateComponents.minute = notificationMinute
         dateComponents.weekday = weekday
         
         // 알림 내용 설정
@@ -162,12 +179,17 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
         }
         
         // 알림 제목 및 내용 설정
-        notificationContent.title = "\(classTime)교시 수업 알림"
+        notificationContent.title = "\(classTime)교시 수업 알림 (10분 전)"
         
-        if displaySubject.contains("반") {
-            notificationContent.body = "\(classTime)교시 수업입니다. \(grade)학년 \(classNumber)반 교실입니다."
+        if !displayLocation.contains("T") {
+            if displaySubject.contains("반"){
+                notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. (설정필요)"
+            }
+            else{
+                notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. \(displayLocation) 교실입니다."
+            }
         } else {
-            notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. \(displayLocation)교실입니다."
+            notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. 교실수업입니다."
         }
         
         notificationContent.sound = UNNotificationSound.default

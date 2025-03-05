@@ -6,6 +6,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         
+        // Check for app updates
+        AppUpdateService.shared.checkForUpdates()
+        
         // 알림 권한 요청
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
@@ -37,5 +40,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         completionHandler()
+    }
+    
+    // Check for updates when app enters foreground
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        AppUpdateService.shared.checkForUpdates()
     }
 }

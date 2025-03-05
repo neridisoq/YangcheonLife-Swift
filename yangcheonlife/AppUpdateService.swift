@@ -1,3 +1,11 @@
+//
+//  AppUpdateService.swift
+//  yangcheonlife
+//
+//  Created by Woohyun Jin on 3/4/25.
+//
+
+
 import Foundation
 import SwiftUI
 
@@ -7,7 +15,8 @@ class AppUpdateService: ObservableObject {
     @Published var updateRequired = false
     @Published var appStoreVersion: String?
     
-    private let appId = "YOUR_APP_ID" // Replace with your App Store app ID
+    private let appId = "6502401068"
+    // Replace with your App Store app ID
     
     private init() {}
     
