@@ -204,16 +204,23 @@ class ScheduleManager {
         return customizedSchedules
     }
     
+    // 외부에서 접근 가능한 커스텀 메서드
+    func applyCurrentSubjectCustomization(schedules: [[ScheduleItem]]) -> [[ScheduleItem]] {
+        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+        return applySubjectCustomization(schedules: schedules, grade: grade, classNumber: classNumber)
+    }
+    
     // 알림 초기화 및 재설정
-    private func resetNotifications(scheduleData: ScheduleData, completion: @escaping (Bool) -> Void) {
+    func resetNotifications(scheduleData: ScheduleData, completion: @escaping (Bool) -> Void) {
         // 1. 모든 알림 삭제
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         
         // 2. 알림 시스템이 업데이트되기를 보장하기 위한 짧은 지연
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            guard let self = self else { 
+            guard let self = self else {
                 completion(false)
-                return 
+                return
             }
             
             // 3. 알림이 활성화되어 있는지 확인
@@ -355,4 +362,80 @@ class ScheduleManager {
         
         return UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
     }
+}
+// ScheduleManager.swift에 추가할 메서드
+
+// 화면 표시용 임시 저장소 키
+private let displayStoreKey = "schedule_display_store"
+
+// 화면 표시용 시간표 데이터 저장
+func saveToDisplayStore(_ data: ScheduleData) {
+    do {
+        let encoded = try JSONEncoder().encode(data)
+        UserDefaults.standard.set(encoded, forKey: displayStoreKey)
+    } catch {
+        print("디스플레이 저장소 저장 실패: \(error)")
+    }
+}
+
+// 화면 표시용 시간표 데이터 로드
+func loadDisplayStore() -> ScheduleData? {
+    guard let data = UserDefaults.standard.data(forKey: displayStoreKey) else {
+        return nil
+    }
+    
+    do {
+        return try JSONDecoder().decode(ScheduleData.self, from: data)
+    } catch {
+        print("디스플레이 저장소 로드 실패: \(error)")
+        return nil
+    }
+}
+
+// 화면 표시용 시간표 가져오기 (알림 설정에 영향 없음)
+func fetchScheduleForDisplay(grade: Int, classNumber: Int, completion: @escaping ([[ScheduleItem]]?) -> Void) {
+    // 서버에서 시간표 가져오기
+    let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
+    guard let url = URL(string: urlString) else {
+        print("Invalid URL")
+        completion(nil)
+        return
+    }
+    
+    URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+        guard let self = self,
+              let data = data,
+              error == nil else {
+            print("시간표 데이터 요청 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+            DispatchQueue.main.async {
+                completion(nil)
+            }
+            return
+        }
+        
+        do {
+            // 서버 응답 데이터 파싱
+            let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
+            
+            // 메타데이터를 포함한 새 데이터 객체 생성
+            let newScheduleData = ScheduleData(
+                grade: grade,
+                classNumber: classNumber,
+                lastUpdated: Date(),
+                schedules: schedules
+            )
+            
+            // 디스플레이 저장소에 저장
+            self.saveToDisplayStore(newScheduleData)
+            
+            DispatchQueue.main.async {
+                completion(schedules)
+            }
+        } catch {
+            print("시간표 데이터 파싱 실패: \(error)")
+            DispatchQueue.main.async {
+                completion(nil)
+            }
+        }
+    }.resume()
 }
