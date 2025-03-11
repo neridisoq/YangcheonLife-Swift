@@ -144,7 +144,7 @@ struct SimpleNextClassWidgetEntryView: View {
                     .lineLimit(widgetFamily == .systemSmall ? 2 : 1)
                 
                 if widgetFamily != .systemSmall && peInfo.hasPhysicalEducation {
-                    Text("운동복을 준비하세요!")
+                    Text("체육복을 준비하세요!")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

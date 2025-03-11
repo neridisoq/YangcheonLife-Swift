@@ -1,6 +1,7 @@
 import UIKit
 import UserNotifications
 import WidgetKit
+import BackgroundTasks
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
@@ -11,6 +12,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // 위젯과 데이터 공유를 위한 UserDefaults 동기화
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+        
+        // 백그라운드 앱 갱신 활성화
+        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
         
         // 알림 권한 요청
         UNUserNotificationCenter.current().delegate = self
@@ -41,7 +45,74 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             }
         }
         
+        // 백그라운드 작업 등록
+        registerBackgroundTasks()
+        
         return true
+    }
+    
+    // 백그라운드 작업 등록
+    private func registerBackgroundTasks() {
+        // 백그라운드 위젯 업데이트 작업 등록
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.helgisnw.yangcheonlife.widgetrefresh", using: nil) { task in
+            self.handleWidgetRefresh(task: task as! BGAppRefreshTask)
+        }
+    }
+    
+    // 백그라운드 위젯 업데이트 작업 처리
+    private func handleWidgetRefresh(task: BGAppRefreshTask) {
+        // 다음 백그라운드 작업 스케줄링
+        scheduleWidgetRefresh()
+        
+        // 위젯 데이터 업데이트 및 타임라인 갱신
+        let updateTask = Task {
+            // 위젯 데이터 동기화
+            SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+            // 위젯 타임라인 갱신
+            WidgetCenter.shared.reloadAllTimelines()
+            print("✅ 백그라운드에서 위젯 타임라인 리로드 완료: \(Date())")
+        }
+        
+        // 작업 완료 또는 제한 시간 도달 시 처리
+        task.expirationHandler = {
+            updateTask.cancel()
+        }
+        
+        // 작업 완료 시 호출
+        Task {
+            await updateTask.value
+            task.setTaskCompleted(success: true)
+        }
+    }
+    
+    // 백그라운드 위젯 업데이트 작업 스케줄링
+    func scheduleWidgetRefresh() {
+        let request = BGAppRefreshTaskRequest(identifier: "com.helgisnw.yangcheonlife.widgetrefresh")
+        // 60초 후에 실행 (최소 시간임, 실제로는 iOS가 적절한 시점에 실행)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 60)
+        
+        do {
+            try BGTaskScheduler.shared.submit(request)
+            print("📆 다음 백그라운드 위젯 업데이트 작업 예약됨")
+        } catch {
+            print("❌ 백그라운드 작업 예약 실패: \(error)")
+        }
+    }
+
+    // 백그라운드 앱 갱신 처리
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("🔄 백그라운드 앱 갱신 시작: \(Date())")
+        
+        // 위젯 데이터 동기화
+        SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+        // 위젯 타임라인 갱신
+        WidgetCenter.shared.reloadAllTimelines()
+        
+        print("✅ 백그라운드 앱 갱신에서 위젯 타임라인 리로드 완료")
+        completionHandler(.newData)
+        
+        // 다음 백그라운드 작업 스케줄링
+        scheduleWidgetRefresh()
     }
 
     // Handle foreground notifications
@@ -58,10 +129,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // Check for updates when app enters foreground
     func applicationWillEnterForeground(_ application: UIApplication) {
         AppUpdateService.shared.checkForUpdates()
+        // 다음 백그라운드 작업 스케줄링
+        scheduleWidgetRefresh()
     }
     
     // 앱 활성화 시 위젯 데이터 동기화
-    // 위젯과 데이터 공유를 위한 UserDefaults 동기화
     func applicationDidBecomeActive(_ application: UIApplication) {
         // 위젯 데이터 동기화
         print("🔄 앱 활성화: 위젯 데이터 동기화 시작")
@@ -69,5 +141,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         SharedUserDefaults.shared.printAllValues()
         WidgetCenter.shared.reloadAllTimelines()
         print("✅ 위젯 타임라인 리로드 요청 완료")
+        
+        // 다음 백그라운드 작업 스케줄링
+        scheduleWidgetRefresh()
+    }
+    
+    // 앱이 백그라운드로 이동할 때 호출
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // 다음 백그라운드 작업 스케줄링
+        scheduleWidgetRefresh()
     }
 }

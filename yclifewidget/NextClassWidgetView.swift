@@ -56,19 +56,19 @@ struct NextClassWidgetView : View {
                 
             case .peInfo(let weekday, let hasPhysicalEducation):
                 // 체육 수업 정보 표시
-                VStack(alignment: .center, spacing: 8) {
+                VStack(alignment: .center, spacing: 4) {
                     Spacer()
                     
                     Image(systemName: hasPhysicalEducation ? "figure.run" : "figure.walk")
-                        .font(.system(size: 32))
+                        .font(.system(size: 28))
                         .foregroundColor(hasPhysicalEducation ? .blue : .gray)
                     
-                    Text("\(weekdayString(weekday)) 체육 \(hasPhysicalEducation ? "있음" : "없음")")
+                    Text("\(weekdayString(weekday - 1)) 체육 \(hasPhysicalEducation ? "있음" : "없음")")
                         .font(.headline)
                         .foregroundColor(hasPhysicalEducation ? .blue : .gray)
                     
                     if hasPhysicalEducation {
-                        Text("운동복을 준비하세요!")
+                        Text("체육복을 준비하세요!")
                             .font(.subheadline)
                     } else {
                         Text("내일은 체육이 없습니다.")

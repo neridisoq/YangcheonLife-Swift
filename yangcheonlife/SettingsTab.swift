@@ -108,6 +108,7 @@ struct SettingsTab: View {
                             Image(systemName: "envelope")
                         }
                     }
+                    Link(NSLocalizedString("개발자 인스타그램", comment: ""), destination: URL(string: "https://instagram.com/neridisoq_")!)
                 }
             }
             .navigationBarTitle("Settings")

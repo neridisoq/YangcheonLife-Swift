@@ -73,7 +73,7 @@ class PhysicalEducationAlertManager {
         
         // 요일 표시 문자열 생성
         let weekdayString = getWeekdayString(weekday)
-        content.body = "오늘 체육 수업이 있습니다. 운동복을 준비하세요!"
+        content.body = "오늘 체육 수업이 있습니다. 체육복을 준비하세요!"
         content.sound = UNNotificationSound.default
         
         // 알림 트리거 생성 (설정된 시간 기준)
