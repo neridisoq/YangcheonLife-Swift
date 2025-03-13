@@ -1,6 +1,7 @@
 import Foundation
 import UserNotifications
 import Combine
+import WidgetKit
 
 // 시간표 데이터와 메타데이터를 함께 저장하는 구조체
 struct ScheduleData: Codable, Equatable {
@@ -88,6 +89,12 @@ class ScheduleManager {
         do {
             let encoded = try JSONEncoder().encode(data)
             UserDefaults.standard.set(encoded, forKey: dataStoreKey)
+            
+            // 위젯용 공유 UserDefaults에도 저장
+            SharedUserDefaults.shared.userDefaults.set(encoded, forKey: dataStoreKey)
+            
+            // 위젯 타임라인 갱신
+            updateWidgetTimelines()
         } catch {
             print("데이터 저장소 저장 실패: \(error)")
         }
@@ -237,6 +244,9 @@ class ScheduleManager {
                 classNumber: scheduleData.classNumber
             )
             
+            // 5. 위젯 타임라인 갱신
+            self.updateWidgetTimelines()
+            
             completion(true)
         }
     }
@@ -362,7 +372,14 @@ class ScheduleManager {
         
         return UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
     }
+    
+    // 시간표 데이터 업데이트 후 위젯 타임라인 갱신
+    func updateWidgetTimelines() {
+        SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+        WidgetCenter.shared.reloadAllTimelines()
+    }
 }
+
 // ScheduleManager.swift에 추가할 메서드
 
 // 화면 표시용 임시 저장소 키
@@ -373,6 +390,9 @@ func saveToDisplayStore(_ data: ScheduleData) {
     do {
         let encoded = try JSONEncoder().encode(data)
         UserDefaults.standard.set(encoded, forKey: displayStoreKey)
+        
+        // 위젯용 공유 UserDefaults에도 저장
+        SharedUserDefaults.shared.userDefaults.set(encoded, forKey: displayStoreKey)
     } catch {
         print("디스플레이 저장소 저장 실패: \(error)")
     }
@@ -402,9 +422,8 @@ func fetchScheduleForDisplay(grade: Int, classNumber: Int, completion: @escaping
         return
     }
     
-    URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-        guard let self = self,
-              let data = data,
+    URLSession.shared.dataTask(with: url) { data, response, error in
+        guard let data = data,
               error == nil else {
             print("시간표 데이터 요청 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
             DispatchQueue.main.async {
@@ -426,10 +445,21 @@ func fetchScheduleForDisplay(grade: Int, classNumber: Int, completion: @escaping
             )
             
             // 디스플레이 저장소에 저장
-            self.saveToDisplayStore(newScheduleData)
+            do {
+                let encoded = try JSONEncoder().encode(newScheduleData)
+                UserDefaults.standard.set(encoded, forKey: "schedule_display_store")
+                
+                // 위젯용 공유 UserDefaults에도 저장
+                SharedUserDefaults.shared.userDefaults.set(encoded, forKey: "schedule_display_store")
+            } catch {
+                print("디스플레이 저장소 저장 실패: \(error)")
+            }
             
             DispatchQueue.main.async {
                 completion(schedules)
+                
+                // 위젯 타임라인 갱신
+                WidgetCenter.shared.reloadAllTimelines()
             }
         } catch {
             print("시간표 데이터 파싱 실패: \(error)")
@@ -438,4 +468,130 @@ func fetchScheduleForDisplay(grade: Int, classNumber: Int, completion: @escaping
             }
         }
     }.resume()
+}
+
+// 알림 초기화 및 재설정 - self 참조 제거 버전
+func resetNotifications(scheduleData: ScheduleData, completion: @escaping (Bool) -> Void) {
+    // 1. 모든 알림 삭제
+    UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    
+    // 2. 알림 시스템이 업데이트되기를 보장하기 위한 짧은 지연
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        // 3. 알림이 활성화되어 있는지 확인
+        let notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
+        if !notificationsEnabled {
+            completion(true)
+            return
+        }
+        
+        // 4. 새 알림 스케줄링 - 클로저 내부에서 scheduleNotifications 직접 호출
+        let schedules = scheduleData.schedules
+        let grade = scheduleData.grade
+        let classNumber = scheduleData.classNumber
+        
+        // 주간 스케줄 기준으로 알림 설정
+        for (weekdayIndex, daySchedule) in schedules.enumerated() {
+            let weekday = weekdayIndex + 2 // API의 주간 스케줄이 월요일(2)부터 시작
+            if weekday > 7 || daySchedule.isEmpty {
+                continue // 토요일, 일요일 또는 비어있는 스케줄 무시
+            }
+            
+            // 해당 요일의 모든 수업에 대해 알림 설정
+            for schedule in daySchedule {
+                // 수업이 있는 시간만 알림 설정
+                if !schedule.subject.isEmpty {
+                    // 알림 식별자에 학년, 반 정보 포함
+                    let identifier = "schedule-g\(grade)-c\(classNumber)-d\(weekday)-p\(schedule.classTime)"
+                    
+                    // 알림 내용 설정
+                    let content = UNMutableNotificationContent()
+                    content.title = "\(schedule.classTime)교시 수업 알림 (10분 전)"
+                    
+                    var displaySubject = schedule.subject
+                    var displayLocation = schedule.teacher
+                    
+                    // 탐구 과목 치환 로직
+                    if schedule.subject.contains("반") {
+                        let customKey = "selected\(schedule.subject)Subject"
+                        if let selectedSubject = UserDefaults.standard.string(forKey: customKey),
+                           selectedSubject != "선택 없음" && selectedSubject != schedule.subject {
+                            
+                            let components = selectedSubject.components(separatedBy: "/")
+                            if components.count == 2 {
+                                displaySubject = components[0]
+                                displayLocation = components[1]
+                            }
+                        }
+                    }
+                    
+                    // 알림 내용 설정
+                    if !displayLocation.contains("T") {
+                        if displaySubject.contains("반") {
+                            content.body = "\(schedule.classTime)교시 \(displaySubject) 수업입니다. (설정필요)"
+                        } else {
+                            content.body = "\(schedule.classTime)교시 \(displaySubject) 수업입니다. \(displayLocation) 교실입니다."
+                        }
+                    } else {
+                        content.body = "\(schedule.classTime)교시 \(displaySubject) 수업입니다. 교실수업입니다."
+                    }
+                    
+                    content.sound = UNNotificationSound.default
+                    
+                    // 알림 트리거 생성
+                    // 알림은 수업 시작 10분 전에 발생하도록 설정
+                    let periodTimes: [(hour: Int, minute: Int)] = [
+                        (8, 20), (9, 20), (10, 20), (11, 20), (13, 10), (14, 10), (15, 10)
+                    ]
+                    
+                    let classTime = schedule.classTime
+                    guard classTime >= 1 && classTime <= periodTimes.count else {
+                        continue
+                    }
+                    
+                    let startTime = periodTimes[classTime - 1]
+                    
+                    // 10분 전 알림 시간 계산
+                    var notificationHour = startTime.hour
+                    var notificationMinute = startTime.minute - 10
+                    
+                    // 분이 음수가 되는 경우 시간 조정
+                    if notificationMinute < 0 {
+                        notificationHour -= 1
+                        notificationMinute += 60
+                    }
+                    
+                    var dateComponents = DateComponents()
+                    dateComponents.hour = notificationHour
+                    dateComponents.minute = notificationMinute
+                    dateComponents.weekday = weekday
+                    
+                    let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+                    
+                    // 알림 요청 생성 및 등록
+                    let request = UNNotificationRequest(
+                        identifier: identifier,
+                        content: content,
+                        trigger: trigger
+                    )
+                    
+                    UNUserNotificationCenter.current().add(request) { error in
+                        if let error = error {
+                            print("알림 설정 실패: \(error)")
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 5. 체육 수업 알림 업데이트
+        if UserDefaults.standard.bool(forKey: "physicalEducationAlertEnabled") {
+            PhysicalEducationAlertManager.shared.scheduleAlerts()
+        }
+        
+        // 6. 위젯 타임라인 갱신
+        SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+        WidgetCenter.shared.reloadAllTimelines()
+        
+        completion(true)
+    }
 }

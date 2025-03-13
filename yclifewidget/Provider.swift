@@ -3,76 +3,77 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> NextClassEntry {
-        NextClassEntry(
+        print("🔄 위젯 Placeholder 요청됨")
+        return NextClassEntry(
             date: Date(),
-            nextClass: nil,
-            remainingTime: nil,
-            grade: 0,
-            classNumber: 0
+            displayMode: .noInfo,
+            grade: 3,
+            classNumber: 5
         )
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NextClassEntry) -> ()) {
+        print("📸 위젯 Snapshot 요청됨")
+        
         let sharedDefaults = SharedUserDefaults.shared.userDefaults
         let grade = sharedDefaults.integer(forKey: "defaultGrade")
         let classNumber = sharedDefaults.integer(forKey: "defaultClass")
         
-        let nextClass = WidgetScheduleManager.shared.getNextClass()
-        let remainingTime = calculateRemainingTime(nextClass: nextClass)
+        print("📊 위젯에서 읽은 학년/반: \(grade)학년 \(classNumber)반")
+        
+        // UserDefaults 내용 로깅
+        SharedUserDefaults.shared.printAllValues()
+        
+        // 만약 공유 UserDefaults에서 값을 읽지 못하면 기본값 설정
+        let finalGrade = grade > 0 ? grade : 3
+        let finalClass = classNumber > 0 ? classNumber : 5
+        
+        print("📊 위젯에 사용될 학년/반: \(finalGrade)학년 \(finalClass)반")
+        
+        let displayMode = WidgetScheduleManager.shared.getDisplayInfo()
         
         let entry = NextClassEntry(
             date: Date(),
-            nextClass: nextClass,
-            remainingTime: remainingTime,
-            grade: grade,
-            classNumber: classNumber
+            displayMode: displayMode,
+            grade: finalGrade,
+            classNumber: finalClass
         )
+        
+        print("✅ 위젯 Snapshot 생성 완료")
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NextClassEntry>) -> ()) {
+        print("⏱️ 위젯 Timeline 요청됨")
+        
         let sharedDefaults = SharedUserDefaults.shared.userDefaults
         let grade = sharedDefaults.integer(forKey: "defaultGrade")
         let classNumber = sharedDefaults.integer(forKey: "defaultClass")
         
-        let nextClass = WidgetScheduleManager.shared.getNextClass()
-        let remainingTime = calculateRemainingTime(nextClass: nextClass)
+        print("📊 위젯에서 읽은 학년/반: \(grade)학년 \(classNumber)반")
+        
+        // 만약 공유 UserDefaults에서 값을 읽지 못하면 기본값 설정
+        let finalGrade = grade > 0 ? grade : 3
+        let finalClass = classNumber > 0 ? classNumber : 5
+        
+        print("📊 위젯에 사용될 학년/반: \(finalGrade)학년 \(finalClass)반")
+        
+        let displayMode = WidgetScheduleManager.shared.getDisplayInfo()
         
         let currentDate = Date()
         let entry = NextClassEntry(
             date: currentDate,
-            nextClass: nextClass,
-            remainingTime: remainingTime,
-            grade: grade,
-            classNumber: classNumber
+            displayMode: displayMode,
+            grade: finalGrade,
+            classNumber: finalClass
         )
         
-        // 다음 업데이트 시간 (10분마다 또는 다음 수업 시작 시)
-        let nextUpdateDate: Date
-        if let nextClass = nextClass {
-            let tenMinutesLater = Calendar.current.date(byAdding: .minute, value: 10, to: currentDate) ?? currentDate
-            nextUpdateDate = min(nextClass.startTime, tenMinutesLater)
-        } else {
-            nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 30, to: currentDate) ?? currentDate
-        }
+        // 다음 업데이트 시간을 1분 후로 설정
+        let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 1, to: currentDate) ?? currentDate
+        print("⏰ 다음 업데이트: \(nextUpdateDate) (1분 후)")
         
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdateDate))
+        print("✅ 위젯 Timeline 생성 완료")
         completion(timeline)
     }
-    
-    private func calculateRemainingTime(nextClass: ClassInfo?) -> TimeInterval? {
-        guard let nextClass = nextClass else { return nil }
-        
-        let now = Date()
-        return nextClass.startTime.timeIntervalSince(now)
-    }
-}
-
-// 위젯 엔트리 모델
-struct NextClassEntry: TimelineEntry {
-    let date: Date
-    let nextClass: ClassInfo?
-    let remainingTime: TimeInterval?
-    let grade: Int
-    let classNumber: Int
 }

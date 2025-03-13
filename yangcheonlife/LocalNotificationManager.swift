@@ -12,9 +12,9 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
         super.init()
         UNUserNotificationCenter.current().delegate = self
         
-        // 초기화 시 로컬에 저장된 시간표 로드
-        if let savedSchedules = loadLocalSchedule() {
-            self.schedules = savedSchedules
+        // 초기화 시 저장소2에서 데이터 로드
+        if let savedData = ScheduleManager.shared.loadDataStore() {
+            self.schedules = savedData.schedules
         }
     }
     
@@ -27,192 +27,28 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
     }
     
     func fetchAndSaveSchedule(grade: Int, classNumber: Int) {
-        // 먼저 로컬에 저장된 시간표 확인
-        if let savedSchedules = loadLocalSchedule(), !savedSchedules.isEmpty {
-            self.schedules = savedSchedules
-            
-            // 알림이 활성화된 경우 현재 시간표로 알림 설정
-            if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
-                scheduleNotifications(schedules: savedSchedules, grade: grade, classNumber: classNumber)
-            }
-        }
-        
-        // 서버에서 최신 시간표 가져오기 시도
-        let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
-        guard let url = URL(string: urlString) else {
-            print("Invalid URL")
-            return
-        }
-        
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: [[ScheduleItem]].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    print("시간표 갱신 완료")
-                case .failure(let error):
-                    print("시간표 갱신 실패: \(error)")
-                }
-            }, receiveValue: { [weak self] schedules in
-                guard let self = self else { return }
-                self.schedules = schedules
-                self.saveScheduleLocally(schedules)
+        // ScheduleManager의 개선된 로직 사용
+        ScheduleManager.shared.fetchAndUpdateSchedule(grade: grade, classNumber: classNumber) { [weak self] success in
+            if success {
+                print("시간표 및 알림 업데이트 완료")
                 
-                // 알림이 활성화된 경우 새 시간표로 알림 재설정
-                if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
-                    self.scheduleNotifications(schedules: schedules, grade: grade, classNumber: classNumber)
+                // 저장소에서 최신 데이터 로드하여 UI 갱신
+                if let savedData = ScheduleManager.shared.loadDataStore() {
+                    DispatchQueue.main.async {
+                        self?.schedules = savedData.schedules
+                    }
                 }
-            })
-            .store(in: &cancellables)
-    }
-    
-    private func saveScheduleLocally(_ schedules: [[ScheduleItem]]) {
-        if let encoded = try? JSONEncoder().encode(schedules) {
-            UserDefaults.standard.set(encoded, forKey: "savedSchedule")
-            // 마지막 업데이트 시간 기록
-            UserDefaults.standard.set(Date(), forKey: "lastScheduleUpdateTime")
+            } else {
+                print("시간표 업데이트 없음 또는 실패")
+            }
         }
     }
     
     func loadLocalSchedule() -> [[ScheduleItem]]? {
-        if let savedData = UserDefaults.standard.data(forKey: "savedSchedule"),
-           let decodedSchedule = try? JSONDecoder().decode([[ScheduleItem]].self, from: savedData) {
-            return decodedSchedule
+        if let savedData = ScheduleManager.shared.loadDataStore() {
+            return savedData.schedules
         }
         return nil
-    }
-    
-    func scheduleNotifications(schedules: [[ScheduleItem]], grade: Int, classNumber: Int) {
-        // 먼저 모든 예약된 알림을 제거
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        
-        // 알림 설정이 활성화되어 있는지 확인
-        let notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
-        if !notificationsEnabled {
-            return
-        }
-        
-        // 현재 날짜에서 요일 정보 가져오기 (1: 일요일, 2: 월요일, ... 7: 토요일)
-        let calendar = Calendar.current
-        
-        // 주간 스케줄 기준으로 알림 설정
-        for (weekdayIndex, daySchedule) in schedules.enumerated() {
-            let weekday = weekdayIndex + 2 // API의 주간 스케줄이 월요일(2)부터 시작
-            if weekday > 7 || daySchedule.isEmpty {
-                continue // 토요일, 일요일 또는 비어있는 스케줄 무시
-            }
-            
-            // 해당 요일의 모든 수업에 대해 알림 설정
-            for schedule in daySchedule {
-                // 수업이 없는 시간(subject와 teacher가 모두 빈 문자열)은 알림 설정 제외
-                if !schedule.subject.isEmpty || !schedule.teacher.isEmpty {
-                    scheduleClassNotification(
-                        weekday: weekday,
-                        classTime: schedule.classTime,
-                        subject: schedule.subject,
-                        teacher: schedule.teacher,
-                        grade: grade,
-                        classNumber: classNumber
-                    )
-                }
-            }
-        }
-    }
-    
-    private func scheduleClassNotification(weekday: Int, classTime: Int, subject: String, teacher: String, grade: Int, classNumber: Int) {
-        // 빈 수업은 알림 설정하지 않음 (추가 안전장치)
-        if subject.isEmpty && teacher.isEmpty {
-            return
-        }
-        
-        // 알림이 발생할 요일과 시간 계산
-        let periodTimes: [(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int))] = [
-            ((8, 20), (9, 10)),   // 1교시
-            ((9, 20), (10, 10)),  // 2교시
-            ((10, 20), (11, 10)), // 3교시
-            ((11, 20), (12, 10)), // 4교시
-            ((13, 10), (14, 00)),  // 5교시
-            ((14, 10), (15, 00)),  // 6교시
-            ((15, 10), (16, 00))   // 7교시
-        ]
-        
-        guard classTime >= 1 && classTime <= periodTimes.count else { return }
-        
-        let periodTime = periodTimes[classTime - 1]
-        let startTime = periodTime.start
-        
-        // 알림은 수업 시작 10분 전에 발생하도록 설정
-        var notificationHour = startTime.hour
-        var notificationMinute = startTime.minute - 10
-        
-        // 분이 음수가 되는 경우 시간 조정
-        if notificationMinute < 0 {
-            notificationHour -= 1
-            notificationMinute += 60
-        }
-        
-        // 현재 시간 기준으로 다음 해당 요일의 해당 시간 계산
-        var dateComponents = DateComponents()
-        dateComponents.hour = notificationHour
-        dateComponents.minute = notificationMinute
-        dateComponents.weekday = weekday
-        
-        // 알림 내용 설정
-        let notificationContent = UNMutableNotificationContent()
-        
-        // 사용자가 설정한 과목 정보 확인
-        var displaySubject = subject
-        var displayLocation = teacher
-        
-        // A반과 같은 형식인 경우 사용자 설정 확인
-        if subject.contains("반") {
-            if let selectedSubject = UserDefaults.standard.string(forKey: "selected\(subject)Subject"),
-               selectedSubject != "선택 없음" && selectedSubject != subject {
-                let components = selectedSubject.components(separatedBy: "/")
-                if components.count == 2 {
-                    displaySubject = components[0]
-                    displayLocation = components[1]
-                }
-            }
-        }
-        
-        // 알림 제목 및 내용 설정
-        notificationContent.title = "\(classTime)교시 수업 알림 (10분 전)"
-        
-        if !displayLocation.contains("T") {
-            if displaySubject.contains("반"){
-                notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. (설정필요)"
-            }
-            else{
-                notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. \(displayLocation) 교실입니다."
-            }
-        } else {
-            notificationContent.body = "\(classTime)교시 \(displaySubject) 수업입니다. 교실수업입니다."
-        }
-        
-        notificationContent.sound = UNNotificationSound.default
-        
-        // 알림 트리거 설정 (매주 해당 요일의 해당 시간에)
-        let trigger = UNCalendarNotificationTrigger(
-            dateMatching: dateComponents,
-            repeats: true
-        )
-        
-        // 알림 요청 생성 및 등록
-        let identifier = "class-notification-\(weekday)-\(classTime)"
-        let request = UNNotificationRequest(
-            identifier: identifier,
-            content: notificationContent,
-            trigger: trigger
-        )
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error)")
-            }
-        }
     }
     
     // MARK: - UNUserNotificationCenterDelegate

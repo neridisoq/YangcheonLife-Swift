@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		08B30CAAB05D77B62693589B /* Pods_yangcheonlife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */; };
 		0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */; };
 		0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */; };
+		0950CE412D79662600222453 /* ScheduleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0950CE402D79662600222453 /* ScheduleManager.swift */; };
 		0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */; };
 		0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFEF2C2A7C04002C4F44 /* ContentView.swift */; };
 		0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0969EFF12C2A7C05002C4F44 /* Assets.xcassets */; };
@@ -24,8 +25,24 @@
 		096D77CA2D773CD000AD63FD /* AppUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D77C92D773CD000AD63FD /* AppUpdateService.swift */; };
 		096D77CC2D773CDE00AD63FD /* UpdateRequiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D77CB2D773CDE00AD63FD /* UpdateRequiredView.swift */; };
 		096DE6942C2B8DA900651DE1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 096DE6922C2B8DA900651DE1 /* Localizable.strings */; };
+		09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */; };
+		09828DC12D7F421800E5FD95 /* WiFiConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */; };
+		09828DE32D7F479C00E5FD95 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		09828DE42D7F479C00E5FD95 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		09828DF12D7F479E00E5FD95 /* yclifewidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990FEC52C2AA31E008EF97D /* InitialSetup.swift */; };
+		0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		09828DEF2D7F479E00E5FD95 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 09828DE12D7F479C00E5FD95;
+			remoteInfo = yclifewidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		0969F01C2C2A82E3002C4F44 /* Embed Watch Content */ = {
@@ -44,6 +61,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				09828DF12D7F479E00E5FD95 /* yclifewidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -53,6 +71,7 @@
 /* Begin PBXFileReference section */
 		0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectSelectionView.swift; sourceTree = "<group>"; };
 		0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
+		0950CE402D79662600222453 /* ScheduleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleManager.swift; sourceTree = "<group>"; };
 		0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = yangcheonlife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = yangcheonlifeApp.swift; sourceTree = "<group>"; };
 		0969EFEF2C2A7C04002C4F44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -75,11 +94,38 @@
 		096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		096DE6D12C2BE1B900651DE1 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		096DE6D22C2BE2B900651DE1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicalEducationAlertManager.swift; sourceTree = "<group>"; };
+		09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiConnectionManager.swift; sourceTree = "<group>"; };
+		09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifewidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0990FEC52C2AA31E008EF97D /* InitialSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialSetup.swift; sourceTree = "<group>"; };
+		0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifewidgetExtension.entitlements; sourceTree = "<group>"; };
+		0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comsi.helgisnw.metestfile.json; sourceTree = "<group>"; };
 		15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_yangcheonlife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E29F6B1E28DC3385C5825090 /* Pods-yangcheonlife.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-yangcheonlife.release.xcconfig"; path = "Target Support Files/Pods-yangcheonlife/Pods-yangcheonlife.release.xcconfig"; sourceTree = "<group>"; };
 		E86773E9C248836C982187EA /* Pods-yangcheonlife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-yangcheonlife.debug.xcconfig"; path = "Target Support Files/Pods-yangcheonlife/Pods-yangcheonlife.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		09828DF22D7F479E00E5FD95 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */;
+		};
+		0999C1A32D7FA65B00DDB78D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SharedUserDefaults.swift,
+			);
+			target = 0969EFE92C2A7C04002C4F44 /* yangcheonlife */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		09828DE52D7F479C00E5FD95 /* yclifewidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (09828DF22D7F479E00E5FD95 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = yclifewidget; sourceTree = "<group>"; };
+		09828DFA2D7F484400E5FD95 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0999C1A32D7FA65B00DDB78D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		0969EFE72C2A7C04002C4F44 /* Frameworks */ = {
@@ -90,13 +136,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		09828DDF2D7F479C00E5FD95 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				09828DE42D7F479C00E5FD95 /* SwiftUI.framework in Frameworks */,
+				09828DE32D7F479C00E5FD95 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0969EFE12C2A7C04002C4F44 = {
 			isa = PBXGroup;
 			children = (
+				0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */,
+				09828DFA2D7F484400E5FD95 /* Shared */,
 				0969EFEC2C2A7C04002C4F44 /* yangcheonlife */,
+				09828DE52D7F479C00E5FD95 /* yclifewidget */,
 				0969EFEB2C2A7C04002C4F44 /* Products */,
 				F65D034D03D29CF9324008A6 /* Pods */,
 				9723D769D7144062BDC836AB /* Frameworks */,
@@ -107,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */,
+				09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,12 +173,16 @@
 		0969EFEC2C2A7C04002C4F44 /* yangcheonlife */ = {
 			isa = PBXGroup;
 			children = (
+				0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */,
 				0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */,
 				0990FEC52C2AA31E008EF97D /* InitialSetup.swift */,
+				0950CE402D79662600222453 /* ScheduleManager.swift */,
 				0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */,
 				0969F0032C2A7DFD002C4F44 /* ScheduleViewModel.swift */,
 				0969F0042C2A7DFD002C4F44 /* ScheduleItem.swift */,
 				0969EFFD2C2A7DB7002C4F44 /* SettingsTab.swift */,
+				09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */,
+				09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */,
 				0969EFFE2C2A7DB7002C4F44 /* TimeTableTab.swift */,
 				0969EFFF2C2A7DB7002C4F44 /* LunchTab.swift */,
 				0969EFFC2C2A7C14002C4F44 /* Info.plist */,
@@ -182,11 +245,35 @@
 			buildRules = (
 			);
 			dependencies = (
+				09828DF02D7F479E00E5FD95 /* PBXTargetDependency */,
 			);
 			name = yangcheonlife;
 			productName = yangcheonlife;
 			productReference = 0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */;
 			productType = "com.apple.product-type.application";
+		};
+		09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 09828DF32D7F479E00E5FD95 /* Build configuration list for PBXNativeTarget "yclifewidgetExtension" */;
+			buildPhases = (
+				09828DDE2D7F479C00E5FD95 /* Sources */,
+				09828DDF2D7F479C00E5FD95 /* Frameworks */,
+				09828DE02D7F479C00E5FD95 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				09828DE52D7F479C00E5FD95 /* yclifewidget */,
+				09828DFA2D7F484400E5FD95 /* Shared */,
+			);
+			name = yclifewidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = yclifewidgetExtension;
+			productReference = 09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -195,11 +282,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1540;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					0969EFE92C2A7C04002C4F44 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					09828DE12D7F479C00E5FD95 = {
+						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
@@ -220,6 +310,7 @@
 			projectRoot = "";
 			targets = (
 				0969EFE92C2A7C04002C4F44 /* yangcheonlife */,
+				09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -229,9 +320,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */,
 				0969EFF52C2A7C05002C4F44 /* Preview Assets.xcassets in Resources */,
 				096DE6942C2B8DA900651DE1 /* Localizable.strings in Resources */,
 				0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		09828DE02D7F479C00E5FD95 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,14 +384,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				0969F01E2C2A843C002C4F44 /* AppDelegate.swift in Sources */,
+				09828DC12D7F421800E5FD95 /* WiFiConnectionManager.swift in Sources */,
 				0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */,
 				096D77CC2D773CDE00AD63FD /* UpdateRequiredView.swift in Sources */,
 				0969F0202C2A844D002C4F44 /* SceneDelegate.swift in Sources */,
 				0969F0002C2A7DB8002C4F44 /* LunchTab.swift in Sources */,
 				0969F0012C2A7DB8002C4F44 /* SettingsTab.swift in Sources */,
 				096D77CA2D773CD000AD63FD /* AppUpdateService.swift in Sources */,
+				0950CE412D79662600222453 /* ScheduleManager.swift in Sources */,
 				0969F0022C2A7DB8002C4F44 /* TimeTableTab.swift in Sources */,
 				0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */,
+				09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */,
 				0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */,
 				0969F0052C2A7DFD002C4F44 /* ScheduleItem.swift in Sources */,
 				0969F0062C2A7DFD002C4F44 /* ScheduleViewModel.swift in Sources */,
@@ -301,7 +403,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		09828DDE2D7F479C00E5FD95 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		09828DF02D7F479E00E5FD95 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */;
+			targetProxy = 09828DEF2D7F479E00E5FD95 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		096DE6922C2B8DA900651DE1 /* Localizable.strings */ = {
@@ -443,12 +560,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E86773E9C248836C982187EA /* Pods-yangcheonlife.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -467,7 +583,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -480,12 +596,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E29F6B1E28DC3385C5825090 /* Pods-yangcheonlife.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -504,9 +619,67 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.1;
+				MARKETING_VERSION = 3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		09828DF42D7F479E00E5FD95 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifewidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifewidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifewidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 3.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifewidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		09828DF52D7F479E00E5FD95 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifewidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifewidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifewidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 3.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifewidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -530,6 +703,15 @@
 			buildConfigurations = (
 				0969EFF92C2A7C05002C4F44 /* Debug */,
 				0969EFFA2C2A7C05002C4F44 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		09828DF32D7F479E00E5FD95 /* Build configuration list for PBXNativeTarget "yclifewidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09828DF42D7F479E00E5FD95 /* Debug */,
+				09828DF52D7F479E00E5FD95 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -1,11 +1,3 @@
-//
-//  ScheduleItem.swift
-//  yangcheonlife
-//
-//  Created by Woohyun Jin on 3/11/25.
-//
-
-
 import Foundation
 
 // 시간표 항목 구조체

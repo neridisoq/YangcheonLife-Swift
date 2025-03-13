@@ -1,5 +1,4 @@
 import Foundation
-import Combine
 
 public class NeisAPIManager {
     public static let shared = NeisAPIManager()
@@ -9,7 +8,7 @@ public class NeisAPIManager {
     
     private init() {}
     
-    public func fetchMeal(date: Date, mealType: MealType) -> AnyPublisher<MealInfo?, Error> {
+    public func fetchMeal(date: Date, mealType: MealType, completion: @escaping (MealInfo?) -> Void) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd"
         let dateString = dateFormatter.string(from: date)
@@ -17,101 +16,93 @@ public class NeisAPIManager {
         let urlString = "\(baseURL)?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=B10&SD_SCHUL_CODE=7010209&MMEAL_SC_CODE=\(mealType.rawValue)&MLSV_YMD=\(dateString)&KEY=\(apiKey)"
         
         guard let url = URL(string: urlString) else {
-            return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
-        }
-        
-        return URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: NeisResponse.self, decoder: JSONDecoder())
-            .map { response in
-                if let error = response.RESULT, error.CODE == "INFO-200" {
-                    // 데이터 없음
-                    return nil
-                }
-                
-                if let mealInfo = response.mealServiceDietInfo?[1].row?.first {
-                    // HTML 태그 제거 및 개행 문자 변환
-                    let menuText = mealInfo.DDISH_NM
-                        .replacingOccurrences(of: "<br/>", with: "\n")
-                        .replacingOccurrences(of: " \\([0-9.]+\\)", with: "", options: .regularExpression)
-                    
-                    return MealInfo(
-                        mealType: mealType,
-                        menuText: menuText,
-                        calInfo: mealInfo.CAL_INFO ?? ""
-                    )
-                }
-                
-                return nil
-            }
-            .catch { error in
-                print("급식 정보 가져오기 실패: \(error)")
-                return Just(nil).setFailureType(to: Error.self).eraseToAnyPublisher()
-            }
-            .eraseToAnyPublisher()
-    }
-}
-
-// NEIS API 응답 구조체
-private struct NeisResponse: Codable {
-    var mealServiceDietInfo: [[String: Any]]?
-    var RESULT: NeisError?
-    
-    enum CodingKeys: String, CodingKey {
-        case mealServiceDietInfo
-        case RESULT
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        // 오류 응답인 경우
-        if let errorContainer = try? container.decode([String: String].self, forKey: .RESULT) {
-            self.RESULT = NeisError(CODE: errorContainer["CODE"] ?? "", MESSAGE: errorContainer["MESSAGE"] ?? "")
-            self.mealServiceDietInfo = nil
+            completion(nil)
             return
         }
         
-        self.RESULT = nil
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                print("급식 정보 가져오기 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+                completion(nil)
+                return
+            }
+            
+            do {
+                // JSON 파싱
+                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    // 오류 응답 확인
+                    if let resultDict = json["RESULT"] as? [String: String],
+                       resultDict["CODE"] == "INFO-200" {
+                        // 데이터 없음
+                        completion(nil)
+                        return
+                    }
+                    
+                    // 급식 정보 파싱
+                    if let mealServiceInfo = json["mealServiceDietInfo"] as? [[String: Any]],
+                       mealServiceInfo.count >= 2,
+                       let rowsData = mealServiceInfo[1]["row"] as? [[String: Any]],
+                       let firstRow = rowsData.first {
+                        
+                        let rawMenuText = firstRow["DDISH_NM"] as? String ?? ""
+                        let menuText = rawMenuText
+                            .replacingOccurrences(of: "<br/>", with: "\n")
+                            .replacingOccurrences(of: "<![CDATA[", with: "")
+                            .replacingOccurrences(of: "]]>", with: "")
+                            // 알레르기 정보 제거 (숫자와 괄호)
+                            .replacingOccurrences(of: " ?\\([0-9\\.]+\\)", with: "", options: .regularExpression)
+                            // (양천) 제거
+                            .replacingOccurrences(of: "\\(양천\\)", with: "", options: .regularExpression)
+                            // (완) 제거
+                            .replacingOccurrences(of: "\\(완\\)", with: "", options: .regularExpression)
+                            // /자율 제거
+                            .replacingOccurrences(of: "/자율", with: "")
+                            // 남은 괄호와 괄호 안 내용 제거
+                            .replacingOccurrences(of: " ?\\([^\\)]*\\)", with: "", options: .regularExpression)
+                            // 중복 공백 제거
+                            .replacingOccurrences(of: "  +", with: " ", options: .regularExpression)
+                            // 줄바꿈 주변 공백 정리
+                            .replacingOccurrences(of: " *\n *", with: "\n", options: .regularExpression)
+                            // 양쪽 공백 제거
+                            .trimmingCharacters(in: .whitespacesAndNewlines)
+                        
+                        let calInfo = firstRow["CAL_INFO"] as? String ?? ""
+                        
+                        let mealInfo = MealInfo(
+                            mealType: mealType,
+                            menuText: menuText,
+                            calInfo: calInfo
+                        )
+                        
+                        completion(mealInfo)
+                        return
+                    }
+                }
+                
+                completion(nil)
+            } catch {
+                print("급식 정보 파싱 오류: \(error)")
+                completion(nil)
+            }
+        }
         
-        // 성공 응답인 경우
-        if let mealServiceDietInfo = try? container.decode([NeisServiceInfo].self, forKey: .mealServiceDietInfo) {
-            self.mealServiceDietInfo = mealServiceDietInfo.map { $0.toDictionary() }
-        } else {
-            self.mealServiceDietInfo = nil
-        }
+        task.resume()
     }
-}
-
-private struct NeisError: Codable {
-    let CODE: String
-    let MESSAGE: String
-}
-
-private struct NeisServiceInfo: Codable {
-    let head: [NeisHead]?
-    let row: [NeisMealInfo]?
     
-    func toDictionary() -> [String: Any] {
-        var dict: [String: Any] = [:]
-        if let head = head {
-            dict["head"] = head
-        }
-        if let row = row {
-            dict["row"] = row
-        }
-        return dict
+    // 캐시 기능 추가
+    private var mealCache: [String: MealInfo] = [:]
+    
+    public func getCachedMeal(date: Date, mealType: MealType) -> MealInfo? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        let key = "\(dateFormatter.string(from: date))_\(mealType.rawValue)"
+        return mealCache[key]
     }
-}
-
-private struct NeisHead: Codable {
-    let list_total_count: Int?
-    let RESULT: NeisError?
-}
-
-private struct NeisMealInfo: Codable {
-    let MMEAL_SC_CODE: String
-    let MLSV_YMD: String
-    let DDISH_NM: String
-    let CAL_INFO: String?
+    
+    public func cacheMeal(date: Date, mealInfo: MealInfo) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        let key = "\(dateFormatter.string(from: date))_\(mealInfo.mealType.rawValue)"
+        mealCache[key] = mealInfo
+    }
 }

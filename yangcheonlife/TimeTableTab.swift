@@ -1,11 +1,22 @@
-//TimeTableTab.swift
 import SwiftUI
 
 struct TimeTableTab: View {
     @StateObject private var viewModel = ScheduleViewModel()
     @ObservedObject private var notificationManager = LocalNotificationManager.shared
-    @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
-    @State private var selectedClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
+    
+    // 시간표 표시를 위한 선택된 학년/반 (UserDefaults에서 초기값을 가져오되, 변경해도 UserDefaults를 업데이트하지 않음)
+    @State private var displayGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
+    @State private var displayClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
+    
+    // 실제 알림에 사용되는 설정값 (참조용)
+    private var actualGrade: Int {
+        UserDefaults.standard.integer(forKey: "defaultGrade")
+    }
+    
+    private var actualClass: Int {
+        UserDefaults.standard.integer(forKey: "defaultClass")
+    }
+    
     @State private var cellBackgroundColor: Color = {
         if let data = UserDefaults.standard.data(forKey: "cellBackgroundColor"),
            let uiColor = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) {
@@ -24,28 +35,28 @@ struct TimeTableTab: View {
         NavigationView {
             VStack {
                 HStack {
-                    Picker(NSLocalizedString("Grade", comment: ""), selection: $selectedGrade) {
+                    Picker(NSLocalizedString("Grade", comment: ""), selection: $displayGrade) {
                         ForEach(1..<4) { grade in
                             Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .onChange(of: selectedGrade) { _ in
-                        viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
+                    .onChange(of: displayGrade) { _ in
+                        viewModel.loadSchedule(grade: displayGrade, classNumber: displayClass)
                     }
 
-                    Picker(NSLocalizedString("Class", comment: ""), selection: $selectedClass) {
+                    Picker(NSLocalizedString("Class", comment: ""), selection: $displayClass) {
                         ForEach(1..<12) { classNumber in
                             Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
-                    .onChange(of: selectedClass) { _ in
-                        viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
+                    .onChange(of: displayClass) { _ in
+                        viewModel.loadSchedule(grade: displayGrade, classNumber: displayClass)
                     }
                     
                     Button(action: {
-                        viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
+                        viewModel.loadSchedule(grade: displayGrade, classNumber: displayClass)
                         loadCellBackgroundColor()
                     }) {
                         Image(systemName: "arrow.clockwise")
@@ -56,6 +67,37 @@ struct TimeTableTab: View {
                 .cornerRadius(10)
                 .shadow(radius: 5)
                 .padding()
+                
+                // 현재 표시 중인 시간표와 알림 설정 정보가 다른 경우 정보 표시
+                if displayGrade != actualGrade || displayClass != actualClass {
+                    HStack {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(.blue)
+                        Text("현재 표시: \(displayGrade)학년 \(displayClass)반 | 알림 설정: \(actualGrade)학년 \(actualClass)반")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    }
+                    .padding(.horizontal)
+                    
+                    Button(action: {
+                        // 현재 표시 중인 학년/반으로 알림 설정 업데이트
+                        UserDefaults.standard.set(displayGrade, forKey: "defaultGrade")
+                        UserDefaults.standard.set(displayClass, forKey: "defaultClass")
+                        
+                        // 알림 재설정
+                        if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
+                            LocalNotificationManager.shared.fetchAndSaveSchedule(grade: displayGrade, classNumber: displayClass)
+                        }
+                    }) {
+                        Text("이 시간표로 알림 설정하기")
+                            .font(.caption)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                }
 
                 Spacer()
                 
@@ -167,12 +209,20 @@ struct TimeTableTab: View {
             }
             .navigationBarTitle(NSLocalizedString("TimeTable", comment: ""), displayMode: .inline)
             .onAppear {
-                viewModel.loadSchedule(grade: selectedGrade, classNumber: selectedClass)
+                // 앱이 처음 실행될 때만 기본값으로 초기화
+                if displayGrade == 0 || displayClass == 0 {
+                    displayGrade = actualGrade
+                    displayClass = actualClass
+                }
+                
+                viewModel.loadSchedule(grade: displayGrade, classNumber: displayClass)
                 loadCellBackgroundColor()
                 
                 // 로컬 저장된 시간표 확인 및 필요시 서버에서 새로 가져오기
                 if LocalNotificationManager.shared.loadLocalSchedule() == nil {
-                    LocalNotificationManager.shared.fetchAndSaveSchedule(grade: selectedGrade, classNumber: selectedClass)
+                    ScheduleManager.shared.fetchAndUpdateSchedule(grade: actualGrade, classNumber: actualClass) { _ in
+                        // 완료 시 처리 (필요하면 구현)
+                    }
                 }
             }
         }
@@ -216,14 +266,5 @@ struct TimeTableTab: View {
 extension Collection {
     subscript(safe index: Index) -> Element? {
         return indices.contains(index) ? self[index] : nil
-    }
-}
-
-struct TimeTableTab_Previews: PreviewProvider {
-    static var previews: some View {
-        TimeTableTab()
-            .environment(\.colorScheme, .dark) // 미리보기 다크 모드
-        TimeTableTab()
-            .environment(\.colorScheme, .light) // 미리보기 라이트 모드
     }
 }

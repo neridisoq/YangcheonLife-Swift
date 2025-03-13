@@ -33,7 +33,9 @@ class PhysicalEducationAlertManager {
             
             // 각 요일에 대해 알림 설정
             for weekday in peWeekdays {
-                schedulePhysicalEducationAlert(weekday: weekday)
+                // 시스템의 요일 형식으로 변환 (월요일: 2, 화요일: 3, ...)
+                let systemWeekday = weekday + 2
+                schedulePhysicalEducationAlert(weekday: systemWeekday)
             }
         }
     }
@@ -53,6 +55,7 @@ class PhysicalEducationAlertManager {
             
             if hasPE {
                 peWeekdays.append(weekdayIndex)
+                print("🏃‍♂️ 체육 수업 발견: \(weekdayIndex)번째 요일")
             }
         }
         
@@ -67,11 +70,14 @@ class PhysicalEducationAlertManager {
         // 알림 내용 설정
         let content = UNMutableNotificationContent()
         content.title = "체육 수업 알림"
-        content.body = "오늘 체육 수업이 있습니다."
+        
+        // 요일 표시 문자열 생성
+        let weekdayString = getWeekdayString(weekday)
+        content.body = "오늘 체육 수업이 있습니다. 운동복을 준비하세요!"
         content.sound = UNNotificationSound.default
         
         // 알림 트리거 생성 (설정된 시간 기준)
-        let trigger = createNotificationTrigger(weekday: weekday + 2) // API는 월요일이 0이지만, UNCalendarNotificationTrigger는 월요일이 2
+        let trigger = createNotificationTrigger(weekday: weekday)
         
         // 알림 요청 생성 및 등록
         let request = UNNotificationRequest(
@@ -84,8 +90,22 @@ class PhysicalEducationAlertManager {
             if let error = error {
                 print("체육 알림 설정 실패: \(error)")
             } else {
-                print("체육 알림 설정 완료 (요일: \(weekday+2))")
+                print("체육 알림 설정 완료 (요일: \(weekdayString))")
             }
+        }
+    }
+    
+    // 요일 번호를 문자열로 변환
+    private func getWeekdayString(_ weekday: Int) -> String {
+        switch weekday {
+        case 1: return "일요일"
+        case 2: return "월요일"
+        case 3: return "화요일"
+        case 4: return "수요일"
+        case 5: return "목요일"
+        case 6: return "금요일"
+        case 7: return "토요일"
+        default: return "알 수 없음"
         }
     }
     
@@ -105,6 +125,8 @@ class PhysicalEducationAlertManager {
         dateComponents.minute = minute
         dateComponents.weekday = weekday // 일요일: 1, 월요일: 2, ..., 토요일: 7
         
+        print("⏰ 체육 알림 설정: \(weekday)요일 \(hour):\(minute)")
+        
         // 주간 반복 알림 트리거 생성
         return UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
     }
@@ -114,6 +136,7 @@ class PhysicalEducationAlertManager {
         UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
             let peIdentifiers = requests.filter { $0.identifier.starts(with: self.peAlertIdentifierPrefix) }.map { $0.identifier }
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: peIdentifiers)
+            print("🗑️ 기존 체육 알림 \(peIdentifiers.count)개 제거")
         }
     }
     

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct MealInfo: Codable {
+public struct MealInfo {
     public let mealType: MealType
     public let menuText: String
     public let calInfo: String

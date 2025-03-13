@@ -1,79 +1,98 @@
-//ScheduleViewModel.swift
 import SwiftUI
 import Combine
 
 class ScheduleViewModel: ObservableObject {
     @Published var schedules: [[ScheduleItem]] = []
+    // 현재 시간표 정보를 저장하는 프로퍼티 추가
+    @Published var currentGrade: Int = 0
+    @Published var currentClass: Int = 0
+    
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        // 초기화 시 로컬에 저장된 시간표가 있으면 로드
-        loadLocalSchedule()
+        // 초기화 시 저장소2에서 로드
+        if let savedData = ScheduleManager.shared.loadDataStore() {
+            self.schedules = savedData.schedules
+            self.currentGrade = savedData.grade
+            self.currentClass = savedData.classNumber
+        }
     }
     
     func loadSchedule(grade: Int, classNumber: Int) {
-        // 먼저, 로컬에 저장된 데이터 확인
-        if let savedSchedules = loadLocalSchedule(), !savedSchedules.isEmpty {
-            self.schedules = savedSchedules
-        }
+        // 현재 표시 중인 학년/반 정보 업데이트
+        self.currentGrade = grade
+        self.currentClass = classNumber
         
-        // 그런 다음, 서버에서 최신 데이터 가져오기 시도
-        fetchSchedule(grade: grade, classNumber: classNumber) { [weak self] fetchedSchedules in
-            if !fetchedSchedules.isEmpty {
-                self?.schedules = fetchedSchedules
-                self?.saveLocalSchedule(fetchedSchedules)
+        // 저장소2에서 시간표 데이터 확인
+        if let savedData = ScheduleManager.shared.loadDataStore() {
+            // 요청한 학년/반과 캐시된 데이터가 일치하는지 확인
+            if savedData.grade == grade && savedData.classNumber == classNumber {
+                self.schedules = savedData.schedules
+                return // 캐시된 데이터가 있으면 서버 요청 생략
             }
         }
-    }
-    
-    private func fetchSchedule(grade: Int, classNumber: Int, completion: @escaping ([[ScheduleItem]]) -> Void) {
+        
+        // 서버에서 시간표 데이터 직접 가져오기 (사용자 설정에 영향 없음)
         let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
         guard let url = URL(string: urlString) else {
             print("Invalid URL")
             return
         }
         
-        URLSession.shared.dataTaskPublisher(for: url)
-            .map { $0.data }
-            .decode(type: [[ScheduleItem]].self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    print("시간표 로드 완료")
-                case .failure(let error):
-                    print("시간표 로드 실패: \(error)")
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let data = data,
+                  error == nil else {
+                print("시간표 데이터 요청 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+                return
+            }
+            
+            do {
+                // 서버 응답 데이터 파싱
+                let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
+                
+                // UI 업데이트
+                DispatchQueue.main.async {
+                    self?.schedules = schedules
                 }
-            }, receiveValue: { schedules in
-                completion(schedules)
-            })
-            .store(in: &cancellables)
+            } catch {
+                print("시간표 데이터 파싱 실패: \(error)")
+            }
+        }.resume()
     }
     
-    // 로컬에 시간표 저장
-    private func saveLocalSchedule(_ schedules: [[ScheduleItem]]) {
-        do {
-            let data = try JSONEncoder().encode(schedules)
-            UserDefaults.standard.set(data, forKey: "cachedSchedule")
-            // 마지막 업데이트 시간 저장
-            UserDefaults.standard.set(Date(), forKey: "lastScheduleUpdateTime")
-        } catch {
-            print("시간표 저장 실패: \(error)")
-        }
-    }
-    
-    // 로컬에서 시간표 로드
-    private func loadLocalSchedule() -> [[ScheduleItem]]? {
-        guard let data = UserDefaults.standard.data(forKey: "cachedSchedule") else {
-            return nil
+    // 화면 표시용 시간표 데이터 가져오기 (알림 설정에 영향 없음)
+    private func fetchScheduleForDisplay(grade: Int, classNumber: Int) {
+        // 서버에서 시간표 가져오기
+        let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return
         }
         
-        do {
-            let decodedSchedule = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
-            return decodedSchedule
-        } catch {
-            print("시간표 로드 실패: \(error)")
-            return nil
-        }
+        URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self,
+                  let data = data,
+                  error == nil else {
+                print("시간표 데이터 요청 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+                return
+            }
+            
+            do {
+                // 서버 응답 데이터 파싱
+                let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
+                
+                // UI 업데이트
+                DispatchQueue.main.async {
+                    self.schedules = schedules
+                }
+            } catch {
+                print("시간표 데이터 파싱 실패: \(error)")
+            }
+        }.resume()
     }
+}
+
+// 데이터 업데이트 알림을 위한 NotificationCenter 확장
+extension Notification.Name {
+    static let scheduleDataDidUpdate = Notification.Name("scheduleDataDidUpdate")
 }

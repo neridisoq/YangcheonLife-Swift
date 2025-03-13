@@ -137,6 +137,9 @@ struct ClassSubjectSelectionView: View {
                 .onChange(of: selectedSubject) { newValue in
                     // 선택한 과목을 UserDefaults에 저장
                     UserDefaults.standard.set(newValue, forKey: "selected\(className)Subject")
+                    
+                    // 알림 재설정 트리거
+                    triggerNotificationReset()
                 }
                 .onAppear {
                     // 이전에 저장된 과목 불러오기
@@ -155,6 +158,42 @@ struct ClassSubjectSelectionView: View {
             }
         }
         .navigationBarTitle("\(className) 설정", displayMode: .inline)
+    }
+    
+    // 과목 선택 시 알림 재설정을 트리거하는 함수
+    private func triggerNotificationReset() {
+        // 설정된 학년/반 정보 가져오기
+        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+        
+        // 알림이 활성화되어 있고, 유효한 학년/반 정보가 있는 경우에만 실행
+        if UserDefaults.standard.bool(forKey: "notificationsEnabled") && grade > 0 && classNumber > 0 {
+            // 변경사항을 저장소에 반영 후 알림 재설정
+            if let savedData = ScheduleManager.shared.loadDataStore() {
+                if savedData.grade == grade && savedData.classNumber == classNumber {
+                    // 현재 설정과 일치하는 데이터가 있는 경우 처리
+                    let customizedSchedules = ScheduleManager.shared.applyCurrentSubjectCustomization(schedules: savedData.schedules)
+                    
+                    let updatedData = ScheduleData(
+                        grade: grade,
+                        classNumber: classNumber,
+                        lastUpdated: Date(),
+                        schedules: customizedSchedules
+                    )
+                    
+                    // 저장소2에 업데이트된 데이터 저장
+                    ScheduleManager.shared.saveToDataStore(updatedData)
+                    
+                    // 알림 재설정
+                    ScheduleManager.shared.resetNotifications(scheduleData: updatedData) { _ in
+                        // 완료 처리 (필요시 구현)
+                    }
+                    
+                    // 업데이트 알림 발송
+                    NotificationCenter.default.post(name: .scheduleDataDidUpdate, object: nil)
+                }
+            }
+        }
     }
 }
 

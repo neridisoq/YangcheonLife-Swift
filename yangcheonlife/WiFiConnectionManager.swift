@@ -3,7 +3,7 @@ import NetworkExtension
 import CoreLocation
 import UIKit
 
-// Wi-Fi 연결 클래스를 메인 코드에 통합하기 위한 클래스
+// Wi-Fi 연결 관리 클래스
 class WiFiConnectionManager {
     static let shared = WiFiConnectionManager()
     
@@ -23,8 +23,8 @@ class WiFiConnectionManager {
     }
     
     func connectToTestWiFi(completion: @escaping (Bool, String) -> Void) {
-        let ssid = "WIFI_2.4Ghz"
-        let password = "dngus11!"
+        let ssid = "senWiFi_Free"
+        let password = "888884444g"
         
         connectToWiFiNetwork(ssid: ssid, password: password, completion: completion)
     }
@@ -54,7 +54,46 @@ class WiFiConnectionManager {
     }
 }
 
-struct WiFiConnectionView: View, CLLocationManagerDelegate {
+// 위치 권한 관리 클래스
+class LocationPermissionManager: NSObject, CLLocationManagerDelegate {
+    static let shared = LocationPermissionManager()
+    
+    private let locationManager = CLLocationManager()
+    var permissionGranted: Bool = false
+    var onPermissionChange: ((Bool) -> Void)?
+    
+    private override init() {
+        super.init()
+        locationManager.delegate = self
+        checkPermission()
+    }
+    
+    func requestPermission() {
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func checkPermission() {
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedWhenInUse, .authorizedAlways:
+            permissionGranted = true
+        default:
+            permissionGranted = false
+        }
+        onPermissionChange?(permissionGranted)
+    }
+    
+    // CLLocationManagerDelegate 메서드
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        checkPermission()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        checkPermission()
+    }
+}
+
+// Wi-Fi 연결 뷰
+struct WiFiConnectionView: View {
     @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
     @State private var selectedClass: Int = 1
     @State private var isConnecting: Bool = false
@@ -63,12 +102,6 @@ struct WiFiConnectionView: View, CLLocationManagerDelegate {
     @State private var alertMessage: String = ""
     @State private var showTestOption: Bool = false
     @State private var locationPermissionGranted: Bool = false
-    private let locationManager = CLLocationManager()
-    
-    init() {
-        // CLLocationManagerDelegate 설정
-        _locationManager.wrappedValue.delegate = self
-    }
     
     var body: some View {
         NavigationView {
@@ -83,9 +116,9 @@ struct WiFiConnectionView: View, CLLocationManagerDelegate {
                 }
                 
                 Section(header: Text("반 선택")) {
-                    if selectedGrade == 3 && showTestOption {
+                    if showTestOption {
                         HStack {
-                            Text("TEST")
+                            Text("senWiFi_Free")
                             Spacer()
                             Button(action: {
                                 connectToTestWiFi()
@@ -111,7 +144,7 @@ struct WiFiConnectionView: View, CLLocationManagerDelegate {
                 }
                 
                 Section(header: Text("설정")) {
-                    Toggle("TEST 옵션 표시", isOn: $showTestOption)
+                    Toggle("senWiFi_Free 옵션 표시", isOn: $showTestOption)
                         .onChange(of: showTestOption) { value in
                             UserDefaults.standard.set(value, forKey: "showWiFiTestOption")
                         }
@@ -178,7 +211,17 @@ struct WiFiConnectionView: View, CLLocationManagerDelegate {
         }
         .onAppear {
             showTestOption = UserDefaults.standard.bool(forKey: "showWiFiTestOption")
-            checkLocationPermission()
+            
+            // 위치 권한 확인 및 설정
+            locationPermissionGranted = LocationPermissionManager.shared.permissionGranted
+            LocationPermissionManager.shared.onPermissionChange = { granted in
+                self.locationPermissionGranted = granted
+            }
+            
+            // 권한이 없는 경우 요청
+            if !locationPermissionGranted {
+                LocationPermissionManager.shared.requestPermission()
+            }
         }
     }
     
@@ -222,26 +265,6 @@ struct WiFiConnectionView: View, CLLocationManagerDelegate {
         alertTitle = "연결 오류"
         alertMessage = message
         showAlert = true
-    }
-    
-    private func checkLocationPermission() {
-        switch CLLocationManager.authorizationStatus() {
-        case .authorizedWhenInUse, .authorizedAlways:
-            locationPermissionGranted = true
-        default:
-            locationPermissionGranted = false
-            // iOS 14부터는 위치 권한이 Wi-Fi 연결에 필요
-            locationManager.requestWhenInUseAuthorization()
-        }
-    }
-    
-    // CLLocationManagerDelegate 메서드
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        checkLocationPermission()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        checkLocationPermission()
     }
 }
 
