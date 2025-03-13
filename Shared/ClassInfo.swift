@@ -56,6 +56,7 @@ public class WidgetScheduleManager {
     
     // 급식 정보 표시가 필요한지 확인
     // 급식 정보 표시가 필요한지 확인
+    // 수정된 코드:
     private func shouldShowMealInfo(now: Date) -> (shouldShow: Bool, mealType: MealType?) {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: now)
@@ -68,9 +69,9 @@ public class WidgetScheduleManager {
             return (false, nil)
         }
         
-        // 중식 표시 시간: 11:20부터 13:00까지 고정
+        // 중식 표시 시간: 11:20부터 12:40까지로 변경
         let lunchStartTime = 11 * 60 + 20
-        let lunchEndTime = 13 * 60 + 0
+        let lunchEndTime = 12 * 60 + 40  // 13:00에서 12:40으로 변경
         
         if currentTotalMinutes >= lunchStartTime && currentTotalMinutes < lunchEndTime {
             return (true, .lunch)

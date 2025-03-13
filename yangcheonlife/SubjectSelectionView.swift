@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 struct SubjectSelectionView: View {
     @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
@@ -124,6 +125,8 @@ struct ClassSubjectSelectionView: View {
     let className: String
     let subjects: [String]
     @State private var selectedSubject: String = ""
+    @State private var showActionAlert: Bool = false
+    @State private var actionAlertMessage: String = ""
     
     var body: some View {
         Form {
@@ -156,44 +159,223 @@ struct ClassSubjectSelectionView: View {
                     }
                 }
             }
+            
+            // 추가: 변경사항 적용 버튼
+            Section {
+                Button(action: {
+                    // 강제로 변경사항 적용
+                    forceUpdateSubjectSelection()
+                }) {
+                    HStack {
+                        Spacer()
+                        Text("변경사항 적용하기")
+                            .foregroundColor(.blue)
+                        Spacer()
+                    }
+                }
+            }
         }
         .navigationBarTitle("\(className) 설정", displayMode: .inline)
+        .alert(isPresented: $showActionAlert) {
+            Alert(
+                title: Text("알림"),
+                message: Text(actionAlertMessage),
+                dismissButton: .default(Text("확인"))
+            )
+        }
     }
     
-    // 과목 선택 시 알림 재설정을 트리거하는 함수
+    // 변경된 함수: 과목 선택 시 알림 재설정을 트리거하는 함수
     private func triggerNotificationReset() {
         // 설정된 학년/반 정보 가져오기
         let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
         let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
         
-        // 알림이 활성화되어 있고, 유효한 학년/반 정보가 있는 경우에만 실행
-        if UserDefaults.standard.bool(forKey: "notificationsEnabled") && grade > 0 && classNumber > 0 {
-            // 변경사항을 저장소에 반영 후 알림 재설정
-            if let savedData = ScheduleManager.shared.loadDataStore() {
-                if savedData.grade == grade && savedData.classNumber == classNumber {
-                    // 현재 설정과 일치하는 데이터가 있는 경우 처리
-                    let customizedSchedules = ScheduleManager.shared.applyCurrentSubjectCustomization(schedules: savedData.schedules)
+        // 유효성 검사
+        guard grade > 0 && classNumber > 0 else {
+            return
+        }
+        
+        // 알림 설정이 활성화되어 있는지 확인
+        let notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
+        
+        // 1. 서버에서 원본 데이터 다시 가져오기 (compareStore를 갱신)
+        let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            
+            do {
+                // 서버 응답 데이터 파싱
+                let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
+                
+                // 메타데이터를 포함한 새 데이터 객체 생성
+                let newScheduleData = ScheduleData(
+                    grade: grade,
+                    classNumber: classNumber,
+                    lastUpdated: Date(),
+                    schedules: schedules
+                )
+                
+                // 비교 저장소에 원본 데이터 저장
+                ScheduleManager.shared.saveToCompareStore(newScheduleData)
+                
+                // 2. 커스텀 적용한 데이터 생성 및 저장
+                DispatchQueue.main.async {
+                    // 커스텀 적용
+                    let customizedSchedules = ScheduleManager.shared.applyCurrentSubjectCustomization(schedules: schedules)
                     
-                    let updatedData = ScheduleData(
+                    // 최종 데이터 객체 생성
+                    let finalScheduleData = ScheduleData(
                         grade: grade,
                         classNumber: classNumber,
                         lastUpdated: Date(),
                         schedules: customizedSchedules
                     )
                     
-                    // 저장소2에 업데이트된 데이터 저장
-                    ScheduleManager.shared.saveToDataStore(updatedData)
+                    // 데이터 저장소에 최종 데이터 저장
+                    ScheduleManager.shared.saveToDataStore(finalScheduleData)
                     
-                    // 알림 재설정
-                    ScheduleManager.shared.resetNotifications(scheduleData: updatedData) { _ in
-                        // 완료 처리 (필요시 구현)
+                    // 3. 알림이 활성화된 경우 재설정
+                    if notificationsEnabled {
+                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                        
+                        // 짧은 지연 후 새로운 알림 설정
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            ScheduleManager.shared.resetNotifications(scheduleData: finalScheduleData) { _ in
+                                // 완료 처리
+                                print("알림 재설정 완료")
+                            }
+                        }
                     }
                     
-                    // 업데이트 알림 발송
+                    // 4. 데이터 업데이트 알림 발송
                     NotificationCenter.default.post(name: .scheduleDataDidUpdate, object: nil)
+                    
+                    // 5. 위젯 데이터 동기화
+                    SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+                    
+                    // 6. 위젯 타임라인 리로드
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
+            } catch {
+                print("시간표 데이터 파싱 실패: \(error)")
+            }
+        }.resume()
+    }
+    
+    // 추가된 함수: 강제로 변경사항 적용
+    private func forceUpdateSubjectSelection() {
+        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+        
+        guard grade > 0 && classNumber > 0 else {
+            actionAlertMessage = "유효한 학년/반 정보가 없습니다."
+            showActionAlert = true
+            return
+        }
+        
+        actionAlertMessage = "변경사항을 적용하는 중..."
+        showActionAlert = true
+        
+        // 서버에서 새로 데이터 가져오기
+        let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                DispatchQueue.main.async {
+                    self.actionAlertMessage = "서버 연결 오류가 발생했습니다."
+                    self.showActionAlert = true
+                }
+                return
+            }
+            
+            do {
+                // 데이터 파싱 및 저장
+                let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
+                
+                DispatchQueue.main.async {
+                    // 1. compareStore 저장
+                    let originalData = ScheduleData(
+                        grade: grade,
+                        classNumber: classNumber,
+                        lastUpdated: Date(),
+                        schedules: schedules
+                    )
+                    ScheduleManager.shared.saveToCompareStore(originalData)
+                    
+                    // 2. 모든 커스텀을 직접 적용
+                    var customizedSchedules = schedules
+                    
+                    // 모든 반 반복 처리
+                    for (dayIndex, day) in schedules.enumerated() {
+                        for (periodIndex, item) in day.enumerated() {
+                            if item.subject.contains("반") {
+                                let customKey = "selected\(item.subject)Subject"
+                                
+                                if let selectedSubject = UserDefaults.standard.string(forKey: customKey),
+                                   selectedSubject != "선택 없음" && selectedSubject != item.subject {
+                                    
+                                    var updatedItem = item
+                                    let components = selectedSubject.components(separatedBy: "/")
+                                    
+                                    if components.count == 2 {
+                                        updatedItem.subject = components[0]
+                                        updatedItem.teacher = components[1]
+                                    }
+                                    
+                                    customizedSchedules[dayIndex][periodIndex] = updatedItem
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 3. 최종 데이터 저장
+                    let finalData = ScheduleData(
+                        grade: grade,
+                        classNumber: classNumber,
+                        lastUpdated: Date(),
+                        schedules: customizedSchedules
+                    )
+                    ScheduleManager.shared.saveToDataStore(finalData)
+                    
+                    // 4. 알림 설정이 활성화된 경우 알림 재설정
+                    if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
+                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            ScheduleManager.shared.resetNotifications(scheduleData: finalData) { _ in
+                                print("알림 재설정 완료")
+                            }
+                        }
+                    }
+                    
+                    // 5. 위젯 데이터 동기화 및 갱신
+                    SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+                    WidgetCenter.shared.reloadAllTimelines()
+                    
+                    // 6. 데이터 업데이트 알림 발송
+                    NotificationCenter.default.post(name: .scheduleDataDidUpdate, object: nil)
+                    
+                    // 성공 메시지 표시
+                    self.actionAlertMessage = "변경사항이 성공적으로 적용되었습니다."
+                    self.showActionAlert = true
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.actionAlertMessage = "데이터 처리 중 오류가 발생했습니다: \(error.localizedDescription)"
+                    self.showActionAlert = true
                 }
             }
-        }
+        }.resume()
     }
 }
 

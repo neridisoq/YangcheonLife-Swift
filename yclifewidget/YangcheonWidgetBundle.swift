@@ -1,3 +1,11 @@
+//
+//  YangcheonWidgetBundle.swift
+//  yangcheonlife
+//
+//  Created by Woohyun Jin on 3/13/25.
+//
+
+
 import WidgetKit
 import SwiftUI
 
@@ -9,6 +17,6 @@ struct YangcheonWidgetBundle: WidgetBundle {
         YclifeWidget()
         
         // 새로운 위젯
-        SimpleNextClassWidget()
+        LockScreenClassWidget()
     }
 }

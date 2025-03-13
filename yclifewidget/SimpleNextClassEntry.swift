@@ -1,3 +1,11 @@
+//
+//  SimpleNextClassEntry.swift
+//  yangcheonlife
+//
+//  Created by Woohyun Jin on 3/13/25.
+//
+
+
 import WidgetKit
 import SwiftUI
 
