@@ -22,10 +22,7 @@ class WiFiConnectionManager {
         connectToWiFiNetwork(ssid: ssid, password: password, completion: completion)
     }
     
-    func connectToTestWiFi(completion: @escaping (Bool, String) -> Void) {
-        let ssid = "senWiFi_Free"
-        let password = "888884444g"
-        
+    func connectToSpecialRoomWiFi(ssid: String, password: String, completion: @escaping (Bool, String) -> Void) {
         connectToWiFiNetwork(ssid: ssid, password: password, completion: completion)
     }
     
@@ -92,6 +89,14 @@ class LocationPermissionManager: NSObject, CLLocationManagerDelegate {
     }
 }
 
+// 특별실 Wi-Fi 정보 구조체
+struct SpecialRoomWiFi: Identifiable {
+    let id = UUID()
+    let name: String
+    let ssid: String
+    let password: String
+}
+
 // Wi-Fi 연결 뷰
 struct WiFiConnectionView: View {
     @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
@@ -101,6 +106,24 @@ struct WiFiConnectionView: View {
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
     @State private var locationPermissionGranted: Bool = false
+    
+    // 특별실 Wi-Fi 목록
+    let specialRooms: [SpecialRoomWiFi] = [
+        SpecialRoomWiFi(name: "화학생명실", ssid: "화학생명실", password: "yangcheon401"),
+        SpecialRoomWiFi(name: "홈베이스A/B", ssid: "홈베이스", password: "yangcheon402"),
+        SpecialRoomWiFi(name: "음악실", ssid: "음악실", password: "yangcheon403"),
+        SpecialRoomWiFi(name: "소강당", ssid: "소강당", password: "yangcheon404"),
+        SpecialRoomWiFi(name: "미술실", ssid: "미술실", password: "yangcheon405"),
+        SpecialRoomWiFi(name: "물리지학실", ssid: "물리지학실", password: "yangcheon406"),
+        SpecialRoomWiFi(name: "멀티스튜디오", ssid: "멀티스튜디오", password: "yangcheon407"),
+        SpecialRoomWiFi(name: "다목적실A/B", ssid: "다목적실AB", password: "yangcheon408"),
+        SpecialRoomWiFi(name: "꿈담카페A", ssid: "꿈담카페A", password: "yangcheon409"),
+        SpecialRoomWiFi(name: "꿈담카페B", ssid: "꿈담카페B", password: "yangcheon410"),
+        SpecialRoomWiFi(name: "도서실", ssid: "도서실", password: "yangcheon411"),
+        SpecialRoomWiFi(name: "세미나실", ssid: "세미나실", password: "yangcheon412"),
+        SpecialRoomWiFi(name: "상록실", ssid: "상록실", password: "yangcheon413"),
+        SpecialRoomWiFi(name: "senWiFi_Free", ssid: "senWiFi_Free", password: "888884444g")
+    ]
     
     var body: some View {
         NavigationView {
@@ -118,17 +141,18 @@ struct WiFiConnectionView: View {
                 Section(header: Text("반 선택")) {
                     if selectedGrade == 4 {
                         // 특별실 Wi-Fi 목록
-                        HStack {
-                            Text("senWiFi_Free")
-                            Spacer()
-                            Button(action: {
-                                connectToTestWiFi()
-                            }) {
-                                Text("연결")
-                                    .foregroundColor(.blue)
+                        ForEach(specialRooms) { room in
+                            HStack {
+                                Text(room.name)
+                                Spacer()
+                                Button(action: {
+                                    connectToSpecialRoom(ssid: room.ssid, password: room.password)
+                                }) {
+                                    Text("연결")
+                                        .foregroundColor(.blue)
+                                }
                             }
                         }
-                        // 추후 특별실 Wi-Fi 추가 위치
                     } else {
                         // 일반 교실 Wi-Fi 목록
                         ForEach(1..<12) { classNumber in
@@ -145,8 +169,6 @@ struct WiFiConnectionView: View {
                         }
                     }
                 }
-                
-
                 
                 Section(header: Text("안내")) {
                     if !locationPermissionGranted {
@@ -247,10 +269,10 @@ struct WiFiConnectionView: View {
         }
     }
     
-    private func connectToTestWiFi() {
+    private func connectToSpecialRoom(ssid: String, password: String) {
         isConnecting = true
         
-        WiFiConnectionManager.shared.connectToTestWiFi() { success, message in
+        WiFiConnectionManager.shared.connectToSpecialRoomWiFi(ssid: ssid, password: password) { success, message in
             isConnecting = false
             
             if success {
