@@ -2,10 +2,18 @@ import UIKit
 import UserNotifications
 import WidgetKit
 import BackgroundTasks
+import FirebaseCore
+import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Firebase 토픽 구독 해제 처리를 별도의 큐에서 실행
+        let firebaseQueue = DispatchQueue(label: "com.helgisnw.yangcheonlife.firebaseQueue", qos: .utility)
+        firebaseQueue.async {
+            // 별도의 큐에서 실행하여 메인 스레드 블로킹 방지
+            self.handleFirebaseUnsubscribe()
+        }
         
         // Check for app updates
         AppUpdateService.shared.checkForUpdates()
@@ -30,8 +38,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                         
                         // ScheduleManager를 통한 시간표 데이터 가져오기 및 알림 설정
                         ScheduleManager.shared.fetchAndUpdateSchedule(grade: grade, classNumber: classNumber) { _ in
-                            // 알림 설정 완료 후 처리 (필요시 구현)
-                            
                             // 체육 수업 알림 설정
                             if UserDefaults.standard.bool(forKey: "physicalEducationAlertEnabled") {
                                 PhysicalEducationAlertManager.shared.scheduleAlerts()
@@ -49,6 +55,21 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         registerBackgroundTasks()
         
         return true
+    }
+    
+    // Firebase 토픽 구독 해제 처리 - 별도의 메서드로 분리
+    private func handleFirebaseUnsubscribe() {
+        // 세마포어를 사용하여 완료될 때까지 대기 (별도 큐에서 실행 중이므로 안전)
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        print("🔄 Firebase 토픽 구독 해제 시작")
+        FirebaseManager.shared.unsubscribeFromAllTopics {
+            print("✅ Firebase 토픽 구독 해제 완료됨")
+            semaphore.signal()
+        }
+        
+        // 최대 10초 대기 (타임아웃 설정)
+        _ = semaphore.wait(timeout: .now() + 10)
     }
     
     // 백그라운드 작업 등록

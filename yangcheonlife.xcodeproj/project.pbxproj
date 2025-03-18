@@ -3,13 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		08B30CAAB05D77B62693589B /* Pods_yangcheonlife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */; };
 		0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */; };
 		0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */; };
+		0922D0552D8869C1008E9C74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */; };
+		0922D0572D8870F1008E9C74 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0922D0562D8870F1008E9C74 /* FirebaseManager.swift */; };
+		0922D0592D8877AE008E9C74 /* UpdateAnnouncementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0922D0582D8877AE008E9C74 /* UpdateAnnouncementView.swift */; };
 		0950CE412D79662600222453 /* ScheduleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0950CE402D79662600222453 /* ScheduleManager.swift */; };
 		0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */; };
 		0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFEF2C2A7C04002C4F44 /* ContentView.swift */; };
@@ -25,6 +28,7 @@
 		096D77CA2D773CD000AD63FD /* AppUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D77C92D773CD000AD63FD /* AppUpdateService.swift */; };
 		096D77CC2D773CDE00AD63FD /* UpdateRequiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D77CB2D773CDE00AD63FD /* UpdateRequiredView.swift */; };
 		096DE6942C2B8DA900651DE1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 096DE6922C2B8DA900651DE1 /* Localizable.strings */; };
+		0979643C2D8865D10008BADC /* FirebaseUnsubscribeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */; };
 		09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */; };
 		09828DC12D7F421800E5FD95 /* WiFiConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */; };
 		09828DE32D7F479C00E5FD95 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
@@ -71,6 +75,9 @@
 /* Begin PBXFileReference section */
 		0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectSelectionView.swift; sourceTree = "<group>"; };
 		0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
+		0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0922D0562D8870F1008E9C74 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
+		0922D0582D8877AE008E9C74 /* UpdateAnnouncementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAnnouncementView.swift; sourceTree = "<group>"; };
 		0950CE402D79662600222453 /* ScheduleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleManager.swift; sourceTree = "<group>"; };
 		0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = yangcheonlife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = yangcheonlifeApp.swift; sourceTree = "<group>"; };
@@ -94,6 +101,7 @@
 		096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		096DE6D12C2BE1B900651DE1 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		096DE6D22C2BE2B900651DE1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUnsubscribeManager.swift; sourceTree = "<group>"; };
 		09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicalEducationAlertManager.swift; sourceTree = "<group>"; };
 		09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiConnectionManager.swift; sourceTree = "<group>"; };
 		09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifewidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,14 +114,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		09828DF22D7F479E00E5FD95 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		09828DF22D7F479E00E5FD95 /* Exceptions for "yclifewidget" folder in "yclifewidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */;
 		};
-		0999C1A32D7FA65B00DDB78D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		0999C1A32D7FA65B00DDB78D /* Exceptions for "Shared" folder in "yangcheonlife" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				SharedUserDefaults.swift,
@@ -123,8 +131,22 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		09828DE52D7F479C00E5FD95 /* yclifewidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (09828DF22D7F479E00E5FD95 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = yclifewidget; sourceTree = "<group>"; };
-		09828DFA2D7F484400E5FD95 /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (0999C1A32D7FA65B00DDB78D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
+		09828DE52D7F479C00E5FD95 /* yclifewidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				09828DF22D7F479E00E5FD95 /* Exceptions for "yclifewidget" folder in "yclifewidgetExtension" target */,
+			);
+			path = yclifewidget;
+			sourceTree = "<group>";
+		};
+		09828DFA2D7F484400E5FD95 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0999C1A32D7FA65B00DDB78D /* Exceptions for "Shared" folder in "yangcheonlife" target */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,7 +195,10 @@
 		0969EFEC2C2A7C04002C4F44 /* yangcheonlife */ = {
 			isa = PBXGroup;
 			children = (
+				0922D0562D8870F1008E9C74 /* FirebaseManager.swift */,
+				0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */,
 				0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */,
+				0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */,
 				0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */,
 				0990FEC52C2AA31E008EF97D /* InitialSetup.swift */,
 				0950CE402D79662600222453 /* ScheduleManager.swift */,
@@ -189,6 +214,7 @@
 				0969EFFB2C2A7C11002C4F44 /* yangcheonlife.entitlements */,
 				0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */,
 				0969EFEF2C2A7C04002C4F44 /* ContentView.swift */,
+				0922D0582D8877AE008E9C74 /* UpdateAnnouncementView.swift */,
 				0969EFF12C2A7C05002C4F44 /* Assets.xcassets */,
 				0969EFF32C2A7C05002C4F44 /* Preview Content */,
 				0969F01D2C2A843C002C4F44 /* AppDelegate.swift */,
@@ -294,7 +320,6 @@
 				};
 			};
 			buildConfigurationList = 0969EFE52C2A7C04002C4F44 /* Build configuration list for PBXProject "yangcheonlife" */;
-			compatibilityVersion = "Xcode 15.0";
 			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -305,6 +330,7 @@
 				"zh-Hans",
 			);
 			mainGroup = 0969EFE12C2A7C04002C4F44;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 0969EFEB2C2A7C04002C4F44 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -322,6 +348,7 @@
 			files = (
 				0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */,
 				0969EFF52C2A7C05002C4F44 /* Preview Assets.xcassets in Resources */,
+				0922D0552D8869C1008E9C74 /* GoogleService-Info.plist in Resources */,
 				096DE6942C2B8DA900651DE1 /* Localizable.strings in Resources */,
 				0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */,
 			);
@@ -385,6 +412,7 @@
 			files = (
 				0969F01E2C2A843C002C4F44 /* AppDelegate.swift in Sources */,
 				09828DC12D7F421800E5FD95 /* WiFiConnectionManager.swift in Sources */,
+				0922D0592D8877AE008E9C74 /* UpdateAnnouncementView.swift in Sources */,
 				0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */,
 				096D77CC2D773CDE00AD63FD /* UpdateRequiredView.swift in Sources */,
 				0969F0202C2A844D002C4F44 /* SceneDelegate.swift in Sources */,
@@ -394,8 +422,10 @@
 				0950CE412D79662600222453 /* ScheduleManager.swift in Sources */,
 				0969F0022C2A7DB8002C4F44 /* TimeTableTab.swift in Sources */,
 				0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */,
+				0922D0572D8870F1008E9C74 /* FirebaseManager.swift in Sources */,
 				09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */,
 				0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */,
+				0979643C2D8865D10008BADC /* FirebaseUnsubscribeManager.swift in Sources */,
 				0969F0052C2A7DFD002C4F44 /* ScheduleItem.swift in Sources */,
 				0969F0062C2A7DFD002C4F44 /* ScheduleViewModel.swift in Sources */,
 				0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */,

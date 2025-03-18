@@ -10,10 +10,23 @@ public class SharedUserDefaults {
     private init() {
         if let sharedDefaults = UserDefaults(suiteName: suiteName) {
             userDefaults = sharedDefaults
-            print("✅ App Group UserDefaults 초기화 성공: \(userDefaults)")
+            print("✅ App Group UserDefaults 초기화 성공: \(suiteName)")
+            
+            // iOS 15 디버깅용 추가 정보
+            let grade = sharedDefaults.integer(forKey: "defaultGrade")
+            let classNumber = sharedDefaults.integer(forKey: "defaultClass")
+            print("📊 공유 UserDefaults 초기 값: 학년=\(grade), 반=\(classNumber)")
+            
+            if grade == 0 || classNumber == 0 {
+                print("⚠️ 공유 UserDefaults에 기본 값이 없음. 표준 UserDefaults에서 확인 시도...")
+                let standardGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
+                let standardClass = UserDefaults.standard.integer(forKey: "defaultClass")
+                print("📊 표준 UserDefaults 값: 학년=\(standardGrade), 반=\(standardClass)")
+            }
         } else {
             userDefaults = UserDefaults.standard
             print("⚠️ App Group UserDefaults 초기화 실패, 표준 UserDefaults 사용")
+            print("⚠️ 시도한 suiteName: \(suiteName)")
         }
     }
     
@@ -77,4 +90,5 @@ public class SharedUserDefaults {
             print("   \(key): \(value)")
         }
     }
+    
 }

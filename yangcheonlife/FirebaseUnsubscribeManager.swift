@@ -18,9 +18,14 @@ class FirebaseUnsubscribeManager {
             return
         }
         
-        // Firebase 초기화
-        FirebaseApp.configure()
-        print("🔥 Firebase 초기화 완료")
+        // Firebase가 이미 초기화되었는지 확인
+        if FirebaseApp.app() == nil {
+            // Firebase 초기화
+            FirebaseApp.configure()
+            print("🔥 Firebase 초기화 완료")
+        } else {
+            print("🔥 Firebase는 이미 초기화되어 있습니다.")
+        }
     }
     
     // 모든 학년/반 토픽 구독 해제

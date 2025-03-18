@@ -206,73 +206,16 @@ struct NextClassWidgetView : View {
 struct WidgetBackgroundModifier: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 17.0, *) {
-                    content
-                        .containerBackground(.background, for: .widget)
-                } else {
-                    content
-                        .background(Color(UIColor.systemBackground))
-                }
-            }
+            content
+                .containerBackground(.background, for: .widget)
+        } else if #available(iOS 16.0, *) {
+            content
+                .background(Color(UIColor.systemBackground))
+        } else {
+            // iOS 15에서 더 나은 모양을 위한 추가 스타일링
+            content
+                .background(Color(UIColor.systemBackground))
+                .cornerRadius(15)
         }
-
-        // 미리보기 제공자
-        struct NextClassWidgetView_Previews: PreviewProvider {
-            static var previews: some View {
-                let previewDate = Date()
-                let calendar = Calendar.current
-                
-                // 예시 수업 정보 생성
-                let startTime = calendar.date(bySettingHour: 10, minute: 20, second: 0, of: previewDate)!
-                let endTime = calendar.date(bySettingHour: 11, minute: 10, second: 0, of: previewDate)!
-                
-                let exampleClass = ClassInfo(
-                    subject: "수학",
-                    teacher: "302호",
-                    periodIndex: 2,
-                    startTime: startTime,
-                    endTime: endTime
-                )
-                
-                return Group {
-                    // 다음 수업 미리보기
-                    NextClassWidgetView(entry: NextClassEntry(
-                        date: previewDate,
-                        displayMode: .nextClass(exampleClass),
-                        grade: 2,
-                        classNumber: 5
-                    ))
-                    .previewContext(WidgetPreviewContext(family: .systemSmall))
-                    .previewDisplayName("다음 수업")
-                    
-                    // 체육 정보 미리보기 (있음)
-                    NextClassWidgetView(entry: NextClassEntry(
-                        date: previewDate,
-                        displayMode: .peInfo(weekday: 2, hasPhysicalEducation: true),
-                        grade: 2,
-                        classNumber: 5
-                    ))
-                    .previewContext(WidgetPreviewContext(family: .systemSmall))
-                    .previewDisplayName("체육 있음")
-                    
-                    // 체육 정보 미리보기 (없음)
-                    NextClassWidgetView(entry: NextClassEntry(
-                        date: previewDate,
-                        displayMode: .peInfo(weekday: 3, hasPhysicalEducation: false),
-                        grade: 2,
-                        classNumber: 5
-                    ))
-                    .previewContext(WidgetPreviewContext(family: .systemSmall))
-                    .previewDisplayName("체육 없음")
-                    
-                    // 정보 없음 미리보기
-                    NextClassWidgetView(entry: NextClassEntry(
-                        date: previewDate,
-                        displayMode: .noInfo,
-                        grade: 2,
-                        classNumber: 5
-                    ))
-                    .previewContext(WidgetPreviewContext(family: .systemSmall))
-                    .previewDisplayName("정보 없음")
-                }
-            }
-        }
+    }
+}

@@ -197,13 +197,10 @@ struct SimpleNextClassWidgetEntryView: View {
 // Widget background modifier
 extension View {
     func widgetBackground() -> some View {
-        if #available(iOS 17.0, *) {
-            return containerBackground(.background, for: .widget)
-        } else {
-            return background(Color(UIColor.systemBackground))
-        }
+        modifier(WidgetBackgroundModifier())
     }
 }
+
 
 struct SimpleNextClassWidget: Widget {
     let kind: String = "SimpleNextClassWidget"

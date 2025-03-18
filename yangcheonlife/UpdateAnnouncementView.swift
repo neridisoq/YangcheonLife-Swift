@@ -1,3 +1,11 @@
+//
+//  UpdateAnnouncementView.swift
+//  yangcheonlife
+//
+//  Created by Woohyun Jin on 3/18/25.
+//
+
+import SwiftUI
 
 struct UpdateAnnouncementView: View {
     @Binding var showUpdateAnnouncement: Bool

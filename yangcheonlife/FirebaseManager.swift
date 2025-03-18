@@ -7,27 +7,26 @@ class FirebaseManager {
     static let shared = FirebaseManager()
     
     private let hasUnsubscribedKey = "hasUnsubscribedFromAllFirebaseTopics"
-    private var isFirebaseConfigured = false
     
     private init() {}
     
     // Firebase 초기화 - 앱에서 한 번만 호출되도록 보장
-    func ensureFirebaseConfigured() {
-        // 이미 구독 해제가 완료되었거나 Firebase가 이미 초기화되었다면 건너뜀
-        if UserDefaults.standard.bool(forKey: hasUnsubscribedKey) || isFirebaseConfigured {
-            print("⏭️ Firebase 초기화 건너뜀 (이미 초기화됨 또는 구독 해제 완료)")
-            return
+    func ensureFirebaseConfigured() -> Bool {
+        // 이미 구독 해제가 완료되었다면 건너뜀
+        if UserDefaults.standard.bool(forKey: hasUnsubscribedKey) {
+            print("⏭️ Firebase 초기화 건너뜀 (구독 해제 이미 완료)")
+            return false
         }
         
         // Firebase가 이미 초기화되었는지 확인
         if FirebaseApp.app() == nil {
             // Firebase 초기화
             FirebaseApp.configure()
-            isFirebaseConfigured = true
             print("🔥 Firebase 초기화 완료")
+            return true
         } else {
-            isFirebaseConfigured = true
             print("🔥 Firebase는 이미 초기화되어 있습니다.")
+            return true
         }
     }
     
@@ -41,7 +40,11 @@ class FirebaseManager {
         }
         
         // Firebase가 초기화되었는지 확인
-        ensureFirebaseConfigured()
+        if !ensureFirebaseConfigured() {
+            // 초기화가 불필요하면 완료 처리
+            completion()
+            return
+        }
         
         let dispatchGroup = DispatchGroup()
         
@@ -50,6 +53,8 @@ class FirebaseManager {
             for classNumber in 1...11 {
                 let topic = "\(grade)-\(classNumber)"
                 dispatchGroup.enter()
+                
+                print("🔄 토픽 '\(topic)' 구독 해제 시도...")
                 
                 Messaging.messaging().unsubscribe(fromTopic: topic) { error in
                     if let error = error {

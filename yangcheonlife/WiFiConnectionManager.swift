@@ -95,28 +95,29 @@ class LocationPermissionManager: NSObject, CLLocationManagerDelegate {
 // Wi-Fi 연결 뷰
 struct WiFiConnectionView: View {
     @State private var selectedGrade: Int = UserDefaults.standard.integer(forKey: "defaultGrade")
-    @State private var selectedClass: Int = 1
+    @State private var selectedClass: Int = UserDefaults.standard.integer(forKey: "defaultClass")
     @State private var isConnecting: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
-    @State private var showTestOption: Bool = false
     @State private var locationPermissionGranted: Bool = false
     
     var body: some View {
         NavigationView {
-            Form {
+            List {
                 Section(header: Text("학년 선택")) {
                     Picker("학년", selection: $selectedGrade) {
-                        Text("1학년").tag(1)
-                        Text("2학년").tag(2)
-                        Text("3학년").tag(3)
+                        ForEach(1..<4) { grade in
+                            Text("\(grade)학년").tag(grade)
+                        }
+                        Text("특별실").tag(4)
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
                 
                 Section(header: Text("반 선택")) {
-                    if showTestOption {
+                    if selectedGrade == 4 {
+                        // 특별실 Wi-Fi 목록
                         HStack {
                             Text("senWiFi_Free")
                             Spacer()
@@ -127,28 +128,25 @@ struct WiFiConnectionView: View {
                                     .foregroundColor(.blue)
                             }
                         }
-                    }
-                    
-                    ForEach(1..<12) { classNumber in
-                        HStack {
-                            Text("\(classNumber)반")
-                            Spacer()
-                            Button(action: {
-                                connectToWiFi(grade: selectedGrade, classNumber: classNumber)
-                            }) {
-                                Text("연결")
-                                    .foregroundColor(.blue)
+                        // 추후 특별실 Wi-Fi 추가 위치
+                    } else {
+                        // 일반 교실 Wi-Fi 목록
+                        ForEach(1..<12) { classNumber in
+                            HStack {
+                                Text("\(classNumber)반")
+                                Spacer()
+                                Button(action: {
+                                    connectToWiFi(grade: selectedGrade, classNumber: classNumber)
+                                }) {
+                                    Text("연결")
+                                        .foregroundColor(.blue)
+                                }
                             }
                         }
                     }
                 }
                 
-                Section(header: Text("설정")) {
-                    Toggle("senWiFi_Free 옵션 표시", isOn: $showTestOption)
-                        .onChange(of: showTestOption) { value in
-                            UserDefaults.standard.set(value, forKey: "showWiFiTestOption")
-                        }
-                }
+
                 
                 Section(header: Text("안내")) {
                     if !locationPermissionGranted {
@@ -179,7 +177,7 @@ struct WiFiConnectionView: View {
                         .font(.footnote)
                 }
             }
-            .navigationBarTitle("학교 Wi-Fi 연결", displayMode: .inline)
+            .navigationBarTitle("학교 Wi-Fi 연결")
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text(alertTitle),
@@ -209,8 +207,9 @@ struct WiFiConnectionView: View {
                 }
             )
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
-            showTestOption = UserDefaults.standard.bool(forKey: "showWiFiTestOption")
+            loadSettings()
             
             // 위치 권한 확인 및 설정
             locationPermissionGranted = LocationPermissionManager.shared.permissionGranted
@@ -223,6 +222,11 @@ struct WiFiConnectionView: View {
                 LocationPermissionManager.shared.requestPermission()
             }
         }
+    }
+    
+    private func loadSettings() {
+        selectedGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        selectedClass = UserDefaults.standard.integer(forKey: "defaultClass")
     }
     
     private func connectToWiFi(grade: Int, classNumber: Int) {

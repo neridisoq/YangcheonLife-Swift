@@ -13,12 +13,24 @@ struct LockScreenClassWidget: Widget {
                 LockScreenClassWidgetView(entry: entry)
                     .widgetAccentable()
             } else {
+                // iOS 15 이하 버전에 대한 처리
                 LockScreenClassWidgetView(entry: entry)
             }
         }
         .configurationDisplayName("다음 수업")
         .description("다음 수업 정보를 잠금화면에 표시합니다.")
-        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+        // iOS 15에서는 잠금화면 위젯 패밀리를 지원하지 않으므로 조건부로 적용
+        .supportedFamilies(getSupportedFamilies())
+    }
+    
+    // iOS 버전에 따라 지원되는 위젯 패밀리 반환
+    private func getSupportedFamilies() -> [WidgetFamily] {
+        if #available(iOS 16.0, *) {
+            return [.accessoryCircular, .accessoryRectangular, .accessoryInline]
+        } else {
+            // iOS 15 이하에서는 홈 화면 위젯만 지원
+            return [.systemSmall, .systemMedium]
+        }
     }
 }
 
