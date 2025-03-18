@@ -473,7 +473,30 @@ struct TimeTableTab: View {
         let startOfPeriod = calendar.date(bySettingHour: startComponents.hour!, minute: startComponents.minute!, second: 0, of: now)!
         let endOfPeriod = calendar.date(bySettingHour: endComponents.hour!, minute: endComponents.minute!, second: 0, of: now)!
         
-        return now >= startOfPeriod && now <= endOfPeriod && weekday == col - 1
+        // Check if during current class period
+        if now >= startOfPeriod && now <= endOfPeriod && weekday == col - 1 {
+            return true
+        }
+        
+        // Check if during break time before next class
+        if periodIndex < periodTimes.count - 1 {
+            let nextPeriodIndex = periodIndex + 1
+            let (nextStartTimeString, _) = periodTimes[nextPeriodIndex]
+            
+            guard let nextStartTime = formatter.date(from: nextStartTimeString) else {
+                return false
+            }
+            
+            let nextStartComponents = calendar.dateComponents([.hour, .minute], from: nextStartTime)
+            let startOfNextPeriod = calendar.date(bySettingHour: nextStartComponents.hour!, minute: nextStartComponents.minute!, second: 0, of: now)!
+            
+            // If it's break time, highlight the next class
+            if now > endOfPeriod && now < startOfNextPeriod && row == nextPeriodIndex + 1 && weekday == col - 1 {
+                return true
+            }
+        }
+        
+        return false
     }
 
     // 셀 배경색 로드
