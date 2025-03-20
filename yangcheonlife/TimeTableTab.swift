@@ -454,45 +454,50 @@ struct TimeTableTab: View {
         let now = Date()
         let calendar = Calendar.current
         let weekday = calendar.component(.weekday, from: now) - 2 // 일요일: 1, 월요일: 2, ..., 금요일: 6
+        
+        // 주말이거나 헤더 셀인 경우
         if weekday < 0 || weekday > 4 || row == 0 || col == 0 {
             return false
         }
         
-        let periodIndex = row - 1
-        let (startTimeString, endTimeString) = periodTimes[periodIndex]
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        
-        guard let startTime = formatter.date(from: startTimeString),
-              let endTime = formatter.date(from: endTimeString) else {
+        // 현재 요일과 표시 중인 요일이 다른 경우
+        if weekday != col - 1 {
             return false
         }
         
-        let startComponents = calendar.dateComponents([.hour, .minute], from: startTime)
-        let endComponents = calendar.dateComponents([.hour, .minute], from: endTime)
-        let startOfPeriod = calendar.date(bySettingHour: startComponents.hour!, minute: startComponents.minute!, second: 0, of: now)!
-        let endOfPeriod = calendar.date(bySettingHour: endComponents.hour!, minute: endComponents.minute!, second: 0, of: now)!
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
         
-        // Check if during current class period
-        if now >= startOfPeriod && now <= endOfPeriod && weekday == col - 1 {
-            return true
-        }
-        
-        // Check if during break time before next class
-        if periodIndex < periodTimes.count - 1 {
-            let nextPeriodIndex = periodIndex + 1
-            let (nextStartTimeString, _) = periodTimes[nextPeriodIndex]
+        // 현재 시간이 어느 교시에 해당하는지 또는 쉬는 시간인지 확인
+        for (index, period) in periodTimes.enumerated() {
+            let (startTimeString, endTimeString) = period
             
-            guard let nextStartTime = formatter.date(from: nextStartTimeString) else {
-                return false
+            guard let startTime = formatter.date(from: startTimeString),
+                  let endTime = formatter.date(from: endTimeString) else {
+                continue
             }
             
-            let nextStartComponents = calendar.dateComponents([.hour, .minute], from: nextStartTime)
-            let startOfNextPeriod = calendar.date(bySettingHour: nextStartComponents.hour!, minute: nextStartComponents.minute!, second: 0, of: now)!
+            let startComponents = calendar.dateComponents([.hour, .minute], from: startTime)
+            let endComponents = calendar.dateComponents([.hour, .minute], from: endTime)
             
-            // If it's break time, highlight the next class
-            if now > endOfPeriod && now < startOfNextPeriod && row == nextPeriodIndex + 1 && weekday == col - 1 {
-                return true
+            let startOfPeriod = calendar.date(bySettingHour: startComponents.hour!, minute: startComponents.minute!, second: 0, of: now)!
+            let endOfPeriod = calendar.date(bySettingHour: endComponents.hour!, minute: endComponents.minute!, second: 0, of: now)!
+            
+            // 현재 수업 시간인 경우
+            if now >= startOfPeriod && now <= endOfPeriod {
+                return row == index + 1 // 해당 교시 강조
+            }
+            
+            // 다음 교시가 있는 경우 쉬는 시간 확인
+            if index < periodTimes.count - 1 {
+                let nextPeriodStart = formatter.date(from: periodTimes[index + 1].0)!
+                let nextStartComponents = calendar.dateComponents([.hour, .minute], from: nextPeriodStart)
+                let startOfNextPeriod = calendar.date(bySettingHour: nextStartComponents.hour!, minute: nextStartComponents.minute!, second: 0, of: now)!
+                
+                // 쉬는 시간인 경우 다음 교시 강조
+                if now > endOfPeriod && now < startOfNextPeriod {
+                    return row == index + 2 // 다음 교시 강조
+                }
             }
         }
         

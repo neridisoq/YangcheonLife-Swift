@@ -11,8 +11,7 @@ struct YangcheonWidgetBundle: WidgetBundle {
         DailyScheduleWidget()
         
         // iOS 16+ lock screen widgets
-        if #available(iOS 16.0, *) {
-            LockScreenClassWidget()
-        }
+        LockScreenClassWidget()
+        
     }
 }
