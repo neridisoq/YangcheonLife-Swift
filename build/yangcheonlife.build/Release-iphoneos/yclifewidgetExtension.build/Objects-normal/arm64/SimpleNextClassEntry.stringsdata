@@ -1,0 +1,64 @@
+{
+  "source": "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yclifewidget/SimpleNextClassEntry.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "다음교시 %lld교시",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ ~ %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 122
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ 체육 %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 141
+        }
+      },
+      {
+        "comment": "",
+        "key": "체육복을 준비하세요!",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 148
+        }
+      },
+      {
+        "comment": "",
+        "key": "수업 정보 없음",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 167
+        }
+      },
+      {
+        "comment": "",
+        "key": "다음 수업",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 217
+        }
+      },
+      {
+        "comment": "",
+        "key": "다음 수업 시간과 교실 정보를 표시합니다.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 218
+        }
+      }
+    ]
+  },
+  "version": 1
+}

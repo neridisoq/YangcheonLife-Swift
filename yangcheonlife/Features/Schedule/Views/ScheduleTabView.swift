@@ -58,21 +58,19 @@ struct ScheduleTabView: View {
     /// 시간표 헤더 (학년/반 선택 및 새로고침)
     private var scheduleHeader: some View {
         HStack {
-            // 학년 선택
-            Picker("학년", selection: $viewModel.displayGrade) {
+            Picker(NSLocalizedString("Grade", comment: ""), selection: $viewModel.displayGrade) {
                 ForEach(AppConstants.School.grades, id: \.self) { grade in
-                    Text("\(grade)학년").tag(grade)
+                    Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                 }
             }
             .pickerStyle(MenuPickerStyle())
             .onChange(of: viewModel.displayGrade) { _ in
                 loadScheduleData()
             }
-            
-            // 반 선택
-            Picker("반", selection: $viewModel.displayClass) {
+
+            Picker(NSLocalizedString("Class", comment: ""), selection: $viewModel.displayClass) {
                 ForEach(AppConstants.School.classes, id: \.self) { classNumber in
-                    Text("\(classNumber)반").tag(classNumber)
+                    Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                 }
             }
             .pickerStyle(MenuPickerStyle())
@@ -80,9 +78,6 @@ struct ScheduleTabView: View {
                 loadScheduleData()
             }
             
-            Spacer()
-            
-            // 새로고침 버튼
             Button(action: {
                 Task {
                     await scheduleService.loadSchedule(
@@ -97,9 +92,11 @@ struct ScheduleTabView: View {
                     .foregroundColor(.appPrimary)
             }
         }
-        .appPadding()
-        .cardStyle()
-        .appPadding([.horizontal, .top])
+        .padding()
+        .background(Color(UIColor.systemBackground))
+        .cornerRadius(10)
+        .shadow(radius: 5)
+        .padding(.horizontal)
     }
     
     /// 시간표 정보 섹션
