@@ -58,6 +58,7 @@
 		09828DE32D7F479C00E5FD95 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
 		09828DE42D7F479C00E5FD95 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
 		09828DF12D7F479E00E5FD95 /* yclifewidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990FEC52C2AA31E008EF97D /* InitialSetup.swift */; };
 		0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */; };
 /* End PBXBuildFile section */
 
@@ -140,6 +141,7 @@
 		0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUnsubscribeManager.swift; sourceTree = "<group>"; };
 		09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicalEducationAlertManager.swift; sourceTree = "<group>"; };
 		09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifewidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0990FEC52C2AA31E008EF97D /* InitialSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialSetup.swift; sourceTree = "<group>"; };
 		0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifewidgetExtension.entitlements; sourceTree = "<group>"; };
 		0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comsi.helgisnw.metestfile.json; sourceTree = "<group>"; };
 		15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_yangcheonlife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -424,6 +426,7 @@
 				0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */,
 				0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */,
 				0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */,
+				0990FEC52C2AA31E008EF97D /* InitialSetup.swift */,
 				0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */,
 				09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */,
 				0969EFFC2C2A7C14002C4F44 /* Info.plist */,
@@ -657,6 +660,7 @@
 				094B1ACA2DE2D623005E29E4 /* SubjectSelectionView.swift in Sources */,
 				09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */,
 				0979643C2D8865D10008BADC /* FirebaseUnsubscribeManager.swift in Sources */,
+				0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */,
 				0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -851,7 +855,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -890,7 +894,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

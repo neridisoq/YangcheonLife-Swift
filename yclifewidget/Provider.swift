@@ -74,23 +74,7 @@ struct Provider: TimelineProvider {
             let timeString = String(format: "%02d:%02d", components.hour ?? 0, components.minute ?? 0)
             
             // 기본 표시 모드 가져오기
-            let baseDisplayMode = WidgetScheduleManager.shared.getDisplayInfo()
-            
-            // 표시 모드에 따라 다른 처리
-            var displayMode = baseDisplayMode
-            
-            // 일부 모드에서는 시간 정보를 추가하여 시각적인 차이 생성
-            if case .nextClass(let nextClass) = displayMode {
-                // 다음 수업 시작까지 남은 시간을 다르게 표시
-                let modifiedNextClass = ClassInfo(
-                    subject: nextClass.subject,
-                    teacher: "\(nextClass.teacher) (\(timeString))",  // 교사 정보에 시간 추가
-                    periodIndex: nextClass.periodIndex,
-                    startTime: nextClass.startTime,
-                    endTime: nextClass.endTime
-                )
-                displayMode = .nextClass(modifiedNextClass)
-            }
+            let displayMode = WidgetScheduleManager.shared.getDisplayInfo()
             
             entries.append(NextClassEntry(
                 date: futureDate,

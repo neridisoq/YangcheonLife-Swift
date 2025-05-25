@@ -1,49 +1,73 @@
+// ContentView.swift - 메인 컨텐츠 뷰
 import SwiftUI
 
 struct ContentView: View {
-    @State private var showInitialSetup = !UserDefaults.standard.bool(forKey: "initialSetupCompleted")
+    
+    // MARK: - Properties
+    @State private var showInitialSetup = !UserDefaults.standard.bool(forKey: AppConstants.UserDefaultsKeys.initialSetupCompleted)
+    @State private var showUpdateAnnouncement = false
     @ObservedObject private var updateService = AppUpdateService.shared
     
-    // 업데이트 안내 표시 여부를 제어하는 상태 변수 추가
-    @State private var showUpdateAnnouncement = false
+    // MARK: - Environment Objects
+    @EnvironmentObject var scheduleService: ScheduleService
+    @EnvironmentObject var wifiService: WiFiService
+    @EnvironmentObject var notificationService: NotificationService
     
+    // MARK: - Body
     var body: some View {
         ZStack {
-            Group {
-                if updateService.updateRequired {
-                    // 새 버전이 사용 가능한 경우 업데이트 필요 뷰 표시
-                    UpdateRequiredView()
-                } else if showInitialSetup {
-                    InitialSetupView(showInitialSetup: $showInitialSetup)
-                } else {
-                    MainView() // 메인 화면 뷰
-                }
-            }
+            mainContent
             
-            // 업데이트 안내 조건부 표시
-            if showUpdateAnnouncement {
-                UpdateAnnouncementView(showUpdateAnnouncement: $showUpdateAnnouncement)
-                    .transition(.opacity)
-                    .zIndex(100) // 다른 모든 요소 위에 표시되도록 함
-            }
+            // 업데이트 안내 오버레이
+            updateAnnouncementOverlay
         }
         .onAppear {
-            // 앱이 나타날 때 업데이트 확인
-            updateService.checkForUpdates()
-            
-            // 업데이트 안내를 표시해야 하는지 확인
-            checkForVersionAnnouncement()
+            setupContentView()
         }
     }
     
-    // 업데이트 안내를 표시해야 하는지 확인하는 메서드
-    private func checkForVersionAnnouncement() {
-        // 현재 버전과 사용자가 확인한 최신 버전 가져오기
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
-        let lastSeenVersion = UserDefaults.standard.string(forKey: "lastSeenUpdateVersion") ?? ""
+    // MARK: - Computed Properties
+    
+    /// 메인 컨텐츠
+    @ViewBuilder
+    private var mainContent: some View {
+        if updateService.updateRequired {
+            UpdateRequiredView()
+        } else if showInitialSetup {
+            InitialSetupView(showInitialSetup: $showInitialSetup)
+        } else {
+            MainTabView()
+        }
+    }
+    
+    /// 업데이트 안내 오버레이
+    @ViewBuilder
+    private var updateAnnouncementOverlay: some View {
+        if showUpdateAnnouncement {
+            UpdateAnnouncementView(showUpdateAnnouncement: $showUpdateAnnouncement)
+                .transition(.opacity)
+                .zIndex(100)
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    /// ContentView 초기 설정
+    private func setupContentView() {
+        // 업데이트 확인
+        updateService.checkForUpdates()
         
-        // 현재 버전이 "3.2"이고, 마지막으로 확인한 버전이 "3.1"이 아닌 경우에만 표시
-        if currentVersion == "3.2" && lastSeenVersion != "3.1" && lastSeenVersion != "3.2" {
+        // 버전 안내 확인
+        checkForVersionAnnouncement()
+    }
+    
+    /// 버전 업데이트 안내 확인
+    private func checkForVersionAnnouncement() {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+        let lastSeenVersion = UserDefaults.standard.string(forKey: AppConstants.UserDefaultsKeys.lastSeenUpdateVersion) ?? ""
+        
+        // 버전 4.0으로 업데이트
+        if currentVersion == AppConstants.App.version && lastSeenVersion != AppConstants.App.version {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 withAnimation {
                     showUpdateAnnouncement = true
@@ -53,21 +77,37 @@ struct ContentView: View {
     }
 }
 
-struct MainView: View {
+// MARK: - 메인 탭 뷰
+struct MainTabView: View {
+    
+    // MARK: - Environment Objects
+    @EnvironmentObject var scheduleService: ScheduleService
+    @EnvironmentObject var wifiService: WiFiService
+    @EnvironmentObject var notificationService: NotificationService
+    
+    // MARK: - Body
     var body: some View {
         TabView {
-            TimeTableTab()
+            // 시간표 탭
+            ScheduleTabView()
                 .tabItem {
-                    Label(NSLocalizedString("TimeTable", comment: ""), systemImage: "calendar")
+                    Label(NSLocalizedString(LocalizationKeys.timeTable, comment: ""), systemImage: "calendar")
                 }
-            LunchTab()
+                .environmentObject(scheduleService)
+                .environmentObject(wifiService)
+            
+            // 급식 탭
+            MealTabView()
                 .tabItem {
-                    Label(NSLocalizedString("Meal", comment: ""), systemImage: "fork.knife")
+                    Label(NSLocalizedString(LocalizationKeys.meal, comment: ""), systemImage: "fork.knife")
                 }
-            SettingsTab()
+            
+            // 설정 탭
+            SettingsTabView()
                 .tabItem {
-                    Label(NSLocalizedString("Settings", comment: ""), systemImage: "gear")
+                    Label(NSLocalizedString(LocalizationKeys.settings, comment: ""), systemImage: "gear")
                 }
         }
+        .accentColor(.appPrimary)
     }
 }

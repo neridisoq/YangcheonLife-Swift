@@ -13,14 +13,14 @@ public class SharedUserDefaults {
             print("✅ App Group UserDefaults 초기화 성공: \(suiteName)")
             
             // iOS 15 디버깅용 추가 정보
-            let grade = sharedDefaults.integer(forKey: "defaultGrade")
-            let classNumber = sharedDefaults.integer(forKey: "defaultClass")
+            let grade = sharedDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+            let classNumber = sharedDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
             print("📊 공유 UserDefaults 초기 값: 학년=\(grade), 반=\(classNumber)")
             
             if grade == 0 || classNumber == 0 {
                 print("⚠️ 공유 UserDefaults에 기본 값이 없음. 표준 UserDefaults에서 확인 시도...")
-                let standardGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
-                let standardClass = UserDefaults.standard.integer(forKey: "defaultClass")
+                let standardGrade = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+                let standardClass = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
                 print("📊 표준 UserDefaults 값: 학년=\(standardGrade), 반=\(standardClass)")
             }
         } else {
@@ -36,11 +36,11 @@ public class SharedUserDefaults {
         let standardDefaults = UserDefaults.standard
         
         // 학년/반 정보 동기화
-        let grade = standardDefaults.integer(forKey: "defaultGrade")
-        let classNumber = standardDefaults.integer(forKey: "defaultClass")
+        let grade = standardDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let classNumber = standardDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
         
-        userDefaults.set(grade, forKey: "defaultGrade")
-        userDefaults.set(classNumber, forKey: "defaultClass")
+        userDefaults.set(grade, forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        userDefaults.set(classNumber, forKey: AppConstants.UserDefaultsKeys.defaultClass)
         
         print("📱 App → Widget 데이터 동기화: 학년=\(grade), 반=\(classNumber)")
         
@@ -61,11 +61,11 @@ public class SharedUserDefaults {
         print("📚 탐구 과목 \(subjectCount)개 동기화 완료")
         
         // 시간표 데이터 동기화
-        if let data = standardDefaults.data(forKey: "schedule_data_store") {
-            userDefaults.set(data, forKey: "schedule_data_store")
+        if let data = standardDefaults.data(forKey: AppConstants.UserDefaultsKeys.scheduleDataStore) {
+            userDefaults.set(data, forKey: AppConstants.UserDefaultsKeys.scheduleDataStore)
             print("📅 시간표 데이터 동기화 완료: \(data.count) 바이트")
             
-            // 시간표 데이터 확인
+            // 시간표 데이터 확인 (새로운 모델 타입 사용)
             do {
                 let scheduleData = try JSONDecoder().decode(ScheduleData.self, from: data)
                 print("✓ 시간표 데이터 확인: \(scheduleData.grade)학년 \(scheduleData.classNumber)반")
@@ -79,8 +79,8 @@ public class SharedUserDefaults {
         userDefaults.synchronize()
         
         // 동기화 후 확인
-        let syncedGrade = userDefaults.integer(forKey: "defaultGrade")
-        let syncedClass = userDefaults.integer(forKey: "defaultClass")
+        let syncedGrade = userDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let syncedClass = userDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
         print("🔄 동기화 완료 확인: 학년=\(syncedGrade), 반=\(syncedClass)")
     }
     // 디버깅용: 공유 UserDefaults의 모든 내용 출력

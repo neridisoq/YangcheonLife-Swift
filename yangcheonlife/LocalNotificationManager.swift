@@ -12,9 +12,9 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
         super.init()
         UNUserNotificationCenter.current().delegate = self
         
-        // 초기화 시 저장소2에서 데이터 로드
-        if let savedData = ScheduleManager.shared.loadDataStore() {
-            self.schedules = savedData.schedules
+        // 초기화 시 저장소에서 데이터 로드
+        if let savedData = ScheduleService.shared.currentScheduleData {
+            self.schedules = savedData.weeklySchedule
         }
     }
     
@@ -27,26 +27,21 @@ class LocalNotificationManager: NSObject, ObservableObject, UNUserNotificationCe
     }
     
     func fetchAndSaveSchedule(grade: Int, classNumber: Int) {
-        // ScheduleManager의 개선된 로직 사용
-        ScheduleManager.shared.fetchAndUpdateSchedule(grade: grade, classNumber: classNumber) { [weak self] success in
-            if success {
-                print("시간표 및 알림 업데이트 완료")
-                
-                // 저장소에서 최신 데이터 로드하여 UI 갱신
-                if let savedData = ScheduleManager.shared.loadDataStore() {
-                    DispatchQueue.main.async {
-                        self?.schedules = savedData.schedules
-                    }
+        Task {
+            await ScheduleService.shared.loadSchedule(grade: grade, classNumber: classNumber)
+            
+            // 저장소에서 최신 데이터 로드하여 UI 갱신
+            if let savedData = ScheduleService.shared.currentScheduleData {
+                await MainActor.run {
+                    self.schedules = savedData.weeklySchedule
                 }
-            } else {
-                print("시간표 업데이트 없음 또는 실패")
             }
         }
     }
     
     func loadLocalSchedule() -> [[ScheduleItem]]? {
-        if let savedData = ScheduleManager.shared.loadDataStore() {
-            return savedData.schedules
+        if let savedData = ScheduleService.shared.currentScheduleData {
+            return savedData.weeklySchedule
         }
         return nil
     }

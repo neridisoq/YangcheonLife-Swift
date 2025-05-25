@@ -36,8 +36,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                         let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
                         let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
                         
-                        // ScheduleManager를 통한 시간표 데이터 가져오기 및 알림 설정
-                        ScheduleManager.shared.fetchAndUpdateSchedule(grade: grade, classNumber: classNumber) { _ in
+                        // ScheduleService를 통한 시간표 데이터 가져오기 및 알림 설정
+                        Task {
+                            await ScheduleService.shared.loadSchedule(grade: grade, classNumber: classNumber)
+                            
                             // 체육 수업 알림 설정
                             if UserDefaults.standard.bool(forKey: "physicalEducationAlertEnabled") {
                                 PhysicalEducationAlertManager.shared.scheduleAlerts()

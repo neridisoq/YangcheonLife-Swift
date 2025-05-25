@@ -1,46 +1,6 @@
 import Foundation
 import WidgetKit
 
-// 위젯에 표시할 수업 정보 구조체
-public struct ClassInfo {
-    public let subject: String
-    public let teacher: String  // 교실
-    public let periodIndex: Int
-    public let startTime: Date
-    public let endTime: Date
-    
-    public init(subject: String, teacher: String, periodIndex: Int, startTime: Date, endTime: Date) {
-        self.subject = subject
-        self.teacher = teacher
-        self.periodIndex = periodIndex
-        self.startTime = startTime
-        self.endTime = endTime
-    }
-}
-
-// 디스플레이 모드 열거형
-public enum DisplayMode {
-    case nextClass(ClassInfo)
-    case peInfo(weekday: Int, hasPhysicalEducation: Bool)
-    case mealInfo(MealInfo)  // 추가
-    case noInfo
-}
-
-// 위젯 엔트리 구조체
-public struct NextClassEntry: TimelineEntry {
-    public let date: Date
-    public let displayMode: DisplayMode
-    public let grade: Int
-    public let classNumber: Int
-    
-    public init(date: Date, displayMode: DisplayMode, grade: Int, classNumber: Int) {
-        self.date = date
-        self.displayMode = displayMode
-        self.grade = grade
-        self.classNumber = classNumber
-    }
-}
-
 public class WidgetScheduleManager {
     public static let shared = WidgetScheduleManager()
     
@@ -55,8 +15,6 @@ public class WidgetScheduleManager {
     }
     
     // 급식 정보 표시가 필요한지 확인
-    // 급식 정보 표시가 필요한지 확인
-    // 수정된 코드:
     private func shouldShowMealInfo(now: Date) -> (shouldShow: Bool, mealType: MealType?) {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: now)
@@ -69,9 +27,9 @@ public class WidgetScheduleManager {
             return (false, nil)
         }
         
-        // 중식 표시 시간: 11:20부터 12:40까지로 변경
+        // 중식 표시 시간: 11:20부터 12:40까지
         let lunchStartTime = 11 * 60 + 20
-        let lunchEndTime = 12 * 60 + 40  // 13:00에서 12:40으로 변경
+        let lunchEndTime = 12 * 60 + 40
         
         if currentTotalMinutes >= lunchStartTime && currentTotalMinutes < lunchEndTime {
             return (true, .lunch)
@@ -80,7 +38,7 @@ public class WidgetScheduleManager {
         return (false, nil)
     }
     
-    // 시간표 데이터 로드
+    // 시간표 데이터 로드 (새로운 모델 구조와 호환)
     private func loadScheduleData(grade: Int, classNumber: Int) -> ScheduleData? {
         print("📂 시간표 데이터 로드 시도: \(grade)학년 \(classNumber)반")
         
@@ -93,7 +51,7 @@ public class WidgetScheduleManager {
         
         do {
             let scheduleData = try JSONDecoder().decode(ScheduleData.self, from: data)
-            print("✅ 시간표 데이터 파싱 성공: \(scheduleData.grade)학년 \(scheduleData.classNumber)반, \(scheduleData.schedules.count)일 시간표")
+            print("✅ 시간표 데이터 파싱 성공: \(scheduleData.grade)학년 \(scheduleData.classNumber)반, \(scheduleData.weeklySchedule.count)일 시간표")
             
             return scheduleData
         } catch {
@@ -197,8 +155,8 @@ public class WidgetScheduleManager {
         let apiWeekday = currentWeekday - 2 // 월요일: 0, 화요일: 1, ...
         let checkToday = currentWeekday >= 2 && currentWeekday <= 6
         
-        if checkToday && apiWeekday >= 0 && apiWeekday < scheduleData.schedules.count {
-            let todaySchedule = scheduleData.schedules[apiWeekday]
+        if checkToday && apiWeekday >= 0 && apiWeekday < scheduleData.weeklySchedule.count {
+            let todaySchedule = scheduleData.weeklySchedule[apiWeekday]
             let hasPEToday = todaySchedule.contains { item in
                 return item.subject.contains("체육") || item.subject.contains("운건")
             }
@@ -229,8 +187,8 @@ public class WidgetScheduleManager {
         print("📆 체육 정보 확인 - 다음 API 요일 인덱스: \(nextApiWeekday)")
         
         // 다음 날 시간표에서 체육 수업 찾기
-        if nextApiWeekday >= 0 && nextApiWeekday < scheduleData.schedules.count {
-            let daySchedule = scheduleData.schedules[nextApiWeekday]
+        if nextApiWeekday >= 0 && nextApiWeekday < scheduleData.weeklySchedule.count {
+            let daySchedule = scheduleData.weeklySchedule[nextApiWeekday]
             
             let hasPhysicalEducation = daySchedule.contains { item in
                 let isPE = item.subject.contains("체육") || item.subject.contains("운건")
@@ -297,18 +255,18 @@ public class WidgetScheduleManager {
         print("📊 API 요일 인덱스: \(apiWeekday) (요일: \(weekday))")
         
         // 유효한 요일 확인
-        guard apiWeekday >= 0 && apiWeekday < scheduleData.schedules.count else {
+        guard apiWeekday >= 0 && apiWeekday < scheduleData.weeklySchedule.count else {
             print("⚠️ 유효하지 않은 요일 인덱스: \(apiWeekday)")
             return nil
         }
         
         // 해당 요일의 시간표 가져오기
-        let daySchedule = scheduleData.schedules[apiWeekday]
+        let daySchedule = scheduleData.weeklySchedule[apiWeekday]
         print("📚 오늘 수업 수: \(daySchedule.count)개")
         
         // 개발/테스트 목적으로 첫 번째 수업 정보 출력
         if let firstClass = daySchedule.first {
-            print("🔍 첫 번째 수업: \(firstClass.subject) (\(firstClass.teacher))")
+            print("🔍 첫 번째 수업: \(firstClass.subject) (\(firstClass.classroom))")
         }
         
         // 1교시 시간 확인 - 8:20~9:10
@@ -365,13 +323,13 @@ public class WidgetScheduleManager {
             if i > currentPeriodIndex {
                 let classItem = daySchedule[i]
                 
-                // classTime은 1부터 시작하므로 인덱스는 classTime - 1
-                if let classTime = createClassTime(periodIndex: classItem.classTime - 1) {
-                    print("✅ 다음 수업 찾음: \(classItem.classTime)교시 \(classItem.subject)")
+                // period는 1부터 시작하므로 인덱스는 period - 1
+                if let classTime = createClassTime(periodIndex: classItem.period - 1) {
+                    print("✅ 다음 수업 찾음: \(classItem.period)교시 \(classItem.subject)")
                     return ClassInfo(
                         subject: getDisplaySubject(scheduleItem: classItem),
                         teacher: getDisplayLocation(scheduleItem: classItem),
-                        periodIndex: classItem.classTime - 1,
+                        periodIndex: classItem.period - 1,
                         startTime: classTime.startTime,
                         endTime: classTime.endTime
                     )
@@ -402,10 +360,10 @@ public class WidgetScheduleManager {
         let apiWeekday = nextWeekday - 2
         
         // 다음 요일 시간표 확인
-        if apiWeekday >= 0 && apiWeekday < scheduleData.schedules.count,
-           !scheduleData.schedules[apiWeekday].isEmpty {
+        if apiWeekday >= 0 && apiWeekday < scheduleData.weeklySchedule.count,
+           !scheduleData.weeklySchedule[apiWeekday].isEmpty {
             // 첫 번째 수업 찾기
-            let firstSchedule = scheduleData.schedules[apiWeekday][0]
+            let firstSchedule = scheduleData.weeklySchedule[apiWeekday][0]
             if !firstSchedule.subject.isEmpty {
                 // 해당 요일의 첫 수업 정보 생성
                 if let classTime = createClassTimeForDay(periodIndex: 0, daysToAdd: 1) {
@@ -428,9 +386,9 @@ public class WidgetScheduleManager {
             }
             
             let checkApiWeekday = checkWeekday - 2
-            if checkApiWeekday >= 0 && checkApiWeekday < scheduleData.schedules.count,
-               !scheduleData.schedules[checkApiWeekday].isEmpty {
-                let firstSchedule = scheduleData.schedules[checkApiWeekday][0]
+            if checkApiWeekday >= 0 && checkApiWeekday < scheduleData.weeklySchedule.count,
+               !scheduleData.weeklySchedule[checkApiWeekday].isEmpty {
+                let firstSchedule = scheduleData.weeklySchedule[checkApiWeekday][0]
                 if !firstSchedule.subject.isEmpty {
                     if let classTime = createClassTimeForDay(periodIndex: 0, daysToAdd: offset) {
                         return ClassInfo(
@@ -454,12 +412,12 @@ public class WidgetScheduleManager {
         let classNumber = sharedDefaults.integer(forKey: "defaultClass")
         
         guard let scheduleData = loadScheduleData(grade: grade, classNumber: classNumber),
-              !scheduleData.schedules[0].isEmpty else {
+              !scheduleData.weeklySchedule[0].isEmpty else {
             return nil
         }
         
         // 월요일 첫 수업 찾기
-        let firstSchedule = scheduleData.schedules[0][0]
+        let firstSchedule = scheduleData.weeklySchedule[0][0]
         if !firstSchedule.subject.isEmpty {
             // 다음 주 월요일까지 날짜 계산
             let calendar = Calendar.current
@@ -580,56 +538,56 @@ public class WidgetScheduleManager {
         startComponents.minute = period.startMinute
         startComponents.second = 0
                 
-                var endComponents = calendar.dateComponents([.year, .month, .day], from: futureDate)
-                endComponents.hour = period.endHour
-                endComponents.minute = period.endMinute
-                endComponents.second = 0
+        var endComponents = calendar.dateComponents([.year, .month, .day], from: futureDate)
+        endComponents.hour = period.endHour
+        endComponents.minute = period.endMinute
+        endComponents.second = 0
                 
-                guard let startTime = calendar.date(from: startComponents),
-                      let endTime = calendar.date(from: endComponents) else {
-                    return nil
-                }
+        guard let startTime = calendar.date(from: startComponents),
+              let endTime = calendar.date(from: endComponents) else {
+            return nil
+        }
                 
-                return (startTime, endTime)
-            }
+        return (startTime, endTime)
+    }
             
-            // 과목명 표시 (탐구반 커스텀 적용)
-            private func getDisplaySubject(scheduleItem: ScheduleItem) -> String {
-                var displaySubject = scheduleItem.subject
-                
-                if scheduleItem.subject.contains("반") {
-                    let customKey = "selected\(scheduleItem.subject)Subject"
-                    
-                    if let selectedSubject = sharedDefaults.string(forKey: customKey),
-                       selectedSubject != "선택 없음" && selectedSubject != scheduleItem.subject {
-                        
-                        let components = selectedSubject.components(separatedBy: "/")
-                        if components.count == 2 {
-                            displaySubject = components[0]
-                        }
-                    }
-                }
-                
-                return displaySubject
-            }
+    // 과목명 표시 (탐구반 커스텀 적용)
+    private func getDisplaySubject(scheduleItem: ScheduleItem) -> String {
+        var displaySubject = scheduleItem.subject
+        
+        if scheduleItem.subject.contains("반") {
+            let customKey = "selected\(scheduleItem.subject)Subject"
             
-            // 교실 정보 표시 (탐구반 커스텀 적용)
-            private func getDisplayLocation(scheduleItem: ScheduleItem) -> String {
-                var displayLocation = scheduleItem.teacher
+            if let selectedSubject = sharedDefaults.string(forKey: customKey),
+               selectedSubject != "선택 없음" && selectedSubject != scheduleItem.subject {
                 
-                if scheduleItem.subject.contains("반") {
-                    let customKey = "selected\(scheduleItem.subject)Subject"
-                    
-                    if let selectedSubject = sharedDefaults.string(forKey: customKey),
-                       selectedSubject != "선택 없음" && selectedSubject != scheduleItem.subject {
-                        
-                        let components = selectedSubject.components(separatedBy: "/")
-                        if components.count == 2 {
-                            displayLocation = components[1]
-                        }
-                    }
+                let components = selectedSubject.components(separatedBy: "/")
+                if components.count == 2 {
+                    displaySubject = components[0]
                 }
-                
-                return displayLocation
             }
         }
+        
+        return displaySubject
+    }
+    
+    // 교실 정보 표시 (탐구반 커스텀 적용)
+    private func getDisplayLocation(scheduleItem: ScheduleItem) -> String {
+        var displayLocation = scheduleItem.classroom
+        
+        if scheduleItem.subject.contains("반") {
+            let customKey = "selected\(scheduleItem.subject)Subject"
+            
+            if let selectedSubject = sharedDefaults.string(forKey: customKey),
+               selectedSubject != "선택 없음" && selectedSubject != scheduleItem.subject {
+                
+                let components = selectedSubject.components(separatedBy: "/")
+                if components.count == 2 {
+                    displayLocation = components[1]
+                }
+            }
+        }
+        
+        return displayLocation
+    }
+}

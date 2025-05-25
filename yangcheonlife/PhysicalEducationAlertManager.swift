@@ -25,11 +25,11 @@ class PhysicalEducationAlertManager {
         let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
         
         // 시간표 데이터 가져오기
-        if let scheduleData = ScheduleManager.shared.loadDataStore(),
+        if let scheduleData = ScheduleService.shared.currentScheduleData,
            scheduleData.grade == grade && scheduleData.classNumber == classNumber {
             
             // 체육 수업이 있는 요일 확인
-            let peWeekdays = findPhysicalEducationWeekdays(schedules: scheduleData.schedules)
+            let peWeekdays = findPhysicalEducationWeekdays(schedules: scheduleData.weeklySchedule)
             
             // 각 요일에 대해 알림 설정
             for weekday in peWeekdays {

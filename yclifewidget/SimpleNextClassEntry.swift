@@ -18,6 +18,7 @@ struct SimpleNextClassEntry: TimelineEntry {
 }
 
 struct SimpleNextClassProvider: TimelineProvider {
+    typealias Entry = SimpleNextClassEntry
     func placeholder(in context: Context) -> SimpleNextClassEntry {
         return SimpleNextClassEntry(
             date: Date(),
@@ -194,10 +195,14 @@ struct SimpleNextClassWidgetEntryView: View {
     }
 }
 
-// Widget background modifier
+// Widget background modifier for iOS compatibility
 extension View {
     func widgetBackground() -> some View {
-        modifier(WidgetBackgroundModifier())
+        if #available(iOS 17.0, *) {
+            return self.containerBackground(.background, for: .widget)
+        } else {
+            return self.background(Color(UIColor.systemBackground))
+        }
     }
 }
 

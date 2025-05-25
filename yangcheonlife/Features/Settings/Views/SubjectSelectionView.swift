@@ -88,37 +88,37 @@ struct SubjectSelectionView: View {
     }
     
     // 2학년 각 반별 과목 리스트
-    let grade2ClassASubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"];
-    let grade2ClassBSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"];
-    let grade2ClassCSubjects = ["선택 없음", "물리I/202", "여지/201", "지구I/205", "화학I/203"];
-    let grade2ClassDSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/210"];
-    let grade2ClassESubjects = ["선택 없음", "물리I/209", "생활과학/211", "여지/다목적실A", "윤사/208", "정법/207", "지구I/210", "한지/206"];
-    let grade2ClassFSubjects = ["선택 없음", "물리I/209", "생활과학/211", "여지/다목적실A", "윤사/208", "정법/207", "지구I/210", "한지/206"];
-    let grade2ClassGSubjects = ["선택 없음", "경제/209", "생명I/211", "생활과학/다목적실A", "세계사/206", "윤사/208", "정법/207", "화학I/210"];
-    let grade2ClassHSubjects = ["선택 없음", "경제/209", "생명I/211", "생활과학/207", "세계사/206", "여지/다목적실A", "윤사/208"];
-    let grade2ClassISubjects = ["선택 없음", "기하/207", "심화국어/206"];
-    let grade2ClassJSubjects = ["선택 없음", "기하/209", "심화국어/208", "영어문화/다목적실B"];
-    let grade2ClassKSubjects = ["선택 없음", "기하/211", "심화국어/홈베이스B", "영어문화/210"];
-    let grade2ClassLSubjects = ["선택 없음", "일본어I/206", "중국어I/207"];
-    let grade2ClassMSubjects = ["선택 없음", "일본어I/208", "중국어I/209"];
-    let grade2ClassNSubjects = ["선택 없음", "일본어I/210", "중국어I/다목적실B"];
+    let grade2ClassASubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"]
+    let grade2ClassBSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/203"]
+    let grade2ClassCSubjects = ["선택 없음", "물리I/202", "여지/201", "지구I/205", "화학I/203"]
+    let grade2ClassDSubjects = ["선택 없음", "물리I/202", "생명I/204", "여지/201", "지구I/205", "화학I/210"]
+    let grade2ClassESubjects = ["선택 없음", "물리I/209", "생활과학/211", "여지/다목적실A", "윤사/208", "정법/207", "지구I/210", "한지/206"]
+    let grade2ClassFSubjects = ["선택 없음", "물리I/209", "생활과학/211", "여지/다목적실A", "윤사/208", "정법/207", "지구I/210", "한지/206"]
+    let grade2ClassGSubjects = ["선택 없음", "경제/209", "생명I/211", "생활과학/다목적실A", "세계사/206", "윤사/208", "정법/207", "화학I/210"]
+    let grade2ClassHSubjects = ["선택 없음", "경제/209", "생명I/211", "생활과학/207", "세계사/206", "여지/다목적실A", "윤사/208"]
+    let grade2ClassISubjects = ["선택 없음", "기하/207", "심화국어/206"]
+    let grade2ClassJSubjects = ["선택 없음", "기하/209", "심화국어/208", "영어문화/다목적실B"]
+    let grade2ClassKSubjects = ["선택 없음", "기하/211", "심화국어/홈베이스B", "영어문화/210"]
+    let grade2ClassLSubjects = ["선택 없음", "일본어I/206", "중국어I/207"]
+    let grade2ClassMSubjects = ["선택 없음", "일본어I/208", "중국어I/209"]
+    let grade2ClassNSubjects = ["선택 없음", "일본어I/210", "중국어I/다목적실B"]
     
     // 3학년 각 반별 과목 리스트
-    let grade3ClassASubjects = ["선택 없음", "과학사/꿈담카페B", "물리/302", "사문/304", "사문탐/303", "생명/305", "세지/306", "지구/301"];
-    let grade3ClassBSubjects = ["선택 없음", "과학사/꿈담카페B", "물리/302", "사문/305", "사문탐/306", "생윤/301", "지구/303", "화학/304"];
-    let grade3ClassCSubjects = ["선택 없음", "물리/302", "사문/305", "사문탐/303", "생명/306", "생윤/301", "화학/304"];
-    let grade3ClassDSubjects = ["선택 없음", "과학사/홈베이스B", "사문탐/309", "생명/310", "생윤/308", "세지/307", "지구/311"];
-    let grade3ClassESubjects = ["선택 없음", "과학사/홈베이스B", "물리/310", "사문/308", "사문탐/309", "생윤/307", "지구/311"];
-    let grade3ClassFSubjects = ["선택 없음", "동아사/홈베이스B", "물리/309", "사문/308", "생명/310", "지구/311", "화학/307"];
-    let grade3ClassGSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "AI수학/304", "진로영어/306"];
-    let grade3ClassHSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "영어회화/304", "진로영어H1/306", "진로영어H2/꿈담카페B"];
-    let grade3ClassISubjects = ["선택 없음", "경제수학/301", "미적분I1/302", "미적분I2/304", "수과탐/303", "영독작/305", "AI수학/꿈담카페B", "진로영어/306"];
-    let grade3ClassJSubjects = ["선택 없음", "미적분/310", "수과탐/309", "영독작/307", "영어회화/308", "진로영어/311"];
-    let grade3ClassKSubjects = ["선택 없음", "경제수학/308", "미적분/309", "영독작/310", "AI수학/307", "진로영어/311"];
-    let grade3ClassLSubjects = ["선택 없음", "고전읽기/311", "미적분/310", "수과탐/309", "영독작/308", "AI수학/홈베이스B", "확통/307"];
-    let grade3ClassMSubjects = ["선택 없음", "고전읽기/308", "미적분/309", "수과탐/310", "AI수학/홈베이스B", "진로영어/311", "확통/307"];
-    let grade3ClassNSubjects = ["선택 없음", "언매/307", "화작N1/308", "화작N2/홈베이스B"];
-    let grade3ClassOSubjects = ["선택 없음", "언매/311", "화작/310"];
+    let grade3ClassASubjects = ["선택 없음", "과학사/꿈담카페B", "물리/302", "사문/304", "사문탐/303", "생명/305", "세지/306", "지구/301"]
+    let grade3ClassBSubjects = ["선택 없음", "과학사/꿈담카페B", "물리/302", "사문/305", "사문탐/306", "생윤/301", "지구/303", "화학/304"]
+    let grade3ClassCSubjects = ["선택 없음", "물리/302", "사문/305", "사문탐/303", "생명/306", "생윤/301", "화학/304"]
+    let grade3ClassDSubjects = ["선택 없음", "과학사/홈베이스B", "사문탐/309", "생명/310", "생윤/308", "세지/307", "지구/311"]
+    let grade3ClassESubjects = ["선택 없음", "과학사/홈베이스B", "물리/310", "사문/308", "사문탐/309", "생윤/307", "지구/311"]
+    let grade3ClassFSubjects = ["선택 없음", "동아사/홈베이스B", "물리/309", "사문/308", "생명/310", "지구/311", "화학/307"]
+    let grade3ClassGSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "AI수학/304", "진로영어/306"]
+    let grade3ClassHSubjects = ["선택 없음", "고전읽기/301", "미적분/302", "수과탐/303", "영독작/305", "영어회화/304", "진로영어H1/306", "진로영어H2/꿈담카페B"]
+    let grade3ClassISubjects = ["선택 없음", "경제수학/301", "미적분I1/302", "미적분I2/304", "수과탐/303", "영독작/305", "AI수학/꿈담카페B", "진로영어/306"]
+    let grade3ClassJSubjects = ["선택 없음", "미적분/310", "수과탐/309", "영독작/307", "영어회화/308", "진로영어/311"]
+    let grade3ClassKSubjects = ["선택 없음", "경제수학/308", "미적분/309", "영독작/310", "AI수학/307", "진로영어/311"]
+    let grade3ClassLSubjects = ["선택 없음", "고전읽기/311", "미적분/310", "수과탐/309", "영독작/308", "AI수학/홈베이스B", "확통/307"]
+    let grade3ClassMSubjects = ["선택 없음", "고전읽기/308", "미적분/309", "수과탐/310", "AI수학/홈베이스B", "진로영어/311", "확통/307"]
+    let grade3ClassNSubjects = ["선택 없음", "언매/307", "화작N1/308", "화작N2/홈베이스B"]
+    let grade3ClassOSubjects = ["선택 없음", "언매/311", "화작/310"]
 }
 
 struct ClassSubjectSelectionView: View {
@@ -160,10 +160,9 @@ struct ClassSubjectSelectionView: View {
                 }
             }
             
-            // 추가: 변경사항 적용 버튼
+            // 변경사항 적용 버튼
             Section {
                 Button(action: {
-                    // 강제로 변경사항 적용
                     forceUpdateSubjectSelection()
                 }) {
                     HStack {
@@ -185,13 +184,11 @@ struct ClassSubjectSelectionView: View {
         }
     }
     
-    // 변경된 함수: 과목 선택 시 알림 재설정을 트리거하는 함수
+    // 과목 선택 시 알림 재설정을 트리거하는 함수
     private func triggerNotificationReset() {
-        // 설정된 학년/반 정보 가져오기
         let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
         let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
         
-        // 유효성 검사
         guard grade > 0 && classNumber > 0 else {
             return
         }
@@ -199,7 +196,7 @@ struct ClassSubjectSelectionView: View {
         // 알림 설정이 활성화되어 있는지 확인
         let notificationsEnabled = UserDefaults.standard.bool(forKey: "notificationsEnabled")
         
-        // 1. 서버에서 원본 데이터 다시 가져오기 (compareStore를 갱신)
+        // 서버에서 원본 데이터 다시 가져오기
         let urlString = "https://comsi.helgisnw.me/\(grade)/\(classNumber)"
         guard let url = URL(string: urlString) else {
             return
@@ -211,65 +208,79 @@ struct ClassSubjectSelectionView: View {
             }
             
             do {
-                // 서버 응답 데이터 파싱
+                // 데이터 파싱 및 저장
                 let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
                 
-                // 메타데이터를 포함한 새 데이터 객체 생성
-                let newScheduleData = ScheduleData(
-                    grade: grade,
-                    classNumber: classNumber,
-                    lastUpdated: Date(),
-                    schedules: schedules
-                )
-                
-                // 비교 저장소에 원본 데이터 저장
-                ScheduleManager.shared.saveToCompareStore(newScheduleData)
-                
-                // 2. 커스텀 적용한 데이터 생성 및 저장
                 DispatchQueue.main.async {
-                    // 커스텀 적용
-                    let customizedSchedules = ScheduleManager.shared.applyCurrentSubjectCustomization(schedules: schedules)
-                    
-                    // 최종 데이터 객체 생성
-                    let finalScheduleData = ScheduleData(
+                    // 원본 데이터 저장
+                    let originalData = ScheduleData(
                         grade: grade,
                         classNumber: classNumber,
                         lastUpdated: Date(),
-                        schedules: customizedSchedules
+                        weeklySchedule: schedules
                     )
                     
-                    // 데이터 저장소에 최종 데이터 저장
-                    ScheduleManager.shared.saveToDataStore(finalScheduleData)
+                    // 모든 커스텀을 직접 적용
+                    var customizedSchedules = schedules
                     
-                    // 3. 알림이 활성화된 경우 재설정
-                    if notificationsEnabled {
-                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                        
-                        // 짧은 지연 후 새로운 알림 설정
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            ScheduleManager.shared.resetNotifications(scheduleData: finalScheduleData) { _ in
-                                // 완료 처리
-                                print("알림 재설정 완료")
+                    // 모든 반 반복 처리
+                    for (dayIndex, day) in schedules.enumerated() {
+                        for (periodIndex, item) in day.enumerated() {
+                            if item.subject.contains("반") {
+                                let customKey = "selected\(item.subject)Subject"
+                                
+                                if let selectedSubject = UserDefaults.standard.string(forKey: customKey),
+                                   selectedSubject != "선택 없음" && selectedSubject != item.subject {
+                                    
+                                    var updatedItem = item
+                                    let components = selectedSubject.components(separatedBy: "/")
+                                    
+                                    if components.count == 2 {
+                                        updatedItem.subject = components[0]
+                                        updatedItem.classroom = components[1] // teacher -> classroom
+                                    }
+                                    
+                                    customizedSchedules[dayIndex][periodIndex] = updatedItem
+                                }
                             }
                         }
                     }
                     
-                    // 4. 데이터 업데이트 알림 발송
-                    NotificationCenter.default.post(name: .scheduleDataDidUpdate, object: nil)
+                    // 최종 데이터 저장
+                    let finalData = ScheduleData(
+                        grade: grade,
+                        classNumber: classNumber,
+                        lastUpdated: Date(),
+                        weeklySchedule: customizedSchedules
+                    )
                     
-                    // 5. 위젯 데이터 동기화
+                    // ScheduleService를 통해 저장
+                    ScheduleService.shared.currentScheduleData = finalData
+                    
+                    // 알림 설정이 활성화된 경우 알림 재설정
+                    if notificationsEnabled {
+                        Task {
+                            await NotificationService.shared.removeAllNotifications()
+                            await ScheduleService.shared.updateNotifications(grade: grade, classNumber: classNumber)
+                        }
+                    }
+                    
+                    // 위젯 데이터 동기화 및 갱신
                     SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
-                    
-                    // 6. 위젯 타임라인 리로드
                     WidgetCenter.shared.reloadAllTimelines()
+                    
+                    // 데이터 업데이트 알림 발송
+                    NotificationCenter.default.post(name: NSNotification.Name("scheduleDataDidUpdate"), object: nil)
                 }
             } catch {
-                print("시간표 데이터 파싱 실패: \(error)")
+                DispatchQueue.main.async {
+                    print("데이터 처리 중 오류: \(error)")
+                }
             }
         }.resume()
     }
     
-    // 추가된 함수: 강제로 변경사항 적용
+    // 강제로 변경사항 적용
     private func forceUpdateSubjectSelection() {
         let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
         let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
@@ -292,7 +303,7 @@ struct ClassSubjectSelectionView: View {
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
                 DispatchQueue.main.async {
-                    self.actionAlertMessage = "서버 연결 오류가 발생했습니다."
+                    self.actionAlertMessage = "네트워크 오류가 발생했습니다."
                     self.showActionAlert = true
                 }
                 return
@@ -303,16 +314,7 @@ struct ClassSubjectSelectionView: View {
                 let schedules = try JSONDecoder().decode([[ScheduleItem]].self, from: data)
                 
                 DispatchQueue.main.async {
-                    // 1. compareStore 저장
-                    let originalData = ScheduleData(
-                        grade: grade,
-                        classNumber: classNumber,
-                        lastUpdated: Date(),
-                        schedules: schedules
-                    )
-                    ScheduleManager.shared.saveToCompareStore(originalData)
-                    
-                    // 2. 모든 커스텀을 직접 적용
+                    // 모든 커스텀을 직접 적용
                     var customizedSchedules = schedules
                     
                     // 모든 반 반복 처리
@@ -329,7 +331,7 @@ struct ClassSubjectSelectionView: View {
                                     
                                     if components.count == 2 {
                                         updatedItem.subject = components[0]
-                                        updatedItem.teacher = components[1]
+                                        updatedItem.classroom = components[1]
                                     }
                                     
                                     customizedSchedules[dayIndex][periodIndex] = updatedItem
@@ -338,32 +340,31 @@ struct ClassSubjectSelectionView: View {
                         }
                     }
                     
-                    // 3. 최종 데이터 저장
+                    // 최종 데이터 저장
                     let finalData = ScheduleData(
                         grade: grade,
                         classNumber: classNumber,
                         lastUpdated: Date(),
-                        schedules: customizedSchedules
+                        weeklySchedule: customizedSchedules
                     )
-                    ScheduleManager.shared.saveToDataStore(finalData)
                     
-                    // 4. 알림 설정이 활성화된 경우 알림 재설정
+                    // ScheduleService를 통해 저장
+                    ScheduleService.shared.currentScheduleData = finalData
+                    
+                    // 알림 설정이 활성화된 경우 알림 재설정
                     if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
-                        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            ScheduleManager.shared.resetNotifications(scheduleData: finalData) { _ in
-                                print("알림 재설정 완료")
-                            }
+                        Task {
+                            await NotificationService.shared.removeAllNotifications()
+                            await ScheduleService.shared.updateNotifications(grade: grade, classNumber: classNumber)
                         }
                     }
                     
-                    // 5. 위젯 데이터 동기화 및 갱신
+                    // 위젯 데이터 동기화 및 갱신
                     SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
                     WidgetCenter.shared.reloadAllTimelines()
                     
-                    // 6. 데이터 업데이트 알림 발송
-                    NotificationCenter.default.post(name: .scheduleDataDidUpdate, object: nil)
+                    // 데이터 업데이트 알림 발송
+                    NotificationCenter.default.post(name: NSNotification.Name("scheduleDataDidUpdate"), object: nil)
                     
                     // 성공 메시지 표시
                     self.actionAlertMessage = "변경사항이 성공적으로 적용되었습니다."
