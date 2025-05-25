@@ -16,14 +16,19 @@ struct ScheduleTabView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
+                Spacer().frame(height: 10) // 상단 탭 이름과 학년/반 선택 박스 사이 간격 추가
                 // 헤더 (학년/반 선택 및 새로고침)
                 scheduleHeader
                 
                 // 시간표 정보 표시
                 scheduleInfoSection
+                Spacer().frame(height: 10) // 시간표 정보와 WiFi 제안 섹션 사이 간격 추가
                 
                 // WiFi 연결 제안
+                if viewModel.isWifiSuggestionEnabled {
                 wifiConnectionSection
+                }
+                Spacer().frame(height: 10) // WiFi 제안 섹션과 시간표 그리드 사이 간격 추가
                 
                 // 시간표 그리드
                 scheduleGridSection
@@ -67,6 +72,7 @@ struct ScheduleTabView: View {
             .onChange(of: viewModel.displayGrade) { _ in
                 loadScheduleData()
             }
+            .frame(maxWidth: 120) // 학년 선택 크기 조정
 
             Picker(NSLocalizedString("Class", comment: ""), selection: $viewModel.displayClass) {
                 ForEach(AppConstants.School.classes, id: \.self) { classNumber in
@@ -77,6 +83,7 @@ struct ScheduleTabView: View {
             .onChange(of: viewModel.displayClass) { _ in
                 loadScheduleData()
             }
+            .frame(maxWidth: 120) // 반 선택 크기 조정
             
             Button(action: {
                 Task {
@@ -131,11 +138,12 @@ struct ScheduleTabView: View {
                         .foregroundColor(.appPrimary)
                     
                     if let currentClass = viewModel.currentClassInfo {
-                        Text("현재 \(currentClass.subject) 수업 중")
+                        Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
                             .bodyStyle()
                         
-                        if !currentClass.classroom.isEmpty && !currentClass.classroom.contains("T") {
-                            Text("교실: \(currentClass.classroom)")
+                        let displayClassroom = viewModel.getDisplayClassroom(for: currentClass)
+                        if !displayClassroom.isEmpty && !displayClassroom.contains("T") {
+                            Text("교실: \(displayClassroom)")
                                 .captionStyle()
                         }
                     }

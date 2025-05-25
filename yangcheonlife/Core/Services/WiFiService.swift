@@ -49,7 +49,18 @@ class WiFiService: NSObject, ObservableObject {
             return nil
         }
         
-        let classroom = scheduleItem.classroom.trimmingCharacters(in: .whitespaces)
+        // 탐구 과목 선택에 따른 교실 정보 반영
+        var classroom = scheduleItem.classroom.trimmingCharacters(in: .whitespaces)
+        if scheduleItem.subject.contains("반") {
+            let customKey = AppConstants.UserDefaultsKeys.selectedSubjectKey(for: scheduleItem.subject)
+            if let selectedSubject = UserDefaults.standard.string(forKey: customKey),
+               selectedSubject != "선택 없음" && selectedSubject != scheduleItem.subject {
+                let components = selectedSubject.components(separatedBy: "/")
+                if components.count == 2 {
+                    classroom = components[1]
+                }
+            }
+        }
         
         // 특별실인지 확인
         if SpecialRoomsData.isSpecialRoom(classroom) {

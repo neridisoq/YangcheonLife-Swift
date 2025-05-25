@@ -10,6 +10,7 @@ class ScheduleTabViewModel: ObservableObject {
     @Published var currentClassInfo: ScheduleItem?
     @Published var suggestedWiFiConnection: WiFiConnectionType?
     @Published var cellBackgroundColor: Color = .currentPeriodBackground
+    @Published var isWifiSuggestionEnabled: Bool = true
     
     // MARK: - Computed Properties
     var actualGrade: Int {
@@ -49,6 +50,7 @@ class ScheduleTabViewModel: ObservableObject {
         
         displayGrade = savedGrade > 0 ? savedGrade : 1
         displayClass = savedClass > 0 ? savedClass : 1
+        isWifiSuggestionEnabled = UserDefaults.standard.object(forKey: AppConstants.UserDefaultsKeys.wifiSuggestionEnabled) as? Bool ?? true
     }
     
     /// 현재 수업 정보 업데이트

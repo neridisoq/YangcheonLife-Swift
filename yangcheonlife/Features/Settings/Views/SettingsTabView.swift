@@ -73,6 +73,12 @@ struct SettingsTabView: View {
                 WiFiConnectionView()
             }
             
+            // WiFi 제안 기능
+            Toggle("WiFi 제안 기능", isOn: $viewModel.wifiSuggestionEnabled)
+                .onChange(of: viewModel.wifiSuggestionEnabled) { isEnabled in
+                    viewModel.saveWifiSuggestionEnabled(isEnabled)
+                }
+            
             // 시간표 셀 배경색
             ColorPicker("시간표 셀 색상", selection: $viewModel.cellBackgroundColor)
                 .onChange(of: viewModel.cellBackgroundColor) { newColor in

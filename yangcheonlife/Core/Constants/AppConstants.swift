@@ -32,6 +32,7 @@ struct AppConstants {
         static let physicalEducationAlertTime = "physicalEducationAlertTime"
         static let cellBackgroundColor = "cellBackgroundColor"
         static let initialSetupCompleted = "initialSetupCompleted"
+        static let wifiSuggestionEnabled = "wifiSuggestionEnabled"
         static let lastSeenUpdateVersion = "lastSeenUpdateVersion"
         
         // 시간표 저장소 키

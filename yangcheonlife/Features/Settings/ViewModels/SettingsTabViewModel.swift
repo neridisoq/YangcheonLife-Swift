@@ -12,6 +12,7 @@ class SettingsTabViewModel: ObservableObject {
     @Published var physicalEducationAlertEnabled: Bool = false
     @Published var physicalEducationAlertTime: Date = Date()
     @Published var cellBackgroundColor: Color = .currentPeriodBackground
+    @Published var wifiSuggestionEnabled: Bool = true
     
     // MARK: - Private Properties
     private let userDefaults = UserDefaults.standard
@@ -29,6 +30,7 @@ class SettingsTabViewModel: ObservableObject {
         defaultClass = userDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
         notificationsEnabled = userDefaults.bool(forKey: AppConstants.UserDefaultsKeys.notificationsEnabled)
         physicalEducationAlertEnabled = userDefaults.bool(forKey: AppConstants.UserDefaultsKeys.physicalEducationAlertEnabled)
+        wifiSuggestionEnabled = userDefaults.object(forKey: AppConstants.UserDefaultsKeys.wifiSuggestionEnabled) as? Bool ?? true
         
         // 기본값 설정
         if defaultGrade == 0 { defaultGrade = 1 }
@@ -81,6 +83,13 @@ class SettingsTabViewModel: ObservableObject {
         updateSharedUserDefaults()
     }
     
+    /// WiFi 제안 기능 활성화 상태 저장
+    func saveWifiSuggestionEnabled(_ enabled: Bool) {
+        wifiSuggestionEnabled = enabled
+        userDefaults.set(enabled, forKey: AppConstants.UserDefaultsKeys.wifiSuggestionEnabled)
+        updateSharedUserDefaults()
+    }
+    
     /// 셀 배경색 저장
     func saveCellBackgroundColor(_ color: Color) {
         cellBackgroundColor = color
@@ -102,6 +111,7 @@ class SettingsTabViewModel: ObservableObject {
             AppConstants.UserDefaultsKeys.physicalEducationAlertEnabled,
             AppConstants.UserDefaultsKeys.physicalEducationAlertTime,
             AppConstants.UserDefaultsKeys.cellBackgroundColor,
+            AppConstants.UserDefaultsKeys.wifiSuggestionEnabled,
             AppConstants.UserDefaultsKeys.initialSetupCompleted
         ]
         
@@ -123,6 +133,7 @@ class SettingsTabViewModel: ObservableObject {
         exportData["defaultClass"] = defaultClass
         exportData["notificationsEnabled"] = notificationsEnabled
         exportData["physicalEducationAlertEnabled"] = physicalEducationAlertEnabled
+        exportData["wifiSuggestionEnabled"] = wifiSuggestionEnabled
         
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -158,6 +169,10 @@ class SettingsTabViewModel: ObservableObject {
         
         if let enabled = data["physicalEducationAlertEnabled"] as? Bool {
             savePhysicalEducationAlertEnabled(enabled)
+        }
+        
+        if let enabled = data["wifiSuggestionEnabled"] as? Bool {
+            saveWifiSuggestionEnabled(enabled)
         }
         
         if let timeString = data["physicalEducationAlertTime"] as? String {

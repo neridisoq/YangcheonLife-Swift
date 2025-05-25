@@ -46,6 +46,9 @@
 		094B1ADA2DE2D64C005E29E4 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AD02DE2D64C005E29E4 /* View+Extension.swift */; };
 		094B1ADB2DE2D64C005E29E4 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ACC2DE2D64C005E29E4 /* LoadingView.swift */; };
 		094B1ADC2DE2D64C005E29E4 /* InitialSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ACB2DE2D64C005E29E4 /* InitialSetupView.swift */; };
+		094B1B6E2DE34993005E29E4 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		094B1B6F2DE34993005E29E4 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		094B1B7C2DE34994005E29E4 /* yclifeLockscreenwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 094B1B6D2DE34993005E29E4 /* yclifeLockscreenwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */; };
 		0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFEF2C2A7C04002C4F44 /* ContentView.swift */; };
 		0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0969EFF12C2A7C05002C4F44 /* Assets.xcassets */; };
@@ -62,6 +65,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		094B1B7A2DE34994005E29E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 094B1B6C2DE34993005E29E4;
+			remoteInfo = yclifeLockscreenwidgetExtension;
+		};
 		09828DEF2D7F479E00E5FD95 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
@@ -89,6 +99,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				09828DF12D7F479E00E5FD95 /* yclifewidgetExtension.appex in Embed Foundation Extensions */,
+				094B1B7C2DE34994005E29E4 /* yclifeLockscreenwidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -122,6 +133,7 @@
 		094B1ACE2DE2D64C005E29E4 /* Collection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extension.swift"; sourceTree = "<group>"; };
 		094B1ACF2DE2D64C005E29E4 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 		094B1AD02DE2D64C005E29E4 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
+		094B1B6D2DE34993005E29E4 /* yclifeLockscreenwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifeLockscreenwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = yangcheonlife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = yangcheonlifeApp.swift; sourceTree = "<group>"; };
 		0969EFEF2C2A7C04002C4F44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -148,6 +160,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		094B1B802DE34994005E29E4 /* Exceptions for "yclifeLockscreenwidget" folder in "yclifeLockscreenwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 094B1B6C2DE34993005E29E4 /* yclifeLockscreenwidgetExtension */;
+		};
 		09828DF22D7F479E00E5FD95 /* Exceptions for "yclifewidget" folder in "yclifewidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -165,6 +184,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		094B1B702DE34993005E29E4 /* yclifeLockscreenwidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				094B1B802DE34994005E29E4 /* Exceptions for "yclifeLockscreenwidget" folder in "yclifeLockscreenwidgetExtension" target */,
+			);
+			path = yclifeLockscreenwidget;
+			sourceTree = "<group>";
+		};
 		09828DE52D7F479C00E5FD95 /* yclifewidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -184,6 +211,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		094B1B6A2DE34993005E29E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				094B1B6F2DE34993005E29E4 /* SwiftUI.framework in Frameworks */,
+				094B1B6E2DE34993005E29E4 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0969EFE72C2A7C04002C4F44 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -399,6 +435,7 @@
 				09828DFA2D7F484400E5FD95 /* Shared */,
 				0969EFEC2C2A7C04002C4F44 /* yangcheonlife */,
 				09828DE52D7F479C00E5FD95 /* yclifewidget */,
+				094B1B702DE34993005E29E4 /* yclifeLockscreenwidget */,
 				0969EFEB2C2A7C04002C4F44 /* Products */,
 				F65D034D03D29CF9324008A6 /* Pods */,
 				9723D769D7144062BDC836AB /* Frameworks */,
@@ -410,6 +447,7 @@
 			children = (
 				0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */,
 				09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */,
+				094B1B6D2DE34993005E29E4 /* yclifeLockscreenwidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -469,6 +507,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		094B1B6C2DE34993005E29E4 /* yclifeLockscreenwidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 094B1B7D2DE34994005E29E4 /* Build configuration list for PBXNativeTarget "yclifeLockscreenwidgetExtension" */;
+			buildPhases = (
+				094B1B692DE34993005E29E4 /* Sources */,
+				094B1B6A2DE34993005E29E4 /* Frameworks */,
+				094B1B6B2DE34993005E29E4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				094B1B702DE34993005E29E4 /* yclifeLockscreenwidget */,
+			);
+			name = yclifeLockscreenwidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = yclifeLockscreenwidgetExtension;
+			productReference = 094B1B6D2DE34993005E29E4 /* yclifeLockscreenwidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		0969EFE92C2A7C04002C4F44 /* yangcheonlife */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0969EFF82C2A7C05002C4F44 /* Build configuration list for PBXNativeTarget "yangcheonlife" */;
@@ -485,6 +545,7 @@
 			);
 			dependencies = (
 				09828DF02D7F479E00E5FD95 /* PBXTargetDependency */,
+				094B1B7B2DE34994005E29E4 /* PBXTargetDependency */,
 			);
 			name = yangcheonlife;
 			productName = yangcheonlife;
@@ -521,9 +582,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					094B1B6C2DE34993005E29E4 = {
+						CreatedOnToolsVersion = 16.3;
+					};
 					0969EFE92C2A7C04002C4F44 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -550,11 +614,19 @@
 			targets = (
 				0969EFE92C2A7C04002C4F44 /* yangcheonlife */,
 				09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */,
+				094B1B6C2DE34993005E29E4 /* yclifeLockscreenwidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		094B1B6B2DE34993005E29E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0969EFE82C2A7C04002C4F44 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -623,6 +695,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		094B1B692DE34993005E29E4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0969EFE62C2A7C04002C4F44 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -683,6 +762,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		094B1B7B2DE34994005E29E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 094B1B6C2DE34993005E29E4 /* yclifeLockscreenwidgetExtension */;
+			targetProxy = 094B1B7A2DE34994005E29E4 /* PBXContainerItemProxy */;
+		};
 		09828DF02D7F479E00E5FD95 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */;
@@ -705,6 +789,62 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		094B1B7E2DE34994005E29E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifeLockscreenwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifeLockscreenwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifeLockscreenwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		094B1B7F2DE34994005E29E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifeLockscreenwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifeLockscreenwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifeLockscreenwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		0969EFF62C2A7C05002C4F44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -965,6 +1105,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		094B1B7D2DE34994005E29E4 /* Build configuration list for PBXNativeTarget "yclifeLockscreenwidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				094B1B7E2DE34994005E29E4 /* Debug */,
+				094B1B7F2DE34994005E29E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0969EFE52C2A7C04002C4F44 /* Build configuration list for PBXProject "yangcheonlife" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
