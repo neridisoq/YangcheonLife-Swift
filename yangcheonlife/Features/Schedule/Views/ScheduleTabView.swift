@@ -1,5 +1,6 @@
 // ScheduleTabView.swift - 시간표 탭 메인 뷰
 import SwiftUI
+import ActivityKit
 
 struct ScheduleTabView: View {
     
@@ -9,6 +10,7 @@ struct ScheduleTabView: View {
     
     // MARK: - State Properties
     @StateObject private var viewModel = ScheduleTabViewModel()
+    @StateObject private var liveActivityManager = LiveActivityManager.shared
     @State private var showWiFiConnectionAlert = false
     @State private var wifiConnectionResult: WiFiConnectionResult?
     
@@ -23,6 +25,7 @@ struct ScheduleTabView: View {
                 // 시간표 정보 표시
                 scheduleInfoSection
                 Spacer().frame(height: 10) // 시간표 정보와 WiFi 제안 섹션 사이 간격 추가
+                
                 
                 // WiFi 연결 제안
                 if viewModel.isWifiSuggestionEnabled {
@@ -41,6 +44,9 @@ struct ScheduleTabView: View {
             }
             .onReceive(viewModel.timer) { _ in
                 viewModel.updateCurrentClassInfo(scheduleData: scheduleService.currentScheduleData)
+                
+                // Live Activity 업데이트
+                liveActivityManager.updateLiveActivity()
             }
             .loadingOverlay(isLoading: scheduleService.isLoading)
             .errorAlert(
@@ -59,6 +65,7 @@ struct ScheduleTabView: View {
     }
     
     // MARK: - View Components
+    
     
     /// 시간표 헤더 (학년/반 선택 및 새로고침)
     private var scheduleHeader: some View {
@@ -138,8 +145,25 @@ struct ScheduleTabView: View {
                         .foregroundColor(.appPrimary)
                     
                     if let currentClass = viewModel.currentClassInfo {
-                        Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
-                            .bodyStyle()
+                        let currentStatus = TimeUtility.getCurrentPeriodStatus()
+                        
+                        switch currentStatus {
+                        case .inClass(_):
+                            Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
+                                .bodyStyle()
+                        case .breakTime(_):
+                            Text("쉬는시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
+                                .bodyStyle()
+                        case .lunchTime:
+                            Text("점심시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
+                                .bodyStyle()
+                        case .preClass(_):
+                            Text("수업 10분 전 - \(viewModel.getDisplaySubject(for: currentClass))")
+                                .bodyStyle()
+                        default:
+                            Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
+                                .bodyStyle()
+                        }
                         
                         let displayClassroom = viewModel.getDisplayClassroom(for: currentClass)
                         if !displayClassroom.isEmpty && !displayClassroom.contains("T") {
@@ -232,4 +256,5 @@ struct ScheduleTabView: View {
             }
         }
     }
+    
 }

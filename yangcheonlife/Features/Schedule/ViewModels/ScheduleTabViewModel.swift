@@ -84,6 +84,26 @@ class ScheduleTabViewModel: ObservableObject {
                 suggestedWiFiConnection = nil
             }
             
+        case .breakTime(let period):
+            // 쉬는시간의 다음 수업 정보 가져오기
+            if let classInfo = scheduleData.getClassInfo(weekday: weekdayIndex, period: period) {
+                currentClassInfo = classInfo
+                suggestedWiFiConnection = wifiService.getSuggestedWiFiConnection(for: classInfo)
+            } else {
+                currentClassInfo = nil
+                suggestedWiFiConnection = nil
+            }
+            
+        case .lunchTime:
+            // 점심시간의 다음 수업(5교시) 정보 가져오기
+            if let classInfo = scheduleData.getClassInfo(weekday: weekdayIndex, period: 5) {
+                currentClassInfo = classInfo
+                suggestedWiFiConnection = wifiService.getSuggestedWiFiConnection(for: classInfo)
+            } else {
+                currentClassInfo = nil
+                suggestedWiFiConnection = nil
+            }
+            
         default:
             currentClassInfo = nil
             suggestedWiFiConnection = nil
@@ -124,6 +144,8 @@ class ScheduleTabViewModel: ObservableObject {
             return period == currentPeriod
         case .preClass(let nextPeriod), .breakTime(let nextPeriod):
             return period == nextPeriod
+        case .lunchTime:
+            return period == 5 // 점심시간에는 5교시를 강조
         default:
             return false
         }

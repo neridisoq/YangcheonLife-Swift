@@ -1,0 +1,17 @@
+version: "Apple Swift version 6.1 (swiftlang-6.1.0.110.21 clang-1700.0.13.3)"
+options: "bdf201a00deadd21aa0dadac0ca4bee489fbd683fe54898d65782a0fb51ad0ba"
+build_start_time: [1748409742, 714115000]
+build_end_time: [1748409747, 895624000]
+inputs:
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/Shared/MealInfo.swift": [1748070751, 529763103]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/Shared/NeisAPIManager.swift": [1748070751, 529832125]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/Shared/SharedUserDefaults.swift": [1748147448, 14262083]
+  ? "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/build/yangcheonlife.build/Release-iphoneos/yclifeliveactivityExtension.build/DerivedSources/GeneratedAssetSymbols.swift"
+  : [1748409740, 352033530]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yangcheonlife/Core/Constants/AppConstants.swift": [1748405682, 978782827]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yangcheonlife/Core/Models/ScheduleModels.swift": [1748405662, 383184463]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yclifeliveactivity/LiveActivityModels.swift": [1748408184, 79907848]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yclifeliveactivity/LiveActivityUtilities.swift": [1748409113, 713829037]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yclifeliveactivity/yclifeliveactivity.swift": [1748408750, 65593624]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yclifeliveactivity/yclifeliveactivityBundle.swift": [1748407791, 489401959]
+  "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yclifeliveactivity/yclifeliveactivityLiveActivity.swift": [1748409575, 577921047]

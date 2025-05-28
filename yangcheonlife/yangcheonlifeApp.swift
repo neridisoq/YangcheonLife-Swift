@@ -1,6 +1,7 @@
 // YangcheonLifeApp.swift - 양천고 라이프 메인 앱
 import SwiftUI
 import UserNotifications
+import ActivityKit
 
 @main
 struct YangcheonLifeApp: App {
@@ -11,6 +12,7 @@ struct YangcheonLifeApp: App {
     @StateObject private var wifiService = WiFiService.shared
     @StateObject private var notificationService = NotificationService.shared
     @StateObject private var firebaseService = FirebaseService.shared
+    @StateObject private var liveActivityManager = LiveActivityManager.shared
     
     // MARK: - Body
     var body: some Scene {
@@ -20,6 +22,7 @@ struct YangcheonLifeApp: App {
                 .environmentObject(wifiService)
                 .environmentObject(notificationService)
                 .environmentObject(firebaseService)
+                .environmentObject(liveActivityManager)
                 .onAppear {
                     setupApp()
                 }

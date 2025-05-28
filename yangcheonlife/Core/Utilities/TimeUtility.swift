@@ -48,6 +48,7 @@ enum CurrentPeriodStatus {
     case beforeSchool       // 등교 전
     case inClass(Int)      // 수업 중 (교시)
     case breakTime(Int)    // 쉬는 시간 (다음 교시)
+    case lunchTime         // 점심 시간
     case preClass(Int)     // 수업 10분 전 (교시)
     case afterSchool       // 하교 후
     
@@ -80,6 +81,16 @@ enum CurrentPeriodStatus {
                 return .inClass(periodNumber)
             }
             
+            // 4교시 종료 후 점심시간 처리 (12:10 ~ 13:00)
+            if index == 3 { // 4교시 (index 3)
+                let currentEndMinutes = period.endTime.hour * 60 + period.endTime.minute // 12:10 = 730분
+                let lunchEndMinutes = 13 * 60 // 13:00 = 780분
+                
+                if currentTotalMinutes > currentEndMinutes && currentTotalMinutes < lunchEndMinutes {
+                    return .lunchTime
+                }
+            }
+            
             // 다음 교시가 있는 경우 쉬는 시간과 수업 전 시간 확인
             if index < PeriodTime.allPeriods.count - 1 {
                 let nextPeriod = PeriodTime.allPeriods[index + 1]
@@ -87,12 +98,23 @@ enum CurrentPeriodStatus {
                 let nextStartMinutes = nextPeriod.startTime.hour * 60 + nextPeriod.startTime.minute
                 let nextPreClassMinutes = nextStartMinutes - 10
                 
-                if currentTotalMinutes > currentEndMinutes && currentTotalMinutes < nextPreClassMinutes {
-                    return .breakTime(periodNumber + 1)
-                } else if currentTotalMinutes >= nextPreClassMinutes && currentTotalMinutes < nextStartMinutes {
-                    return .preClass(periodNumber + 1)
+                // 4교시 이후는 점심시간으로 별도 처리되므로 제외
+                if index != 3 {
+                    if currentTotalMinutes > currentEndMinutes && currentTotalMinutes < nextPreClassMinutes {
+                        return .breakTime(periodNumber + 1)
+                    } else if currentTotalMinutes >= nextPreClassMinutes && currentTotalMinutes < nextStartMinutes {
+                        return .preClass(periodNumber + 1)
+                    }
                 }
             }
+        }
+        
+        // 5교시 수업 10분 전 (13:00 ~ 13:10) 처리
+        let fifthPeriodPreStart = 13 * 60 // 13:00 = 780분
+        let fifthPeriodStart = 13 * 60 + 10 // 13:10 = 790분
+        
+        if currentTotalMinutes >= fifthPeriodPreStart && currentTotalMinutes < fifthPeriodStart {
+            return .preClass(5)
         }
         
         // 하교 후
@@ -131,6 +153,8 @@ struct TimeUtility {
             return period
         case .beforeSchool:
             return 1
+        case .lunchTime:
+            return 5 // 점심시간 다음은 5교시
         default:
             return nil
         }
@@ -265,7 +289,21 @@ struct TimeUtility {
         let status = getCurrentPeriodStatus(at: date)
         
         switch status {
+        case .inClass(let period):
+            // 현재 수업 중이면 수업 종료까지 남은 시간
+            guard let endTime = getPeriodEndTime(period: period) else { return nil }
+            
+            let calendar = Calendar.current
+            guard let classEndTime = calendar.date(bySettingHour: endTime.hour,
+                                                   minute: endTime.minute,
+                                                   second: 0,
+                                                   of: date) else { return nil }
+            
+            let timeDifference = classEndTime.timeIntervalSince(date)
+            return max(0, Int(timeDifference / 60))
+            
         case .preClass(let period), .breakTime(let period):
+            // 수업 전이면 수업 시작까지 남은 시간
             guard let startTime = getPeriodStartTime(period: period) else { return nil }
             
             let calendar = Calendar.current
@@ -277,8 +315,21 @@ struct TimeUtility {
             let timeDifference = nextClassTime.timeIntervalSince(date)
             return max(0, Int(timeDifference / 60))
             
+        case .lunchTime:
+            // 점심시간이면 5교시 시작까지 남은 시간
+            guard let startTime = getPeriodStartTime(period: 5) else { return nil }
+            
+            let calendar = Calendar.current
+            guard let nextClassTime = calendar.date(bySettingHour: startTime.hour,
+                                                   minute: startTime.minute,
+                                                   second: 0,
+                                                   of: date) else { return nil }
+            
+            let timeDifference = nextClassTime.timeIntervalSince(date)
+            return max(0, Int(timeDifference / 60))
+            
         default:
-            return nil
+            return 0
         }
     }
 }
