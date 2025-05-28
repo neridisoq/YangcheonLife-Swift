@@ -58,6 +58,11 @@
 		098ED0172DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */; };
 		098ED0182DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */; };
 		098ED0192DE6D5DE0036C2CE /* TimeUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A972DE2D604005E29E4 /* TimeUtility.swift */; };
+		098ED0252DE747440036C2CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		098ED0262DE747440036C2CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		098ED0312DE747460036C2CE /* yclifemealwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		098ED0B32DE74B020036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
+		098ED0B42DE74B1D0036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
 		0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +88,13 @@
 			remoteGlobalIDString = 098ECFC02DE6CC710036C2CE;
 			remoteInfo = yclifeliveactivityExtension;
 		};
+		098ED02F2DE747460036C2CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 098ED0232DE747440036C2CE;
+			remoteInfo = yclifemealwidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -105,6 +117,7 @@
 				098ECF762DE6C2CD0036C2CE /* yclifemainwidgetExtension.appex in Embed Foundation Extensions */,
 				098ECFD02DE6CC720036C2CE /* yclifeliveactivityExtension.appex in Embed Foundation Extensions */,
 				098ECF8C2DE6C3770036C2CE /* yclifelockwidgetExtension.appex in Embed Foundation Extensions */,
+				098ED0312DE747460036C2CE /* yclifemealwidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -159,6 +172,8 @@
 		098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifeliveactivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		098ECFD52DE6CCAD0036C2CE /* yclifeliveactivityExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifeliveactivityExtension.entitlements; sourceTree = "<group>"; };
 		098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifemealwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		098ED03B2DE748A20036C2CE /* yclifemealwidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifemealwidgetExtension.entitlements; sourceTree = "<group>"; };
 		0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifewidgetExtension.entitlements; sourceTree = "<group>"; };
 		0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comsi.helgisnw.metestfile.json; sourceTree = "<group>"; };
 		15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_yangcheonlife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -225,6 +240,22 @@
 			);
 			target = 0969EFE92C2A7C04002C4F44 /* yangcheonlife */;
 		};
+		098ED0352DE747460036C2CE /* Exceptions for "yclifemealwidget" folder in "yclifemealwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 098ED0232DE747440036C2CE /* yclifemealwidgetExtension */;
+		};
+		098ED0372DE747F00036C2CE /* Exceptions for "Shared" folder in "yclifemealwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MealInfo.swift,
+				NeisAPIManager.swift,
+				SharedUserDefaults.swift,
+			);
+			target = 098ED0232DE747440036C2CE /* yclifemealwidgetExtension */;
+		};
 		0999C1A32D7FA65B00DDB78D /* Exceptions for "Shared" folder in "yangcheonlife" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -244,6 +275,7 @@
 				098ECF932DE6C9740036C2CE /* Exceptions for "Shared" folder in "yclifemainwidgetExtension" target */,
 				098ECF972DE6C97C0036C2CE /* Exceptions for "Shared" folder in "yclifelockwidgetExtension" target */,
 				098ECFDC2DE6D1CE0036C2CE /* Exceptions for "Shared" folder in "yclifeliveactivityExtension" target */,
+				098ED0372DE747F00036C2CE /* Exceptions for "Shared" folder in "yclifemealwidgetExtension" target */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -271,6 +303,14 @@
 				098ECFD42DE6CC720036C2CE /* Exceptions for "yclifeliveactivity" folder in "yclifeliveactivityExtension" target */,
 			);
 			path = yclifeliveactivity;
+			sourceTree = "<group>";
+		};
+		098ED0272DE747440036C2CE /* yclifemealwidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				098ED0352DE747460036C2CE /* Exceptions for "yclifemealwidget" folder in "yclifemealwidgetExtension" target */,
+			);
+			path = yclifemealwidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -308,6 +348,15 @@
 			files = (
 				098ECFC32DE6CC710036C2CE /* SwiftUI.framework in Frameworks */,
 				098ECFC22DE6CC710036C2CE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ED0212DE747440036C2CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ED0262DE747440036C2CE /* SwiftUI.framework in Frameworks */,
+				098ED0252DE747440036C2CE /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,6 +556,7 @@
 		0969EFE12C2A7C04002C4F44 = {
 			isa = PBXGroup;
 			children = (
+				098ED03B2DE748A20036C2CE /* yclifemealwidgetExtension.entitlements */,
 				098ECFD52DE6CCAD0036C2CE /* yclifeliveactivityExtension.entitlements */,
 				098ECFA02DE6C9ED0036C2CE /* yclifelockwidgetExtension.entitlements */,
 				098ECF9F2DE6C9E30036C2CE /* yclifemainwidgetExtension.entitlements */,
@@ -516,6 +566,7 @@
 				098ECF6C2DE6C2CB0036C2CE /* yclifemainwidget */,
 				098ECF822DE6C3760036C2CE /* yclifelockwidget */,
 				098ECFC42DE6CC710036C2CE /* yclifeliveactivity */,
+				098ED0272DE747440036C2CE /* yclifemealwidget */,
 				0969EFEB2C2A7C04002C4F44 /* Products */,
 				F65D034D03D29CF9324008A6 /* Pods */,
 				9723D769D7144062BDC836AB /* Frameworks */,
@@ -529,6 +580,7 @@
 				098ECF692DE6C2CB0036C2CE /* yclifemainwidgetExtension.appex */,
 				098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */,
 				098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */,
+				098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -602,6 +654,7 @@
 				098ECF752DE6C2CD0036C2CE /* PBXTargetDependency */,
 				098ECF8B2DE6C3770036C2CE /* PBXTargetDependency */,
 				098ECFCF2DE6CC720036C2CE /* PBXTargetDependency */,
+				098ED0302DE747460036C2CE /* PBXTargetDependency */,
 			);
 			name = yangcheonlife;
 			productName = yangcheonlife;
@@ -674,6 +727,28 @@
 			productReference = 098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		098ED0232DE747440036C2CE /* yclifemealwidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 098ED0322DE747460036C2CE /* Build configuration list for PBXNativeTarget "yclifemealwidgetExtension" */;
+			buildPhases = (
+				098ED0202DE747440036C2CE /* Sources */,
+				098ED0212DE747440036C2CE /* Frameworks */,
+				098ED0222DE747440036C2CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				098ED0272DE747440036C2CE /* yclifemealwidget */,
+			);
+			name = yclifemealwidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = yclifemealwidgetExtension;
+			productReference = 098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -694,6 +769,9 @@
 						CreatedOnToolsVersion = 16.3;
 					};
 					098ECFC02DE6CC710036C2CE = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					098ED0232DE747440036C2CE = {
 						CreatedOnToolsVersion = 16.3;
 					};
 				};
@@ -718,6 +796,7 @@
 				098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */,
 				098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */,
 				098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */,
+				098ED0232DE747440036C2CE /* yclifemealwidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -750,6 +829,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		098ECFBF2DE6CC710036C2CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ED0222DE747440036C2CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -870,6 +956,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		098ED0202DE747440036C2CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ED0B32DE74B020036C2CE /* AppConstants.swift in Sources */,
+				098ED0B42DE74B1D0036C2CE /* ScheduleModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -887,6 +982,11 @@
 			isa = PBXTargetDependency;
 			target = 098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */;
 			targetProxy = 098ECFCE2DE6CC720036C2CE /* PBXContainerItemProxy */;
+		};
+		098ED0302DE747460036C2CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 098ED0232DE747440036C2CE /* yclifemealwidgetExtension */;
+			targetProxy = 098ED02F2DE747460036C2CE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1278,6 +1378,64 @@
 			};
 			name = Release;
 		};
+		098ED0332DE747460036C2CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifemealwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifemealwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifemealwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifemealwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		098ED0342DE747460036C2CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifemealwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifemealwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifemealwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifemealwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1322,6 +1480,15 @@
 			buildConfigurations = (
 				098ECFD12DE6CC720036C2CE /* Debug */,
 				098ECFD22DE6CC720036C2CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		098ED0322DE747460036C2CE /* Build configuration list for PBXNativeTarget "yclifemealwidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				098ED0332DE747460036C2CE /* Debug */,
+				098ED0342DE747460036C2CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

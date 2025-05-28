@@ -11,39 +11,27 @@ struct MealTabView: View {
     
     // MARK: - Body
     var body: some View {
-        NavigationView {
-            ZStack {
-                // 웹뷰 컨테이너
-                MealWebView(
-                    isLoading: $isLoading,
-                    hasError: $hasError,
-                    errorMessage: $errorMessage
-                )
-                
-                // 로딩 인디케이터
-                if isLoading {
-                    LoadingView(message: "급식 정보 로딩 중...", showBackground: false)
-                }
-                
-                // 에러 상태
-                if hasError {
-                    ErrorView(error: MealError.loadFailed(errorMessage)) {
-                        reloadMealInfo()
-                    }
-                }
+        ZStack {
+            // 웹뷰 컨테이너
+            MealWebView(
+                isLoading: $isLoading,
+                hasError: $hasError,
+                errorMessage: $errorMessage
+            )
+            
+            // 로딩 인디케이터
+            if isLoading {
+                LoadingView(message: "급식 정보 로딩 중...", showBackground: false)
             }
-            .navigationTitle(NSLocalizedString(LocalizationKeys.meal, comment: ""))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("새로고침") {
-                        reloadMealInfo()
-                    }
-                    .disabled(isLoading)
+            
+            // 에러 상태
+            if hasError {
+                ErrorView(error: MealError.loadFailed(errorMessage)) {
+                    reloadMealInfo()
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
+        .ignoresSafeArea(.all, edges: .top)
     }
     
     // MARK: - Private Methods
