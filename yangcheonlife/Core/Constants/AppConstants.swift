@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: - 앱 전반 상수 정의
 
-struct AppConstants {
+public struct AppConstants {
     
     // MARK: - 앱 정보
     struct App {
@@ -24,23 +24,23 @@ struct AppConstants {
     }
     
     // MARK: - UserDefaults 키
-    struct UserDefaultsKeys {
-        static let defaultGrade = "defaultGrade"
-        static let defaultClass = "defaultClass"
-        static let notificationsEnabled = "notificationsEnabled"
-        static let physicalEducationAlertEnabled = "physicalEducationAlertEnabled"
-        static let physicalEducationAlertTime = "physicalEducationAlertTime"
-        static let cellBackgroundColor = "cellBackgroundColor"
-        static let initialSetupCompleted = "initialSetupCompleted"
-        static let wifiSuggestionEnabled = "wifiSuggestionEnabled"
-        static let lastSeenUpdateVersion = "lastSeenUpdateVersion"
+    public struct UserDefaultsKeys {
+        public static let defaultGrade = "defaultGrade"
+        public static let defaultClass = "defaultClass"
+        public static let notificationsEnabled = "notificationsEnabled"
+        public static let physicalEducationAlertEnabled = "physicalEducationAlertEnabled"
+        public static let physicalEducationAlertTime = "physicalEducationAlertTime"
+        public static let cellBackgroundColor = "cellBackgroundColor"
+        public static let initialSetupCompleted = "initialSetupCompleted"
+        public static let wifiSuggestionEnabled = "wifiSuggestionEnabled"
+        public static let lastSeenUpdateVersion = "lastSeenUpdateVersion"
         
         // 시간표 저장소 키
-        static let scheduleDataStore = "schedule_data_store"
-        static let scheduleCompareStore = "schedule_compare_store"
+        public static let scheduleDataStore = "schedule_data_store"
+        public static let scheduleCompareStore = "schedule_compare_store"
         
         // 탐구과목 선택 키 생성
-        static func selectedSubjectKey(for subject: String) -> String {
+        public static func selectedSubjectKey(for subject: String) -> String {
             return "selected\(subject)Subject"
         }
     }
