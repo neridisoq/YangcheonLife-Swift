@@ -12,7 +12,7 @@ class LiveActivityManager: ObservableObject {
     #if canImport(ActivityKit)
     private var _currentActivity: Any?
     
-    @available(iOS 16.2, *)
+    @available(iOS 18.0, *)
     var currentActivity: Activity<ClassActivityAttributes>? {
         get { _currentActivity as? Activity<ClassActivityAttributes> }
         set { 
@@ -25,7 +25,7 @@ class LiveActivityManager: ObservableObject {
     /// Live Activity가 실행 중인지 확인
     var isActivityRunning: Bool {
         #if canImport(ActivityKit)
-        if #available(iOS 16.2, *) {
+        if #available(iOS 18.0, *) {
             return currentActivity != nil
         }
         #endif
@@ -34,7 +34,7 @@ class LiveActivityManager: ObservableObject {
     
     private init() {
         #if canImport(ActivityKit)
-        if #available(iOS 16.2, *) {
+        if #available(iOS 18.0, *) {
             // 앱 시작 시 기존 활성 상태인 Live Activity 찾기
             if let existingActivity = Activity<ClassActivityAttributes>.activities.first {
                 currentActivity = existingActivity
@@ -46,7 +46,7 @@ class LiveActivityManager: ObservableObject {
     /// Live Activity 시작
     func startLiveActivity(grade: Int, classNumber: Int) {
         #if canImport(ActivityKit)
-        guard #available(iOS 16.2, *) else { return }
+        guard #available(iOS 18.0, *) else { return }
         
         let authInfo = ActivityAuthorizationInfo()
         print("🔍 Live Activity Authorization Status: \(authInfo.areActivitiesEnabled)")
@@ -86,7 +86,7 @@ class LiveActivityManager: ObservableObject {
     /// Live Activity 업데이트
     func updateLiveActivity() {
         #if canImport(ActivityKit)
-        guard #available(iOS 16.2, *),
+        guard #available(iOS 18.0, *),
               let activity = currentActivity else { return }
         
         let newState = ClassActivityAttributes.ContentState(
@@ -106,7 +106,7 @@ class LiveActivityManager: ObservableObject {
     /// Live Activity 종료
     func stopLiveActivity() {
         #if canImport(ActivityKit)
-        guard #available(iOS 16.2, *),
+        guard #available(iOS 18.0, *),
               let activity = currentActivity else { return }
         
         // UI 즉시 업데이트를 위해 먼저 nil로 설정
@@ -123,7 +123,7 @@ class LiveActivityManager: ObservableObject {
     /// 모든 Live Activity 종료
     func stopAllActivities() {
         #if canImport(ActivityKit)
-        guard #available(iOS 16.2, *) else { return }
+        guard #available(iOS 18.0, *) else { return }
         
         // UI 즉시 업데이트를 위해 먼저 nil로 설정
         DispatchQueue.main.async {
@@ -140,7 +140,7 @@ class LiveActivityManager: ObservableObject {
     
     // MARK: - Helper Methods
     
-    @available(iOS 16.2, *)
+    @available(iOS 18.0, *)
     private func getCurrentStatus() -> ClassStatus {
         let timeStatus = TimeUtility.getCurrentPeriodStatus()
         
@@ -160,7 +160,7 @@ class LiveActivityManager: ObservableObject {
         }
     }
     
-    @available(iOS 16.2, *)
+    @available(iOS 18.0, *)
     private func getCurrentClass() -> ClassInfo? {
         guard let currentPeriod = TimeUtility.getCurrentPeriodNumber() else { return nil }
         
@@ -191,7 +191,7 @@ class LiveActivityManager: ObservableObject {
         )
     }
     
-    @available(iOS 16.2, *)
+    @available(iOS 18.0, *)
     private func getNextClass() -> ClassInfo? {
         let weekdayIndex = TimeUtility.getCurrentWeekdayIndex()
         guard weekdayIndex >= 0 else { return nil }

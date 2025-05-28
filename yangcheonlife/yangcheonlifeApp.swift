@@ -1,7 +1,10 @@
 // YangcheonLifeApp.swift - 양천고 라이프 메인 앱
 import SwiftUI
 import UserNotifications
+
+#if canImport(ActivityKit) && swift(>=5.9)
 import ActivityKit
+#endif
 
 @main
 struct YangcheonLifeApp: App {

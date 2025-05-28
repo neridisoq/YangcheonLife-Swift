@@ -9,6 +9,7 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
+@available(iOS 18.0, *)
 struct ClassLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: ClassActivityAttributes.self) { context in
@@ -47,6 +48,7 @@ struct ClassLiveActivity: Widget {
 
 // MARK: - Live Activity Views
 
+@available(iOS 18.0, *)
 struct ClassLiveActivityView: View {
     let context: ActivityViewContext<ClassActivityAttributes>
     
@@ -164,6 +166,7 @@ struct ClassLiveActivityView: View {
     }
 }
 
+@available(iOS 18.0, *)
 struct ClassCardView: View {
     let classInfo: ClassInfo
     let title: String
@@ -199,6 +202,7 @@ struct ClassCardView: View {
     }
 }
 
+@available(iOS 18.0, *)
 struct ClassStatusView: View {
     let status: ClassStatus
     
@@ -213,6 +217,7 @@ struct ClassStatusView: View {
     }
 }
 
+@available(iOS 18.0, *)
 struct TimeRemainingView: View {
     let minutes: Int
     
@@ -234,6 +239,7 @@ struct TimeRemainingView: View {
     }
 }
 
+@available(iOS 18.0, *)
 struct ClassInfoView: View {
     let currentClass: ClassInfo?
     let nextClass: ClassInfo?

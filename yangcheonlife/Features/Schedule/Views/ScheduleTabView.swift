@@ -1,6 +1,9 @@
 // ScheduleTabView.swift - 시간표 탭 메인 뷰
 import SwiftUI
+
+#if canImport(ActivityKit) && swift(>=5.9)
 import ActivityKit
+#endif
 
 struct ScheduleTabView: View {
     
