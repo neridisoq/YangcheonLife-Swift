@@ -359,10 +359,24 @@ class LockWidgetDataService {
         guard weekday >= 0 && weekday < 5 else { return nil }
         
         let dailySchedule = scheduleData.getDailySchedule(for: weekday)
-        let currentPeriod = getCurrentPeriod(at: date) ?? 0
+        let currentPeriod = getCurrentPeriod(at: date)
+        
+        // 점심시간(12:10-13:10) 처리: 5교시부터 찾기
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        let currentMinutes = hour * 60 + minute
+        
+        let startPeriod: Int
+        if currentMinutes >= (12 * 60 + 10) && currentMinutes < (13 * 60 + 10) {
+            // 점심시간이면 5교시부터 찾기
+            startPeriod = 5
+        } else {
+            // 일반적인 경우: 현재 교시 다음부터 찾기
+            startPeriod = (currentPeriod ?? 0) + 1
+        }
         
         // Find next class
-        for period in (currentPeriod + 1)...7 {
+        for period in startPeriod...7 {
             if let classItem = dailySchedule.first(where: { $0.period == period }) {
                 let startTime = getPeriodStartTime(period: period, date: date)
                 let endTime = getPeriodEndTime(period: period, date: date)

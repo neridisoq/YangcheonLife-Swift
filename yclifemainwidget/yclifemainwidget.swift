@@ -60,13 +60,61 @@ struct MainWidgetProvider: TimelineProvider {
         let finalClass = classNumber > 0 ? classNumber : 5
         
         let currentDate = Date()
-        let displayMode = MainWidgetDataService.shared.getDisplayMode(for: context.family)
+        
+        // 급식 시간대인지 확인하고 미리 데이터 가져오기
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: currentDate)
+        let minute = calendar.component(.minute, from: currentDate)
+        let currentMinutes = hour * 60 + minute
+        
+        // 급식 시간대에 데이터 미리 가져오기
+        if context.family == .systemMedium {
+            if currentMinutes >= (11 * 60 + 20) && currentMinutes < (12 * 60 + 50) {
+                // 점심시간: 급식 정보 가져오기
+                fetchMealDataIfNeeded(date: currentDate, mealType: .lunch) {
+                    self.createTimelineEntry(currentDate: currentDate, grade: finalGrade, classNumber: finalClass, family: context.family, completion: completion)
+                }
+                return
+            } else if currentMinutes >= (15 * 60 + 10) && currentMinutes <= (17 * 60 + 30) {
+                // 석식시간: 석식 정보 가져오기, 없으면 다음날 중식
+                fetchMealDataIfNeeded(date: currentDate, mealType: .dinner) {
+                    let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
+                    self.fetchMealDataIfNeeded(date: nextDay, mealType: .lunch) {
+                        self.createTimelineEntry(currentDate: currentDate, grade: finalGrade, classNumber: finalClass, family: context.family, completion: completion)
+                    }
+                }
+                return
+            }
+        }
+        
+        // 일반적인 경우
+        createTimelineEntry(currentDate: currentDate, grade: finalGrade, classNumber: finalClass, family: context.family, completion: completion)
+    }
+    
+    private func fetchMealDataIfNeeded(date: Date, mealType: MealType, completion: @escaping () -> Void) {
+        // 이미 캐시된 데이터가 있으면 바로 완료
+        if NeisAPIManager.shared.getCachedMeal(date: date, mealType: mealType) != nil {
+            completion()
+            return
+        }
+        
+        // 캐시가 없으면 API 호출
+        NeisAPIManager.shared.fetchMeal(date: date, mealType: mealType) { mealInfo in
+            if let mealInfo = mealInfo {
+                NeisAPIManager.shared.cacheMeal(date: date, mealInfo: mealInfo)
+            }
+            completion()
+        }
+    }
+    
+    private func createTimelineEntry(currentDate: Date, grade: Int, classNumber: Int, family: WidgetFamily, completion: @escaping (Timeline<MainWidgetEntry>) -> Void) {
+        let displayMode = MainWidgetDataService.shared.getDisplayMode(for: family)
         
         let entry = MainWidgetEntry(
             date: currentDate,
             displayMode: displayMode,
-            grade: finalGrade,
-            classNumber: finalClass
+            grade: grade,
+            classNumber: classNumber
         )
         
         // 다음 갱신 시간 계산 (5분 후 또는 다음 교시 시작 시간)
@@ -140,12 +188,12 @@ struct SmallWidgetView: View {
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     
-                    Text(classInfo.subject)
+                    Text(getDisplaySubject(classInfo))
                         .font(.headline)
                         .fontWeight(.bold)
                         .lineLimit(1)
                     
-                    Text(classInfo.classroom)
+                    Text(getDisplayClassroom(classInfo))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
@@ -202,6 +250,8 @@ struct MediumWidgetView: View {
             MealWidgetView(mealInfo: mealInfo, entry: entry)
         case .nextClass(let classInfo):
             NextClassMediumView(classInfo: classInfo, entry: entry)
+        case .peInfo(let weekday, let hasPhysicalEducation):
+            PEMediumWidgetView(weekday: weekday, hasPhysicalEducation: hasPhysicalEducation, entry: entry)
         default:
             SmallWidgetView(entry: entry)
         }
@@ -224,30 +274,30 @@ struct NextClassMediumView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
-                Text(classInfo.subject)
+                Text(getDisplaySubject(classInfo))
                     .font(.title2)
                     .fontWeight(.bold)
                     .lineLimit(1)
                 
-                Text(classInfo.classroom)
+                Text(getDisplayClassroom(classInfo))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
                 Spacer()
                 
                 HStack {
+                    Text("\(classInfo.period)교시")
+                        .font(.caption)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.2))
+                        .cornerRadius(4)
+                    
                     Text("\(formatTime(classInfo.startTime)) ~ \(formatTime(classInfo.endTime))")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     
                     Spacer()
-                    
-                    Text("\(classInfo.period)교시")
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.2))
-                        .cornerRadius(6)
                 }
             }
             
@@ -270,6 +320,52 @@ struct NextClassMediumView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.green)
                 }
+            }
+        }
+        .padding()
+    }
+}
+
+struct PEMediumWidgetView: View {
+    let weekday: Int
+    let hasPhysicalEducation: Bool
+    let entry: MainWidgetEntry
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            // Left side - PE info
+            VStack(alignment: .leading, spacing: 8) {
+                Text("\(entry.grade)학년 \(entry.classNumber)반")
+                    .font(.caption)
+                    .foregroundColor(.blue)
+                
+                Text("내일 체육")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Text("\(weekdayString(weekday)) 체육")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .lineLimit(1)
+                
+                Text(hasPhysicalEducation ? "있음" : "없음")
+                    .font(.subheadline)
+                    .foregroundColor(hasPhysicalEducation ? .blue : .secondary)
+                
+                Spacer()
+            }
+            
+            Spacer()
+            
+            // Right side - Icon
+            VStack {
+                Image(systemName: hasPhysicalEducation ? "figure.run" : "figure.walk")
+                    .font(.system(size: 40))
+                    .foregroundColor(hasPhysicalEducation ? .blue : .gray)
+                
+                Text(hasPhysicalEducation ? "준비하세요!" : "편안한 하루")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
         }
         .padding()
@@ -518,6 +614,44 @@ private func getDisplayClassroom(_ item: ScheduleItem) -> String {
     return displayClassroom
 }
 
+private func getDisplaySubject(_ classInfo: ClassInfo) -> String {
+    var displaySubject = classInfo.subject
+    
+    if classInfo.subject.contains("반") {
+        let customKey = "selected\(classInfo.subject)Subject"
+        
+        if let selectedSubject = SharedUserDefaults.shared.userDefaults.string(forKey: customKey),
+           selectedSubject != "선택 없음" && selectedSubject != classInfo.subject {
+            
+            let components = selectedSubject.components(separatedBy: "/")
+            if components.count == 2 {
+                displaySubject = components[0]
+            }
+        }
+    }
+    
+    return displaySubject
+}
+
+private func getDisplayClassroom(_ classInfo: ClassInfo) -> String {
+    var displayClassroom = classInfo.classroom
+    
+    if classInfo.subject.contains("반") {
+        let customKey = "selected\(classInfo.subject)Subject"
+        
+        if let selectedSubject = SharedUserDefaults.shared.userDefaults.string(forKey: customKey),
+           selectedSubject != "선택 없음" && selectedSubject != classInfo.subject {
+            
+            let components = selectedSubject.components(separatedBy: "/")
+            if components.count == 2 {
+                displayClassroom = components[1]
+            }
+        }
+    }
+    
+    return displayClassroom
+}
+
 // MARK: - Data Service
 class MainWidgetDataService {
     static let shared = MainWidgetDataService()
@@ -552,14 +686,39 @@ class MainWidgetDataService {
             return .dailySchedule(dailySchedule, currentPeriod: currentPeriod)
             
         case .systemMedium:
-            // Check if it's meal time
-            if (hour >= 12 && hour < 13) || (hour >= 18 && hour < 19) {
-                if let mealInfo = getMealInfo(at: currentDate) {
+            let minute = calendar.component(.minute, from: currentDate)
+            let currentMinutes = hour * 60 + minute
+            
+            // 4교시 시작 (11:20) 후부터 12시 50분 전까지: 급식
+            if currentMinutes >= (11 * 60 + 20) && currentMinutes < (12 * 60 + 50) {
+                if let mealInfo = NeisAPIManager.shared.getCachedMeal(date: currentDate, mealType: .lunch) {
                     return .mealInfo(mealInfo)
+                }
+                // 급식 정보가 없어도 다음 수업을 보여주지 않고 빈 상태로
+                return .noInfo
+            }
+            
+            // 7교시 시작 (15:10) 부터 17시 30분까지: 석식
+            if currentMinutes >= (15 * 60 + 10) && currentMinutes <= (17 * 60 + 30) {
+                if let mealInfo = NeisAPIManager.shared.getCachedMeal(date: currentDate, mealType: .dinner) {
+                    return .mealInfo(mealInfo)
+                }
+                // 석식이 없으면 다음날 중식 시도
+                let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
+                if let mealInfo = NeisAPIManager.shared.getCachedMeal(date: nextDay, mealType: .lunch) {
+                    return .mealInfo(mealInfo)
+                }
+                return .noInfo
+            }
+            
+            // 17:30 이후: 다음날 체육 알림
+            if currentMinutes > (17 * 60 + 30) {
+                if let peInfo = getPEInfo(from: scheduleData, at: currentDate) {
+                    return .peInfo(weekday: peInfo.weekday, hasPhysicalEducation: peInfo.hasPhysicalEducation)
                 }
             }
             
-            // Otherwise show next class
+            // 그 외: 다음 수업 (단, 점심시간과 석식시간 제외)
             if let nextClass = getNextClass(from: scheduleData, at: currentDate) {
                 return .nextClass(nextClass)
             }
@@ -625,10 +784,24 @@ class MainWidgetDataService {
         guard weekday >= 0 && weekday < 5 else { return nil }
         
         let dailySchedule = scheduleData.getDailySchedule(for: weekday)
-        let currentPeriod = getCurrentPeriod(at: date) ?? 0
+        let currentPeriod = getCurrentPeriod(at: date)
+        
+        // 점심시간(12:10-13:10) 처리: 5교시부터 찾기
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        let currentMinutes = hour * 60 + minute
+        
+        let startPeriod: Int
+        if currentMinutes >= (12 * 60 + 10) && currentMinutes < (13 * 60 + 10) {
+            // 점심시간이면 5교시부터 찾기
+            startPeriod = 5
+        } else {
+            // 일반적인 경우: 현재 교시 다음부터 찾기
+            startPeriod = (currentPeriod ?? 0) + 1
+        }
         
         // Find next class
-        for period in (currentPeriod + 1)...7 {
+        for period in startPeriod...7 {
             if let classItem = dailySchedule.first(where: { $0.period == period }) {
                 let startTime = getPeriodStartTime(period: period, date: date)
                 let endTime = getPeriodEndTime(period: period, date: date)
@@ -644,22 +817,6 @@ class MainWidgetDataService {
         }
         
         return nil
-    }
-    
-    private func getMealInfo(at date: Date) -> MealInfo? {
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: date)
-        
-        let mealType: MealType
-        if hour >= 12 && hour < 13 {
-            mealType = .lunch
-        } else if hour >= 18 && hour < 19 {
-            mealType = .dinner
-        } else {
-            return nil
-        }
-        
-        return NeisAPIManager.shared.getCachedMeal(date: date, mealType: mealType)
     }
     
     private func getPEInfo(from scheduleData: ScheduleData, at date: Date) -> (weekday: Int, hasPhysicalEducation: Bool)? {

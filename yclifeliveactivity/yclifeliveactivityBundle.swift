@@ -11,7 +11,6 @@ import SwiftUI
 @main
 struct yclifeliveactivityBundle: WidgetBundle {
     var body: some Widget {
-        yclifeliveactivity()
         ClassLiveActivity()
     }
 }
