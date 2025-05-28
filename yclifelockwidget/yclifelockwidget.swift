@@ -154,7 +154,7 @@ struct CircularWidgetView: View {
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
                 
-                Text("\(classInfo.period)")
+                Text("\(classInfo.classroom)")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             }

@@ -15,7 +15,10 @@ class LiveActivityManager: ObservableObject {
     @available(iOS 16.2, *)
     var currentActivity: Activity<ClassActivityAttributes>? {
         get { _currentActivity as? Activity<ClassActivityAttributes> }
-        set { _currentActivity = newValue }
+        set { 
+            _currentActivity = newValue
+            objectWillChange.send()
+        }
     }
     #endif
     
@@ -70,7 +73,9 @@ class LiveActivityManager: ObservableObject {
                 attributes: attributes,
                 content: ActivityContent(state: initialState, staleDate: nil)
             )
-            currentActivity = activity
+            DispatchQueue.main.async {
+                self.currentActivity = activity
+            }
             print("Live Activity started successfully")
         } catch {
             print("Failed to start Live Activity: \(error)")
@@ -104,11 +109,13 @@ class LiveActivityManager: ObservableObject {
         guard #available(iOS 16.2, *),
               let activity = currentActivity else { return }
         
+        // UI 즉시 업데이트를 위해 먼저 nil로 설정
+        DispatchQueue.main.async {
+            self.currentActivity = nil
+        }
+        
         Task {
             await activity.end(nil, dismissalPolicy: .immediate)
-            await MainActor.run {
-                currentActivity = nil
-            }
         }
         #endif
     }
@@ -118,12 +125,14 @@ class LiveActivityManager: ObservableObject {
         #if canImport(ActivityKit)
         guard #available(iOS 16.2, *) else { return }
         
+        // UI 즉시 업데이트를 위해 먼저 nil로 설정
+        DispatchQueue.main.async {
+            self.currentActivity = nil
+        }
+        
         Task {
             for activity in Activity<ClassActivityAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
-            }
-            await MainActor.run {
-                currentActivity = nil
             }
         }
         #endif
