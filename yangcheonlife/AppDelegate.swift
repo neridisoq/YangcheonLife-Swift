@@ -8,6 +8,9 @@ import FirebaseMessaging
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Firebase 초기화 및 설정
+        FirebaseService.shared.initialize()
+        
         // Firebase 토픽 구독 해제 처리를 별도의 큐에서 실행
         let firebaseQueue = DispatchQueue(label: "com.helgisnw.yangcheonlife.firebaseQueue", qos: .utility)
         firebaseQueue.async {
@@ -24,34 +27,39 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // 백그라운드 앱 갱신 활성화
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
         
-        // 알림 권한 요청
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
-            print("Permission granted: \(granted)")
+        // 알림 권한 요청 및 설정
+        UNUserNotificationCenter.current().delegate = NotificationService.shared
+        Task {
+            let granted = await NotificationService.shared.requestAuthorization()
+            print("📱 알림 권한: \(granted)")
             
             if granted {
-                // 권한이 허용되면 로컬 알림 설정
-                DispatchQueue.main.async {
-                    if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
-                        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
-                        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
-                        
-                        // ScheduleService를 통한 시간표 데이터 가져오기 및 알림 설정
-                        Task {
-                            await ScheduleService.shared.loadSchedule(grade: grade, classNumber: classNumber)
-                            
-                            // 체육 수업 알림 설정
-                            if UserDefaults.standard.bool(forKey: "physicalEducationAlertEnabled") {
-                                PhysicalEducationAlertManager.shared.scheduleAlerts()
-                            }
-                            
-                            // 위젯 타임라인 갱신
-                            WidgetCenter.shared.reloadAllTimelines()
-                        }
+                // 권한이 허용되면 알림 설정
+                if UserDefaults.standard.bool(forKey: "notificationsEnabled") {
+                    let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+                    let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+                    
+                    // ScheduleService를 통한 시간표 데이터 가져오기 및 알림 설정
+                    await ScheduleService.shared.loadSchedule(grade: grade, classNumber: classNumber)
+                    
+                    // Firebase 토픽 구독
+                    if grade > 0 && classNumber > 0 {
+                        FirebaseService.shared.subscribeToTopic(grade: grade, classNumber: classNumber)
                     }
+                    
+                    // 체육 수업 알림 설정
+                    if UserDefaults.standard.bool(forKey: "physicalEducationAlertEnabled") {
+                        await NotificationService.shared.schedulePhysicalEducationAlerts()
+                    }
+                    
+                    // 위젯 타임라인 갱신
+                    WidgetCenter.shared.reloadAllTimelines()
                 }
             }
         }
+        
+        // APNS 등록
+        application.registerForRemoteNotifications()
         
         // 백그라운드 작업 등록
         registerBackgroundTasks()
@@ -65,7 +73,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         let semaphore = DispatchSemaphore(value: 0)
         
         print("🔄 Firebase 토픽 구독 해제 시작")
-        FirebaseManager.shared.unsubscribeFromAllTopics {
+        FirebaseService.shared.unsubscribeFromAllTopics {
             print("✅ Firebase 토픽 구독 해제 완료됨")
             semaphore.signal()
         }
@@ -138,15 +146,27 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         scheduleWidgetRefresh()
     }
 
-    // Handle foreground notifications
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .badge, .sound])
+    // MARK: - Remote Notifications (Firebase)
+    
+    /// APNS 등록 성공
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("📱 APNS 등록 성공")
+        Messaging.messaging().apnsToken = deviceToken
     }
     
-    // Handle background and closed app notifications
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
-        completionHandler()
+    /// APNS 등록 실패
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("❌ APNS 등록 실패: \(error)")
+    }
+    
+    /// Firebase 원격 알림 수신 (백그라운드/종료 상태)
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("📩 Firebase 원격 알림 수신: \(userInfo)")
+        
+        // Firebase가 메시지를 처리하도록 함
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        
+        completionHandler(.newData)
     }
     
     // Check for updates when app enters foreground

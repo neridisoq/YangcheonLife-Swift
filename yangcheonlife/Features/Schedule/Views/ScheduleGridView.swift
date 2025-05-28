@@ -69,7 +69,7 @@ struct ScheduleCellView: View {
     
     private var isCurrentPeriod: Bool {
         guard !isHeader,
-              let scheduleData = scheduleData else { return false }
+              scheduleData != nil else { return false }
         
         return viewModel.isCurrentPeriod(weekday: column - 1, period: row)
     }
@@ -151,9 +151,8 @@ struct ScheduleCellView: View {
             if let item = scheduleItem {
                 // 과목명 (탐구과목 치환 적용)
                 Text(viewModel.getDisplaySubject(for: item))
-                    .font(.system(size: 14))
+                    .font(.system(size: 14, weight: isCurrentPeriod ? .bold : .regular))
                     .lineLimit(1)
-                    .fontWeight(isCurrentPeriod ? .bold : .regular)
                 
                 // 교실 정보 (탐구과목 치환 적용)
                 Text(viewModel.getDisplayClassroom(for: item))

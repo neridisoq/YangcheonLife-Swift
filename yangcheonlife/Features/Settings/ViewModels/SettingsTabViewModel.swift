@@ -45,15 +45,29 @@ class SettingsTabViewModel: ObservableObject {
     
     /// 학년 저장
     func saveDefaultGrade(_ grade: Int) {
+        let oldGrade = defaultGrade
         defaultGrade = grade
         userDefaults.set(grade, forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        
+        // Firebase 토픽 구독 업데이트
+        if oldGrade != grade && defaultClass > 0 {
+            FirebaseService.shared.switchTopic(to: grade, classNumber: defaultClass)
+        }
+        
         updateSharedUserDefaults()
     }
     
     /// 반 저장
     func saveDefaultClass(_ classNumber: Int) {
+        let oldClass = defaultClass
         defaultClass = classNumber
         userDefaults.set(classNumber, forKey: AppConstants.UserDefaultsKeys.defaultClass)
+        
+        // Firebase 토픽 구독 업데이트
+        if oldClass != classNumber && defaultGrade > 0 {
+            FirebaseService.shared.switchTopic(to: defaultGrade, classNumber: classNumber)
+        }
+        
         updateSharedUserDefaults()
     }
     
@@ -68,6 +82,16 @@ class SettingsTabViewModel: ObservableObject {
     func savePhysicalEducationAlertEnabled(_ enabled: Bool) {
         physicalEducationAlertEnabled = enabled
         userDefaults.set(enabled, forKey: AppConstants.UserDefaultsKeys.physicalEducationAlertEnabled)
+        
+        // 체육 알림 설정 업데이트
+        Task {
+            if enabled {
+                await NotificationService.shared.schedulePhysicalEducationAlerts()
+            } else {
+                await NotificationService.shared.removePhysicalEducationAlerts()
+            }
+        }
+        
         updateSharedUserDefaults()
     }
     
@@ -80,6 +104,14 @@ class SettingsTabViewModel: ObservableObject {
         let timeString = formatter.string(from: time)
         
         userDefaults.set(timeString, forKey: AppConstants.UserDefaultsKeys.physicalEducationAlertTime)
+        
+        // 체육 알림 다시 설정 (시간 변경사항 반영)
+        if physicalEducationAlertEnabled {
+            Task {
+                await NotificationService.shared.schedulePhysicalEducationAlerts()
+            }
+        }
+        
         updateSharedUserDefaults()
     }
     

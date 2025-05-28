@@ -35,13 +35,13 @@ struct DailyScheduleProvider: TimelineProvider {
     
     func getSnapshot(in context: Context, completion: @escaping (DailyScheduleEntry) -> Void) {
         let sampleSchedule = [
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 1, classroom: "301", subject: "수학"),
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 2, classroom: "302", subject: "영어"),
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 3, classroom: "체육관", subject: "체육"),
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 4, classroom: "301", subject: "국어"),
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 5, classroom: "303", subject: "사회"),
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 6, classroom: "304", subject: "과학"),
-            ScheduleItem(grade: 3, classNumber: 5, weekday: 0, weekdayString: "월", period: 7, classroom: "301", subject: "진로")
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 1, teacher: "301", subject: "수학"),
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 2, teacher: "302", subject: "영어"),
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 3, teacher: "체육관", subject: "체육"),
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 4, teacher: "301", subject: "국어"),
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 5, teacher: "303", subject: "사회"),
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 6, teacher: "304", subject: "과학"),
+            ScheduleItem(grade: 3, class: 5, weekday: 0, weekdayString: "월", classTime: 7, teacher: "301", subject: "진로")
         ]
         
         let entry = DailyScheduleEntry(
@@ -129,10 +129,10 @@ struct DailyScheduleProvider: TimelineProvider {
         // Get schedule data from UserDefaults
         if let data = sharedDefaults.data(forKey: "schedule_data_store"),
            let scheduleData = try? JSONDecoder().decode(ScheduleData.self, from: data),
-           apiWeekday >= 0 && apiWeekday < scheduleData.weeklySchedule.count {
+           apiWeekday >= 0 && apiWeekday < scheduleData.schedules.count {
             
             // Get the appropriate day's schedule
-            let daySchedule = scheduleData.weeklySchedule[apiWeekday]
+            let daySchedule = scheduleData.schedules[apiWeekday]
             
             // Get current period index (다음 날 시간표의 경우 현재 교시는 표시하지 않음)
             let currentPeriodIndex = useNextDay ? -1 : getCurrentPeriodIndex(now: currentDate)
@@ -274,7 +274,7 @@ struct DailyScheduleWidgetView: View {
                     // Schedule list - Using VStack instead of ScrollView to avoid warning
                     VStack(spacing: 4) {
                         ForEach(0..<7) { index in
-                            let scheduleItem = entry.schedule.first { $0.period == index + 1 }
+                            let scheduleItem = entry.schedule.first { $0.classTime == index + 1 }
                             
                             ScheduleItemView(
                                 scheduleItem: scheduleItem,
@@ -371,7 +371,7 @@ struct ScheduleItemView: View {
     }
     
     private func getDisplayLocation(scheduleItem: ScheduleItem) -> String {
-        var displayLocation = scheduleItem.classroom
+        var displayLocation = scheduleItem.teacher
         
         if scheduleItem.subject.contains("반") {
             let customKey = "selected\(scheduleItem.subject)Subject"

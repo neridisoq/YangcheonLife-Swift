@@ -121,10 +121,19 @@ extension View {
     
     /// 현재 교시 강조 스타일
     func currentPeriodStyle(isCurrentPeriod: Bool) -> some View {
-        self
-            .background(isCurrentPeriod ? Color.currentPeriodBackground : Color.clear)
-            .fontWeight(isCurrentPeriod ? .bold : .regular)
-            .foregroundColor(isCurrentPeriod ? .primary : .primary)
+        Group {
+            if #available(iOS 16.0, *) {
+                self
+                    .background(isCurrentPeriod ? Color.currentPeriodBackground : Color.clear)
+                    .fontWeight(isCurrentPeriod ? .bold : .regular)
+                    .foregroundColor(isCurrentPeriod ? .primary : .primary)
+            } else {
+                self
+                    .background(isCurrentPeriod ? Color.currentPeriodBackground : Color.clear)
+                    .font(isCurrentPeriod ? .body.bold() : .body)
+                    .foregroundColor(isCurrentPeriod ? .primary : .primary)
+            }
+        }
     }
     
     /// 테두리 스타일

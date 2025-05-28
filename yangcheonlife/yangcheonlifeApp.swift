@@ -10,6 +10,7 @@ struct YangcheonLifeApp: App {
     @StateObject private var scheduleService = ScheduleService.shared
     @StateObject private var wifiService = WiFiService.shared
     @StateObject private var notificationService = NotificationService.shared
+    @StateObject private var firebaseService = FirebaseService.shared
     
     // MARK: - Body
     var body: some Scene {
@@ -18,6 +19,7 @@ struct YangcheonLifeApp: App {
                 .environmentObject(scheduleService)
                 .environmentObject(wifiService)
                 .environmentObject(notificationService)
+                .environmentObject(firebaseService)
                 .onAppear {
                     setupApp()
                 }
