@@ -101,7 +101,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
             // 위젯 타임라인 갱신
             WidgetCenter.shared.reloadAllTimelines()
-            print("✅ 백그라운드에서 위젯 타임라인 리로드 완료: \(Date())")
+            // 라이브 액티비티 업데이트
+            LiveActivityManager.shared.updateLiveActivity()
+            print("✅ 백그라운드에서 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 완료: \(Date())")
         }
         
         // 작업 완료 또는 제한 시간 도달 시 처리
@@ -119,12 +121,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // 백그라운드 위젯 업데이트 작업 스케줄링
     func scheduleWidgetRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: "com.helgisnw.yangcheonlife.widgetrefresh")
-        // 60초 후에 실행 (최소 시간임, 실제로는 iOS가 적절한 시점에 실행)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 60)
+        // 30초 후에 실행 (라이브 액티비티 업데이트를 위해 더 자주 실행)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 30)
         
         do {
             try BGTaskScheduler.shared.submit(request)
-            print("📆 다음 백그라운드 위젯 업데이트 작업 예약됨")
+            print("📆 다음 백그라운드 위젯 및 라이브 액티비티 업데이트 작업 예약됨")
         } catch {
             print("❌ 백그라운드 작업 예약 실패: \(error)")
         }
@@ -138,8 +140,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
         // 위젯 타임라인 갱신
         WidgetCenter.shared.reloadAllTimelines()
+        // 라이브 액티비티 업데이트
+        LiveActivityManager.shared.updateLiveActivity()
         
-        print("✅ 백그라운드 앱 갱신에서 위젯 타임라인 리로드 완료")
+        print("✅ 백그라운드 앱 갱신에서 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 완료")
         completionHandler(.newData)
         
         // 다음 백그라운드 작업 스케줄링
@@ -166,12 +170,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // Firebase가 메시지를 처리하도록 함
         Messaging.messaging().appDidReceiveMessage(userInfo)
         
+        // 라이브 액티비티 업데이트 (원격 알림으로 인한 업데이트)
+        LiveActivityManager.shared.updateLiveActivity()
+        
         completionHandler(.newData)
     }
     
     // Check for updates when app enters foreground
     func applicationWillEnterForeground(_ application: UIApplication) {
         AppUpdateService.shared.checkForUpdates()
+        // 라이브 액티비티 업데이트
+        LiveActivityManager.shared.updateLiveActivity()
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
     }
@@ -183,7 +192,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
         SharedUserDefaults.shared.printAllValues()
         WidgetCenter.shared.reloadAllTimelines()
-        print("✅ 위젯 타임라인 리로드 요청 완료")
+        // 라이브 액티비티 업데이트
+        LiveActivityManager.shared.updateLiveActivity()
+        print("✅ 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 요청 완료")
         
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
@@ -191,6 +202,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // 앱이 백그라운드로 이동할 때 호출
     func applicationDidEnterBackground(_ application: UIApplication) {
+        // 라이브 액티비티 업데이트 (백그라운드 진입 전 마지막 업데이트)
+        LiveActivityManager.shared.updateLiveActivity()
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
     }
