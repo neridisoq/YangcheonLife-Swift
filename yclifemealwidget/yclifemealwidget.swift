@@ -94,7 +94,7 @@ struct MealWidgetProvider: TimelineProvider {
         var fetchTasks: [(Date, MealType)] = []
         
         // 시간에 따라 필요한 급식 데이터 결정
-        if currentMinutes >= (18 * 60) || currentMinutes < (13 * 60 + 30) {
+        if currentMinutes >= (18 * 60) {
             // 다음날 중식이 필요
             let nextDay = calendar.date(byAdding: .day, value: 1, to: date) ?? date
             fetchTasks.append((nextDay, .lunch))
@@ -136,7 +136,7 @@ struct MealWidgetProvider: TimelineProvider {
         let currentMinutes = hour * 60 + minute
         
         // 시간별 급식 로직
-        if currentMinutes >= (18 * 60) || currentMinutes < (13 * 60 + 30) {
+        if currentMinutes >= (18 * 60) {
             // 오후 6시부터 다음날 1시 30분까지: 다음날 중식
             let nextDay = calendar.date(byAdding: .day, value: 1, to: date) ?? date
             return NeisAPIManager.shared.getCachedMeal(date: nextDay, mealType: .lunch)
@@ -277,7 +277,7 @@ struct SmallMealWidgetView: View {
         let minute = calendar.component(.minute, from: entry.date)
         let currentMinutes = hour * 60 + minute
         
-        if currentMinutes >= (18 * 60) || currentMinutes < (13 * 60 + 30) {
+        if currentMinutes >= (18 * 60){
             return "내일"
         } else if currentMinutes >= (13 * 60 + 30) && currentMinutes < (18 * 60) {
             return "오늘"
@@ -363,7 +363,7 @@ struct MediumMealWidgetView: View {
         let minute = calendar.component(.minute, from: entry.date)
         let currentMinutes = hour * 60 + minute
         
-        if currentMinutes >= (18 * 60) || currentMinutes < (13 * 60 + 30) {
+        if currentMinutes >= (18 * 60) {
             return "내일"
         } else if currentMinutes >= (13 * 60 + 30) && currentMinutes < (18 * 60) {
             return "오늘"

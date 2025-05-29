@@ -7,7 +7,7 @@ struct WiFiConnectionView: View {
     @StateObject private var wifiService = WiFiService.shared
     @State private var selectedGrade = 3
     @State private var selectedClassNumber = 5
-    @State private var selectedRoomType = 0 // 0: 일반교실, 1: 특별실
+    @State private var selectedTab = 2 // 0: 1학년, 1: 2학년, 2: 3학년, 3: 특별실
     @State private var connectionResult: WiFiConnectionResult?
     @State private var showResult = false
     
@@ -17,22 +17,29 @@ struct WiFiConnectionView: View {
     // MARK: - Body
     var body: some View {
         NavigationView {
-            List {
-                // 연결 유형 선택
-                connectionTypeSection
+            VStack(spacing: 0) {
+                // 상단 탭 선택
+                gradeTabSection
                 
-                // 일반 교실 선택
-                if selectedRoomType == 0 {
-                    regularClassroomSection
+                // 하단 컨텐츠
+                TabView(selection: $selectedTab) {
+                    // 1학년 탭
+                    gradeClassroomView(grade: 1)
+                        .tag(0)
+                    
+                    // 2학년 탭
+                    gradeClassroomView(grade: 2)
+                        .tag(1)
+                    
+                    // 3학년 탭
+                    gradeClassroomView(grade: 3)
+                        .tag(2)
+                    
+                    // 특별실 탭
+                    specialRoomView
+                        .tag(3)
                 }
-                
-                // 특별실 선택
-                if selectedRoomType == 1 {
-                    specialRoomSection
-                }
-                
-                // 안내사항
-                infoSection
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
             .navigationTitle("학교 WiFi 연결")
             .navigationBarTitleDisplayMode(.inline)
@@ -53,71 +60,106 @@ struct WiFiConnectionView: View {
     
     // MARK: - View Sections
     
-    /// 연결 유형 선택 섹션
-    private var connectionTypeSection: some View {
-        Section("연결 유형") {
-            Picker("유형", selection: $selectedRoomType) {
-                Text("일반 교실").tag(0)
-                Text("특별실").tag(1)
+    /// 학년 탭 선택 섹션
+    private var gradeTabSection: some View {
+        HStack(spacing: 2) {
+            ForEach(0..<4, id: \.self) { index in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        selectedTab = index
+                    }
+                } label: {
+                    Text(tabTitle(for: index))
+                        .font(.system(size: 15, weight: selectedTab == index ? .medium : .regular))
+                        .foregroundColor(selectedTab == index ? .blue : .secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(selectedTab == index ? Color.blue.opacity(0.1) : Color.clear)
+                        )
+                }
+                .buttonStyle(PlainButtonStyle())
             }
-            .pickerStyle(SegmentedPickerStyle())
+        }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color(.systemGray6))
+        )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+    
+    /// 학년별 교실 뷰
+    private func gradeClassroomView(grade: Int) -> some View {
+        VStack(spacing: 0) {
+            List {
+                Section("\(grade)학년 교실 WiFi") {
+                    ForEach(AppConstants.School.classes, id: \.self) { classNumber in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("\(grade)학년 \(classNumber)반")
+                                    .bodyStyle()
+                                
+                                Text("SSID: \(grade)-\(classNumber)")
+                                    .captionStyle()
+                            }
+                            
+                            Spacer()
+                            
+                            Button("연결") {
+                                selectedGrade = grade
+                                selectedClassNumber = classNumber
+                                connectToClassroom()
+                            }
+                            .secondaryButtonStyle()
+                            .disabled(wifiService.isConnecting)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+                
+                // 안내사항 (각 탭에 표시)
+                gradeInfoSection(grade: grade)
+            }
         }
     }
     
-    /// 일반 교실 섹션
-    private var regularClassroomSection: some View {
-        Section("일반 교실 WiFi") {
-            // 학년 선택
-            Picker("학년", selection: $selectedGrade) {
-                ForEach(AppConstants.School.grades, id: \.self) { grade in
-                    Text("\(grade)학년").tag(grade)
-                }
-            }
-            
-            // 반 선택
-            Picker("반", selection: $selectedClassNumber) {
-                ForEach(AppConstants.School.classes, id: \.self) { classNumber in
-                    Text("\(classNumber)반").tag(classNumber)
-                }
-            }
-            
-            // 연결 버튼
-            Button("🔗 \(selectedGrade)학년 \(selectedClassNumber)반 WiFi 연결") {
-                connectToClassroom()
-            }
-            .primaryButtonStyle()
-            .disabled(wifiService.isConnecting)
-        }
-    }
-    
-    /// 특별실 섹션
-    private var specialRoomSection: some View {
-        Section("특별실 WiFi") {
-            ForEach(specialRooms) { room in
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(room.name)
-                            .bodyStyle()
+    /// 특별실 뷰
+    private var specialRoomView: some View {
+        List {
+            Section("특별실 WiFi") {
+                ForEach(specialRooms) { room in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(room.name)
+                                .bodyStyle()
+                            
+                            Text("SSID: \(room.ssid)")
+                                .captionStyle()
+                        }
                         
-                        Text("SSID: \(room.ssid)")
-                            .captionStyle()
+                        Spacer()
+                        
+                        Button("연결") {
+                            connectToSpecialRoom(room)
+                        }
+                        .secondaryButtonStyle()
+                        .disabled(wifiService.isConnecting)
                     }
-                    
-                    Spacer()
-                    
-                    Button("연결") {
-                        connectToSpecialRoom(room)
-                    }
-                    .secondaryButtonStyle()
-                    .disabled(wifiService.isConnecting)
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
             }
+            
+            // 특별실 안내사항
+            specialRoomInfoSection
         }
     }
     
-    /// 안내사항 섹션
-    private var infoSection: some View {
+    /// 학년별 안내사항 섹션
+    private func gradeInfoSection(grade: Int) -> some View {
         Section("안내사항") {
             if !wifiService.hasLocationPermission {
                 HStack {
@@ -143,18 +185,64 @@ struct WiFiConnectionView: View {
             Text("• 학교 WiFi는 SSID가 숨김 설정되어 있습니다.")
                 .captionStyle()
             
-            Text("• 일반교실 SSID 형식: 학년-반 (예: 3-5)")
+            Text("• \(grade)학년 SSID 형식: \(grade)-반번호 (예: \(grade)-5)")
                 .captionStyle()
             
-            Text("• 일반교실 비밀번호 형식: yangcheon + 학년반번호")
+            Text("• 비밀번호 형식: yangcheon + 학년반번호")
                 .captionStyle()
             
-            Text("• 예시: 3학년 5반 → SSID: 3-5, 비밀번호: yangcheon305")
+            Text("• 예시: \(grade)학년 5반 → SSID: \(grade)-5, 비밀번호: yangcheon\(grade)05")
+                .captionStyle()
+        }
+    }
+    
+    /// 특별실 안내사항 섹션
+    private var specialRoomInfoSection: some View {
+        Section("안내사항") {
+            if !wifiService.hasLocationPermission {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.warningColor)
+                    
+                    VStack(alignment: .leading) {
+                        Text("위치 권한 필요")
+                            .bodyStyle()
+                        Text("WiFi 연결을 위해 위치 권한이 필요합니다.")
+                            .captionStyle()
+                    }
+                    
+                    Spacer()
+                    
+                    Button("설정") {
+                        openSettings()
+                    }
+                    .secondaryButtonStyle()
+                }
+            }
+            
+            Text("• 학교 WiFi는 SSID가 숨김 설정되어 있습니다.")
+                .captionStyle()
+            
+            Text("• 특별실은 고유한 SSID와 비밀번호를 가집니다.")
+                .captionStyle()
+            
+            Text("• 각 특별실의 SSID와 비밀번호는 위 목록을 참고하세요.")
                 .captionStyle()
         }
     }
     
     // MARK: - Private Methods
+    
+    /// 탭 제목 반환
+    private func tabTitle(for index: Int) -> String {
+        switch index {
+        case 0: return "1학년"
+        case 1: return "2학년"
+        case 2: return "3학년"
+        case 3: return "특별실"
+        default: return ""
+        }
+    }
     
     /// 기본 설정 로드
     private func loadDefaultSettings() {
@@ -163,6 +251,9 @@ struct WiFiConnectionView: View {
         
         if selectedGrade == 0 { selectedGrade = 3 }
         if selectedClassNumber == 0 { selectedClassNumber = 5 }
+        
+        // 저장된 학년에 따라 기본 탭 설정
+        selectedTab = selectedGrade - 1
     }
     
     /// 일반 교실 WiFi 연결

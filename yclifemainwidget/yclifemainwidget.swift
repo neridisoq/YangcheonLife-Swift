@@ -117,7 +117,7 @@ struct MainWidgetProvider: TimelineProvider {
             classNumber: classNumber
         )
         
-        // 다음 갱신 시간 계산 (5분 후 또는 다음 교시 시작 시간)
+        // 다음 갱신 시간 계산 (1분 후)
         let nextRefreshDate = MainWidgetDataService.shared.getNextRefreshTime(from: currentDate)
         let timeline = Timeline(entries: [entry], policy: .after(nextRefreshDate))
         
@@ -712,7 +712,7 @@ class MainWidgetDataService {
             }
             
             // 17:30 이후: 다음날 체육 알림
-            if currentMinutes > (17 * 60 + 30) {
+            if currentMinutes > (17 * 60 + 30) || currentMinutes < (8 * 60){
                 if let peInfo = getPEInfo(from: scheduleData, at: currentDate) {
                     return .peInfo(weekday: peInfo.weekday, hasPhysicalEducation: peInfo.hasPhysicalEducation)
                 }
@@ -748,8 +748,8 @@ class MainWidgetDataService {
     func getNextRefreshTime(from date: Date) -> Date {
         let calendar = Calendar.current
         
-        // Refresh every 5 minutes
-        return calendar.date(byAdding: .minute, value: 5, to: date) ?? date
+        // Refresh every 1 minute
+        return calendar.date(byAdding: .minute, value: 1, to: date) ?? date
     }
     
     private func getCurrentPeriod(at date: Date) -> Int? {

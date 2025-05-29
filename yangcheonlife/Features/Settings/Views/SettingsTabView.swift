@@ -56,11 +56,13 @@ struct SettingsTabView: View {
     // MARK: - View Sections
     
     /// Live Activity 제어 섹션
+    @ViewBuilder
     private var liveActivitySection: some View {
-        Section("라이브 액티비티") {
+        if #available(iOS 18.0, *) {
+            Section("라이브 액티비티") {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Dynamic Island 표시")
+                    Text("Live Activity / Dynamic Island 표시")
                         .font(.subheadline)
                         .fontWeight(.medium)
                     Text("현재 수업, 다음 수업, 남은 시간을 Dynamic Island와 잠금 화면에서 확인")
@@ -104,6 +106,7 @@ struct SettingsTabView: View {
             }
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
+            }
         }
     }
     
@@ -326,6 +329,7 @@ struct SettingsTabView: View {
     // MARK: - Live Activity Methods
     
     /// Live Activity 시작
+    @available(iOS 18.0, *)
     private func startLiveActivity() {
         liveActivityManager.startLiveActivity(
             grade: viewModel.defaultGrade,
@@ -334,6 +338,7 @@ struct SettingsTabView: View {
     }
     
     /// Live Activity 중지
+    @available(iOS 18.0, *)
     private func stopLiveActivity() {
         liveActivityManager.stopLiveActivity()
     }
