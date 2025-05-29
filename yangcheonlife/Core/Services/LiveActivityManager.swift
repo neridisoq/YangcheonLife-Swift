@@ -222,6 +222,16 @@ class LiveActivityManager: ObservableObject {
             if period == 4 {
                 return nil
             }
+            // 7교시 중이면 학교 끝 표시
+            if period == 7 {
+                return ClassInfo(
+                    period: 8,
+                    subject: "학교 끝!",
+                    classroom: "",
+                    startTime: "",
+                    endTime: ""
+                )
+            }
             nextPeriod = period + 1
         case .breakTime(let period):
             nextPeriod = period
@@ -235,19 +245,45 @@ class LiveActivityManager: ObservableObject {
         
         guard let targetPeriod = nextPeriod else { return nil }
         
-        // 대상 교시부터 7교시까지 찾기
-        for period in targetPeriod...7 {
-            if let scheduleItem = dailySchedule.first(where: { $0.period == period }) {
-                let timeString = TimeUtility.getPeriodTimeString(period: period)
-                let timeComponents = timeString.components(separatedBy: " - ")
-                
-                return ClassInfo(
-                    period: period,
-                    subject: scheduleItem.subject,
-                    classroom: scheduleItem.classroom,
-                    startTime: timeComponents.first ?? "",
-                    endTime: timeComponents.last ?? ""
-                )
+        // 현재일 대상 교시부터 7교시까지 찾기
+        if targetPeriod <= 7 {
+            for period in targetPeriod...7 {
+                if let scheduleItem = dailySchedule.first(where: { $0.period == period }) {
+                    let timeString = TimeUtility.getPeriodTimeString(period: period)
+                    let timeComponents = timeString.components(separatedBy: " - ")
+                    
+                    return ClassInfo(
+                        period: period,
+                        subject: scheduleItem.subject,
+                        classroom: scheduleItem.classroom,
+                        startTime: timeComponents.first ?? "",
+                        endTime: timeComponents.last ?? ""
+                    )
+                }
+            }
+        }
+        
+        // 현재일에서 수업을 찾지 못했으면 다음 수업일의 1교시부터 찾기
+        let nextSchoolDay = TimeUtility.getNextSchoolDay()
+        let nextWeekdayIndex = TimeUtility.getCurrentWeekdayIndex(at: nextSchoolDay)
+        
+        if nextWeekdayIndex >= 0 {
+            let nextDaySchedule = scheduleData.getDailySchedule(for: nextWeekdayIndex)
+            
+            // 다음날 1교시부터 7교시까지 찾기
+            for period in 1...7 {
+                if let scheduleItem = nextDaySchedule.first(where: { $0.period == period }) {
+                    let timeString = TimeUtility.getPeriodTimeString(period: period)
+                    let timeComponents = timeString.components(separatedBy: " - ")
+                    
+                    return ClassInfo(
+                        period: period,
+                        subject: scheduleItem.subject,
+                        classroom: scheduleItem.classroom,
+                        startTime: timeComponents.first ?? "",
+                        endTime: timeComponents.last ?? ""
+                    )
+                }
             }
         }
         

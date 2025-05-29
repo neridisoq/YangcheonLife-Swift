@@ -103,6 +103,7 @@ struct ScheduleTabView: View {
                         forceRefresh: true
                     )
                     viewModel.updateCurrentClassInfo(scheduleData: scheduleService.currentScheduleData)
+                    viewModel.loadCellBackgroundColor()
                 }
             }) {
                 Image(systemName: "arrow.clockwise")
@@ -217,6 +218,7 @@ struct ScheduleTabView: View {
                 cellBackgroundColor: viewModel.cellBackgroundColor,
                 geometry: geometry
             )
+            .environmentObject(viewModel)
         }
         .appPadding([.horizontal, .bottom])
     }

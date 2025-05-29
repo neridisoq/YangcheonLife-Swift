@@ -359,39 +359,159 @@ class LockWidgetDataService {
         guard weekday >= 0 && weekday < 5 else { return nil }
         
         let dailySchedule = scheduleData.getDailySchedule(for: weekday)
-        let currentPeriod = getCurrentPeriod(at: date)
         
-        // 점심시간(12:10-13:10) 처리: 5교시부터 찾기
-        let hour = calendar.component(.hour, from: date)
-        let minute = calendar.component(.minute, from: date)
-        let currentMinutes = hour * 60 + minute
+        // TimeUtility의 getCurrentPeriodStatus 사용
+        let timeStatus = getCurrentPeriodStatus(at: date)
         
         let startPeriod: Int
-        if currentMinutes >= (12 * 60 + 10) && currentMinutes < (13 * 60 + 10) {
-            // 점심시간이면 5교시부터 찾기
+        switch timeStatus {
+        case .beforeSchool:
+            startPeriod = 1
+        case .inClass(let period):
+            // 7교시 중이면 학교 끝
+            if period == 7 {
+                return LockClassInfo(
+                    subject: "학교 끝!",
+                    classroom: "",
+                    period: 0,
+                    startTime: date,
+                    endTime: date
+                )
+            }
+            // 현재 수업 중이면 다음 교시부터
+            startPeriod = period + 1
+        case .breakTime(let nextPeriod), .preClass(let nextPeriod):
+            // 쉬는시간이나 수업 전이면 해당 교시부터
+            startPeriod = nextPeriod
+        case .lunchTime:
+            // 점심시간이면 5교시부터
             startPeriod = 5
-        } else {
-            // 일반적인 경우: 현재 교시 다음부터 찾기
-            startPeriod = (currentPeriod ?? 0) + 1
+        case .afterSchool:
+            // 하교 후면 다음날 1교시부터
+            return getNextDayFirstClass(from: scheduleData, currentDate: date)
         }
         
-        // Find next class
-        for period in startPeriod...7 {
-            if let classItem = dailySchedule.first(where: { $0.period == period }) {
-                let startTime = getPeriodStartTime(period: period, date: date)
-                let endTime = getPeriodEndTime(period: period, date: date)
-                
-                return LockClassInfo(
-                    subject: getDisplaySubject(classItem),
-                    classroom: getDisplayClassroom(classItem),
-                    period: period,
-                    startTime: startTime,
-                    endTime: endTime
-                )
+        // 현재일 수업 찾기
+        if startPeriod <= 7 {
+            for period in startPeriod...7 {
+                if let classItem = dailySchedule.first(where: { $0.period == period }) {
+                    let startTime = getPeriodStartTime(period: period, date: date)
+                    let endTime = getPeriodEndTime(period: period, date: date)
+                    
+                    return LockClassInfo(
+                        subject: getDisplaySubject(classItem),
+                        classroom: getDisplayClassroom(classItem),
+                        period: period,
+                        startTime: startTime,
+                        endTime: endTime
+                    )
+                }
+            }
+        }
+        
+        // 현재일에 수업이 없으면 다음날 찾기
+        return getNextDayFirstClass(from: scheduleData, currentDate: date)
+    }
+    
+    private func getNextDayFirstClass(from scheduleData: ScheduleData, currentDate: Date) -> LockClassInfo? {
+        let calendar = Calendar.current
+        var nextDay = currentDate
+        
+        // 다음 수업일 찾기 (최대 7일까지)
+        for _ in 1...7 {
+            guard let next = calendar.date(byAdding: .day, value: 1, to: nextDay) else { return nil }
+            nextDay = next
+            
+            let weekday = calendar.component(.weekday, from: nextDay) - 2
+            guard weekday >= 0 && weekday < 5 else { continue } // 주말 스킵
+            
+            let dailySchedule = scheduleData.getDailySchedule(for: weekday)
+            
+            // 1교시부터 7교시까지 찾기
+            for period in 1...7 {
+                if let classItem = dailySchedule.first(where: { $0.period == period }) {
+                    let startTime = getPeriodStartTime(period: period, date: nextDay)
+                    let endTime = getPeriodEndTime(period: period, date: nextDay)
+                    
+                    return LockClassInfo(
+                        subject: getDisplaySubject(classItem),
+                        classroom: getDisplayClassroom(classItem),
+                        period: period,
+                        startTime: startTime,
+                        endTime: endTime
+                    )
+                }
             }
         }
         
         return nil
+    }
+    
+    private func getCurrentPeriodStatus(at date: Date) -> CurrentPeriodStatus {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        let currentTotalMinutes = hour * 60 + minute
+        
+        // 등교 전 (8:10 이전)
+        if currentTotalMinutes < (8 * 60 + 10) {
+            return .beforeSchool
+        }
+        
+        let periodTimes = [
+            (start: 8 * 60 + 20, end: 9 * 60 + 10),   // 1교시
+            (start: 9 * 60 + 20, end: 10 * 60 + 10),  // 2교시
+            (start: 10 * 60 + 20, end: 11 * 60 + 10), // 3교시
+            (start: 11 * 60 + 20, end: 12 * 60 + 10), // 4교시
+            (start: 13 * 60 + 10, end: 14 * 60),      // 5교시
+            (start: 14 * 60 + 10, end: 15 * 60),      // 6교시
+            (start: 15 * 60 + 10, end: 16 * 60)       // 7교시
+        ]
+        
+        // 각 교시 시간 확인
+        for (index, time) in periodTimes.enumerated() {
+            let periodNumber = index + 1
+            
+            // 수업 중
+            if currentTotalMinutes >= time.start && currentTotalMinutes <= time.end {
+                return .inClass(periodNumber)
+            }
+            
+            // 수업 10분 전
+            if currentTotalMinutes >= (time.start - 10) && currentTotalMinutes < time.start {
+                return .preClass(periodNumber)
+            }
+            
+            // 쉬는시간 (다음 교시까지)
+            if index < periodTimes.count - 1 {
+                let nextTime = periodTimes[index + 1]
+                if currentTotalMinutes > time.end && currentTotalMinutes < (nextTime.start - 10) {
+                    // 4교시 후는 점심시간
+                    if periodNumber == 4 {
+                        return .lunchTime
+                    } else {
+                        return .breakTime(periodNumber + 1)
+                    }
+                }
+            }
+        }
+        
+        // 점심시간 (12:10 ~ 13:00)
+        if currentTotalMinutes > (12 * 60 + 10) && currentTotalMinutes < (13 * 60) {
+            return .lunchTime
+        }
+        
+        // 하교 후
+        return .afterSchool
+    }
+    
+    enum CurrentPeriodStatus {
+        case beforeSchool
+        case inClass(Int)
+        case breakTime(Int)
+        case preClass(Int)
+        case lunchTime
+        case afterSchool
     }
     
     private func getPEInfo(from scheduleData: ScheduleData, at date: Date) -> (weekday: Int, hasPhysicalEducation: Bool)? {
@@ -411,30 +531,6 @@ class LockWidgetDataService {
         return (weekday: targetWeekday, hasPhysicalEducation: hasPhysicalEducation)
     }
     
-    private func getCurrentPeriod(at date: Date) -> Int? {
-        let calendar = Calendar.current
-        let hour = calendar.component(.hour, from: date)
-        let minute = calendar.component(.minute, from: date)
-        let currentMinutes = hour * 60 + minute
-        
-        let periodTimes = [
-            (start: 8 * 60 + 20, end: 9 * 60 + 10),   // 1교시
-            (start: 9 * 60 + 20, end: 10 * 60 + 10),  // 2교시
-            (start: 10 * 60 + 20, end: 11 * 60 + 10), // 3교시
-            (start: 11 * 60 + 20, end: 12 * 60 + 10), // 4교시
-            (start: 13 * 60 + 10, end: 14 * 60),      // 5교시
-            (start: 14 * 60 + 10, end: 15 * 60),      // 6교시
-            (start: 15 * 60 + 10, end: 16 * 60)       // 7교시
-        ]
-        
-        for (index, time) in periodTimes.enumerated() {
-            if currentMinutes >= time.start && currentMinutes <= time.end {
-                return index + 1
-            }
-        }
-        
-        return nil
-    }
     
     private func getPeriodStartTime(period: Int, date: Date) -> Date {
         let calendar = Calendar.current

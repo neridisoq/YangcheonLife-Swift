@@ -59,8 +59,8 @@ struct ScheduleCellView: View {
     let scheduleData: ScheduleData?
     let cellBackgroundColor: Color
     
-    // MARK: - State
-    @StateObject private var viewModel = ScheduleTabViewModel()
+    // MARK: - Environment
+    @EnvironmentObject private var scheduleTabViewModel: ScheduleTabViewModel
     
     // MARK: - Computed Properties
     private var isHeader: Bool {
@@ -71,7 +71,7 @@ struct ScheduleCellView: View {
         guard !isHeader,
               scheduleData != nil else { return false }
         
-        return viewModel.isCurrentPeriod(weekday: column - 1, period: row)
+        return scheduleTabViewModel.isCurrentPeriod(weekday: column - 1, period: row)
     }
     
     private var scheduleItem: ScheduleItem? {
@@ -150,12 +150,12 @@ struct ScheduleCellView: View {
         VStack(spacing: 2) {
             if let item = scheduleItem {
                 // 과목명 (탐구과목 치환 적용)
-                Text(viewModel.getDisplaySubject(for: item))
+                Text(scheduleTabViewModel.getDisplaySubject(for: item))
                     .font(.system(size: 14, weight: isCurrentPeriod ? .bold : .regular))
                     .lineLimit(1)
                 
                 // 교실 정보 (탐구과목 치환 적용)
-                Text(viewModel.getDisplayClassroom(for: item))
+                Text(scheduleTabViewModel.getDisplayClassroom(for: item))
                     .font(.system(size: 10))
                     .lineLimit(1)
                     .foregroundColor(.secondary)

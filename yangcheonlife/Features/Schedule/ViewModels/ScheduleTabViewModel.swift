@@ -31,6 +31,7 @@ class ScheduleTabViewModel: ObservableObject {
     // MARK: - Private Properties
     private let userDefaults = UserDefaults.standard
     private let wifiService = WiFiService.shared
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Timer for periodic updates
     lazy var timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
@@ -39,6 +40,11 @@ class ScheduleTabViewModel: ObservableObject {
     init() {
         setupInitialValues()
         loadCellBackgroundColor()
+        setupColorChangeNotification()
+    }
+    
+    deinit {
+        cancellables.forEach { $0.cancel() }
     }
     
     // MARK: - Public Methods
@@ -147,16 +153,18 @@ class ScheduleTabViewModel: ObservableObject {
     
     /// 셀 배경색 로드
     func loadCellBackgroundColor() {
-        cellBackgroundColor = Color.loadFromUserDefaults(
+        let loadedColor = Color.loadFromUserDefaults(
             key: AppConstants.UserDefaultsKeys.cellBackgroundColor,
-            defaultColor: .currentPeriodBackground
+            defaultColor: Color.yellow // 기본 색상 (투명도 없음)
         )
+        cellBackgroundColor = loadedColor.opacity(0.3) // 표시할 때 투명도 적용
     }
     
     /// 셀 배경색 저장
     func saveCellBackgroundColor(_ color: Color) {
+        // 원본 색상을 저장하고, 표시용으로는 투명도 적용
         color.saveToUserDefaults(key: AppConstants.UserDefaultsKeys.cellBackgroundColor)
-        cellBackgroundColor = color
+        cellBackgroundColor = color.opacity(0.3)
     }
     
     /// 현재 교시인지 확인
@@ -215,5 +223,18 @@ class ScheduleTabViewModel: ObservableObject {
         }
         
         return scheduleItem.classroom
+    }
+    
+    // MARK: - Private Methods
+    
+    /// 색상 변경 알림 설정
+    private func setupColorChangeNotification() {
+        NotificationCenter.default.publisher(for: NSNotification.Name("CellBackgroundColorChanged"))
+            .sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.loadCellBackgroundColor()
+                }
+            }
+            .store(in: &cancellables)
     }
 }

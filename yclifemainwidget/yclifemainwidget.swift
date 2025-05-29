@@ -698,8 +698,8 @@ class MainWidgetDataService {
                 return .noInfo
             }
             
-            // 7교시 시작 (15:10) 부터 17시 30분까지: 석식
-            if currentMinutes >= (15 * 60 + 10) && currentMinutes <= (17 * 60 + 30) {
+            // 7교시 시작 (15:00) 부터 17시 30분까지: 석식
+            if currentMinutes >= (15 * 60) && currentMinutes <= (17 * 60 + 30) {
                 if let mealInfo = NeisAPIManager.shared.getCachedMeal(date: currentDate, mealType: .dinner) {
                     return .mealInfo(mealInfo)
                 }

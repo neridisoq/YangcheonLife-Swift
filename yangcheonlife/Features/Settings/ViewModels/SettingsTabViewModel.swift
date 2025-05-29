@@ -150,14 +150,16 @@ class SettingsTabViewModel: ObservableObject {
     func saveCellBackgroundColor(_ color: Color) {
         cellBackgroundColor = color
         
-        // 투명도 적용
-        let adjustedColor = color.opacity(0.3)
-        adjustedColor.saveToUserDefaults(key: AppConstants.UserDefaultsKeys.cellBackgroundColor)
+        // 투명도 적용하지 않고 원본 색상을 저장
+        color.saveToUserDefaults(key: AppConstants.UserDefaultsKeys.cellBackgroundColor)
         
         // iCloud 동기화 (색상 데이터)
         if let colorData = userDefaults.data(forKey: AppConstants.UserDefaultsKeys.cellBackgroundColor) {
             iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.cellBackgroundColor, syncKey: iCloudSyncService.SyncKeys.cellBackgroundColor, value: colorData)
         }
+        
+        // 색상 변경 알림 발송
+        NotificationCenter.default.post(name: NSNotification.Name("CellBackgroundColorChanged"), object: nil)
         
         updateSharedUserDefaults()
     }
@@ -273,7 +275,7 @@ class SettingsTabViewModel: ObservableObject {
     private func loadCellBackgroundColor() {
         cellBackgroundColor = Color.loadFromUserDefaults(
             key: AppConstants.UserDefaultsKeys.cellBackgroundColor,
-            defaultColor: .currentPeriodBackground
+            defaultColor: Color.yellow // 기본 색상 (투명도 없는 원본)
         )
     }
     
