@@ -8,43 +8,92 @@
 
 /* Begin PBXBuildFile section */
 		08B30CAAB05D77B62693589B /* Pods_yangcheonlife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */; };
-		0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */; };
-		0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */; };
 		0922D0552D8869C1008E9C74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */; };
-		0922D0572D8870F1008E9C74 /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0922D0562D8870F1008E9C74 /* FirebaseManager.swift */; };
-		0922D0592D8877AE008E9C74 /* UpdateAnnouncementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0922D0582D8877AE008E9C74 /* UpdateAnnouncementView.swift */; };
-		0950CE412D79662600222453 /* ScheduleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0950CE402D79662600222453 /* ScheduleManager.swift */; };
+		094B1A9A2DE2D604005E29E4 /* TimeUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A972DE2D604005E29E4 /* TimeUtility.swift */; };
+		094B1A9B2DE2D604005E29E4 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
+		094B1A9C2DE2D604005E29E4 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A932DE2D604005E29E4 /* NotificationService.swift */; };
+		094B1A9D2DE2D604005E29E4 /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
+		094B1A9E2DE2D604005E29E4 /* WiFiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A902DE2D604005E29E4 /* WiFiModels.swift */; };
+		094B1A9F2DE2D604005E29E4 /* WiFiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A952DE2D604005E29E4 /* WiFiService.swift */; };
+		094B1AA02DE2D604005E29E4 /* AppUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A922DE2D604005E29E4 /* AppUpdateService.swift */; };
+		094B1AA12DE2D604005E29E4 /* ScheduleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A942DE2D604005E29E4 /* ScheduleService.swift */; };
+		094B1AC12DE2D623005E29E4 /* ScheduleTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB12DE2D623005E29E4 /* ScheduleTabView.swift */; };
+		094B1AC22DE2D623005E29E4 /* WiFiConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ABD2DE2D623005E29E4 /* WiFiConnectionView.swift */; };
+		094B1AC32DE2D623005E29E4 /* ClassGradeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB72DE2D623005E29E4 /* ClassGradeSettingsView.swift */; };
+		094B1AC42DE2D623005E29E4 /* ScheduleGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB02DE2D623005E29E4 /* ScheduleGridView.swift */; };
+		094B1AC52DE2D623005E29E4 /* MealTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AAB2DE2D623005E29E4 /* MealTabView.swift */; };
+		094B1AC62DE2D623005E29E4 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB62DE2D623005E29E4 /* AdvancedSettingsView.swift */; };
+		094B1AC72DE2D623005E29E4 /* ScheduleTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AAE2DE2D623005E29E4 /* ScheduleTabViewModel.swift */; };
+		094B1AC82DE2D623005E29E4 /* SettingsTabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB42DE2D623005E29E4 /* SettingsTabViewModel.swift */; };
+		094B1AC92DE2D623005E29E4 /* SettingsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB82DE2D623005E29E4 /* SettingsTabView.swift */; };
+		094B1ACA2DE2D623005E29E4 /* SubjectSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AB92DE2D623005E29E4 /* SubjectSelectionView.swift */; };
+		094B1AD32DE2D64C005E29E4 /* Collection+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ACE2DE2D64C005E29E4 /* Collection+Extension.swift */; };
+		094B1AD42DE2D64C005E29E4 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ACF2DE2D64C005E29E4 /* Color+Extension.swift */; };
+		094B1AD52DE2D64C005E29E4 /* View+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1AD02DE2D64C005E29E4 /* View+Extension.swift */; };
+		094B1AD62DE2D64C005E29E4 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ACC2DE2D64C005E29E4 /* LoadingView.swift */; };
+		094B1AD72DE2D64C005E29E4 /* InitialSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1ACB2DE2D64C005E29E4 /* InitialSetupView.swift */; };
 		0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */; };
 		0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFEF2C2A7C04002C4F44 /* ContentView.swift */; };
 		0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0969EFF12C2A7C05002C4F44 /* Assets.xcassets */; };
 		0969EFF52C2A7C05002C4F44 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0969EFF42C2A7C05002C4F44 /* Preview Assets.xcassets */; };
-		0969F0002C2A7DB8002C4F44 /* LunchTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFFF2C2A7DB7002C4F44 /* LunchTab.swift */; };
-		0969F0012C2A7DB8002C4F44 /* SettingsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFFD2C2A7DB7002C4F44 /* SettingsTab.swift */; };
-		0969F0022C2A7DB8002C4F44 /* TimeTableTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969EFFE2C2A7DB7002C4F44 /* TimeTableTab.swift */; };
-		0969F0052C2A7DFD002C4F44 /* ScheduleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969F0042C2A7DFD002C4F44 /* ScheduleItem.swift */; };
-		0969F0062C2A7DFD002C4F44 /* ScheduleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969F0032C2A7DFD002C4F44 /* ScheduleViewModel.swift */; };
 		0969F01E2C2A843C002C4F44 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969F01D2C2A843C002C4F44 /* AppDelegate.swift */; };
 		0969F0202C2A844D002C4F44 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */; };
-		096D77CA2D773CD000AD63FD /* AppUpdateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D77C92D773CD000AD63FD /* AppUpdateService.swift */; };
-		096D77CC2D773CDE00AD63FD /* UpdateRequiredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096D77CB2D773CDE00AD63FD /* UpdateRequiredView.swift */; };
 		096DE6942C2B8DA900651DE1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 096DE6922C2B8DA900651DE1 /* Localizable.strings */; };
-		0979643C2D8865D10008BADC /* FirebaseUnsubscribeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */; };
-		09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */; };
-		09828DC12D7F421800E5FD95 /* WiFiConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */; };
-		09828DE32D7F479C00E5FD95 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
-		09828DE42D7F479C00E5FD95 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
-		09828DF12D7F479E00E5FD95 /* yclifewidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990FEC52C2AA31E008EF97D /* InitialSetup.swift */; };
+		098ECF642DE6C0D40036C2CE /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ECF632DE6C0D40036C2CE /* FirebaseService.swift */; };
+		098ECF6A2DE6C2CB0036C2CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		098ECF6B2DE6C2CB0036C2CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		098ECF762DE6C2CD0036C2CE /* yclifemainwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 098ECF692DE6C2CB0036C2CE /* yclifemainwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		098ECF802DE6C3760036C2CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		098ECF812DE6C3760036C2CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		098ECF8C2DE6C3770036C2CE /* yclifelockwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		098ECF9B2DE6C9A00036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
+		098ECF9C2DE6C9B10036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
+		098ECF9D2DE6C9CD0036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
+		098ECF9E2DE6C9D50036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
+		098ECFC22DE6CC710036C2CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		098ECFC32DE6CC710036C2CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		098ECFD02DE6CC720036C2CE /* yclifeliveactivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		098ECFDF2DE6D1EC0036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
+		098ECFE02DE6D1FE0036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
+		098ED0172DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */; };
+		098ED0182DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */; };
+		098ED0192DE6D5DE0036C2CE /* TimeUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A972DE2D604005E29E4 /* TimeUtility.swift */; };
+		098ED0252DE747440036C2CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
+		098ED0262DE747440036C2CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
+		098ED0312DE747460036C2CE /* yclifemealwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		098ED0B32DE74B020036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
+		098ED0B42DE74B1D0036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
 		0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		09828DEF2D7F479E00E5FD95 /* PBXContainerItemProxy */ = {
+		098ECF742DE6C2CD0036C2CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 09828DE12D7F479C00E5FD95;
-			remoteInfo = yclifewidgetExtension;
+			remoteGlobalIDString = 098ECF682DE6C2CB0036C2CE;
+			remoteInfo = yclifemainwidgetExtension;
+		};
+		098ECF8A2DE6C3770036C2CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 098ECF7E2DE6C3760036C2CE;
+			remoteInfo = yclifelockwidgetExtension;
+		};
+		098ECFCE2DE6CC720036C2CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 098ECFC02DE6CC710036C2CE;
+			remoteInfo = yclifeliveactivityExtension;
+		};
+		098ED02F2DE747460036C2CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 098ED0232DE747440036C2CE;
+			remoteInfo = yclifemealwidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -65,7 +114,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				09828DF12D7F479E00E5FD95 /* yclifewidgetExtension.appex in Embed Foundation Extensions */,
+				098ECF762DE6C2CD0036C2CE /* yclifemainwidgetExtension.appex in Embed Foundation Extensions */,
+				098ECFD02DE6CC720036C2CE /* yclifeliveactivityExtension.appex in Embed Foundation Extensions */,
+				098ECF8C2DE6C3770036C2CE /* yclifelockwidgetExtension.appex in Embed Foundation Extensions */,
+				098ED0312DE747460036C2CE /* yclifemealwidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -73,12 +125,30 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectSelectionView.swift; sourceTree = "<group>"; };
-		0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotificationManager.swift; sourceTree = "<group>"; };
 		0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		0922D0562D8870F1008E9C74 /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
-		0922D0582D8877AE008E9C74 /* UpdateAnnouncementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateAnnouncementView.swift; sourceTree = "<group>"; };
-		0950CE402D79662600222453 /* ScheduleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleManager.swift; sourceTree = "<group>"; };
+		094B1A8D2DE2D604005E29E4 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
+		094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModels.swift; sourceTree = "<group>"; };
+		094B1A902DE2D604005E29E4 /* WiFiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiModels.swift; sourceTree = "<group>"; };
+		094B1A922DE2D604005E29E4 /* AppUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateService.swift; sourceTree = "<group>"; };
+		094B1A932DE2D604005E29E4 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		094B1A942DE2D604005E29E4 /* ScheduleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleService.swift; sourceTree = "<group>"; };
+		094B1A952DE2D604005E29E4 /* WiFiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiService.swift; sourceTree = "<group>"; };
+		094B1A972DE2D604005E29E4 /* TimeUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtility.swift; sourceTree = "<group>"; };
+		094B1AAB2DE2D623005E29E4 /* MealTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealTabView.swift; sourceTree = "<group>"; };
+		094B1AAE2DE2D623005E29E4 /* ScheduleTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTabViewModel.swift; sourceTree = "<group>"; };
+		094B1AB02DE2D623005E29E4 /* ScheduleGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleGridView.swift; sourceTree = "<group>"; };
+		094B1AB12DE2D623005E29E4 /* ScheduleTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleTabView.swift; sourceTree = "<group>"; };
+		094B1AB42DE2D623005E29E4 /* SettingsTabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTabViewModel.swift; sourceTree = "<group>"; };
+		094B1AB62DE2D623005E29E4 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
+		094B1AB72DE2D623005E29E4 /* ClassGradeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassGradeSettingsView.swift; sourceTree = "<group>"; };
+		094B1AB82DE2D623005E29E4 /* SettingsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTabView.swift; sourceTree = "<group>"; };
+		094B1AB92DE2D623005E29E4 /* SubjectSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectSelectionView.swift; sourceTree = "<group>"; };
+		094B1ABD2DE2D623005E29E4 /* WiFiConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiConnectionView.swift; sourceTree = "<group>"; };
+		094B1ACB2DE2D64C005E29E4 /* InitialSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialSetupView.swift; sourceTree = "<group>"; };
+		094B1ACC2DE2D64C005E29E4 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		094B1ACE2DE2D64C005E29E4 /* Collection+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extension.swift"; sourceTree = "<group>"; };
+		094B1ACF2DE2D64C005E29E4 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
+		094B1AD02DE2D64C005E29E4 /* View+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Extension.swift"; sourceTree = "<group>"; };
 		0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = yangcheonlife.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = yangcheonlifeApp.swift; sourceTree = "<group>"; };
 		0969EFEF2C2A7C04002C4F44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -86,26 +156,24 @@
 		0969EFF42C2A7C05002C4F44 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0969EFFB2C2A7C11002C4F44 /* yangcheonlife.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yangcheonlife.entitlements; sourceTree = "<group>"; };
 		0969EFFC2C2A7C14002C4F44 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0969EFFD2C2A7DB7002C4F44 /* SettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
-		0969EFFE2C2A7DB7002C4F44 /* TimeTableTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTableTab.swift; sourceTree = "<group>"; };
-		0969EFFF2C2A7DB7002C4F44 /* LunchTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunchTab.swift; sourceTree = "<group>"; };
-		0969F0032C2A7DFD002C4F44 /* ScheduleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewModel.swift; sourceTree = "<group>"; };
-		0969F0042C2A7DFD002C4F44 /* ScheduleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleItem.swift; sourceTree = "<group>"; };
 		0969F01D2C2A843C002C4F44 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		096D77C92D773CD000AD63FD /* AppUpdateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateService.swift; sourceTree = "<group>"; };
-		096D77CB2D773CDE00AD63FD /* UpdateRequiredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateRequiredView.swift; sourceTree = "<group>"; };
 		096DE6932C2B8DA900651DE1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		096DE6952C2B8DD100651DE1 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		096DE6D12C2BE1B900651DE1 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		096DE6D22C2BE2B900651DE1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUnsubscribeManager.swift; sourceTree = "<group>"; };
-		09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhysicalEducationAlertManager.swift; sourceTree = "<group>"; };
-		09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiConnectionManager.swift; sourceTree = "<group>"; };
-		09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifewidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		0990FEC52C2AA31E008EF97D /* InitialSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialSetup.swift; sourceTree = "<group>"; };
+		098ECF632DE6C0D40036C2CE /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
+		098ECF692DE6C2CB0036C2CE /* yclifemainwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifemainwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifelockwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		098ECF9F2DE6C9E30036C2CE /* yclifemainwidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifemainwidgetExtension.entitlements; sourceTree = "<group>"; };
+		098ECFA02DE6C9ED0036C2CE /* yclifelockwidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifelockwidgetExtension.entitlements; sourceTree = "<group>"; };
+		098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifeliveactivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		098ECFD52DE6CCAD0036C2CE /* yclifeliveactivityExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifeliveactivityExtension.entitlements; sourceTree = "<group>"; };
+		098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
+		098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifemealwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		098ED03B2DE748A20036C2CE /* yclifemealwidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifemealwidgetExtension.entitlements; sourceTree = "<group>"; };
 		0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifewidgetExtension.entitlements; sourceTree = "<group>"; };
 		0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comsi.helgisnw.metestfile.json; sourceTree = "<group>"; };
 		15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_yangcheonlife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,16 +182,85 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		09828DF22D7F479E00E5FD95 /* Exceptions for "yclifewidget" folder in "yclifewidgetExtension" target */ = {
+		098ECF7A2DE6C2CD0036C2CE /* Exceptions for "yclifemainwidget" folder in "yclifemainwidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */;
+			target = 098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */;
+		};
+		098ECF902DE6C3770036C2CE /* Exceptions for "yclifelockwidget" folder in "yclifelockwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */;
+		};
+		098ECF932DE6C9740036C2CE /* Exceptions for "Shared" folder in "yclifemainwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MealInfo.swift,
+				NeisAPIManager.swift,
+				SharedUserDefaults.swift,
+			);
+			target = 098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */;
+		};
+		098ECF972DE6C97C0036C2CE /* Exceptions for "Shared" folder in "yclifelockwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MealInfo.swift,
+				NeisAPIManager.swift,
+				SharedUserDefaults.swift,
+			);
+			target = 098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */;
+		};
+		098ECFD42DE6CC720036C2CE /* Exceptions for "yclifeliveactivity" folder in "yclifeliveactivityExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */;
+		};
+		098ECFDC2DE6D1CE0036C2CE /* Exceptions for "Shared" folder in "yclifeliveactivityExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MealInfo.swift,
+				NeisAPIManager.swift,
+				SharedUserDefaults.swift,
+			);
+			target = 098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */;
+		};
+		098ED01B2DE6D92E0036C2CE /* Exceptions for "yclifeliveactivity" folder in "yangcheonlife" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LiveActivityModels.swift,
+				LiveActivityUtilities.swift,
+				yclifeliveactivity.swift,
+				yclifeliveactivityLiveActivity.swift,
+			);
+			target = 0969EFE92C2A7C04002C4F44 /* yangcheonlife */;
+		};
+		098ED0352DE747460036C2CE /* Exceptions for "yclifemealwidget" folder in "yclifemealwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 098ED0232DE747440036C2CE /* yclifemealwidgetExtension */;
+		};
+		098ED0372DE747F00036C2CE /* Exceptions for "Shared" folder in "yclifemealwidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MealInfo.swift,
+				NeisAPIManager.swift,
+				SharedUserDefaults.swift,
+			);
+			target = 098ED0232DE747440036C2CE /* yclifemealwidgetExtension */;
 		};
 		0999C1A32D7FA65B00DDB78D /* Exceptions for "Shared" folder in "yangcheonlife" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				MealInfo.swift,
+				NeisAPIManager.swift,
 				SharedUserDefaults.swift,
 			);
 			target = 0969EFE92C2A7C04002C4F44 /* yangcheonlife */;
@@ -131,20 +268,49 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		09828DE52D7F479C00E5FD95 /* yclifewidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				09828DF22D7F479E00E5FD95 /* Exceptions for "yclifewidget" folder in "yclifewidgetExtension" target */,
-			);
-			path = yclifewidget;
-			sourceTree = "<group>";
-		};
 		09828DFA2D7F484400E5FD95 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				0999C1A32D7FA65B00DDB78D /* Exceptions for "Shared" folder in "yangcheonlife" target */,
+				098ECF932DE6C9740036C2CE /* Exceptions for "Shared" folder in "yclifemainwidgetExtension" target */,
+				098ECF972DE6C97C0036C2CE /* Exceptions for "Shared" folder in "yclifelockwidgetExtension" target */,
+				098ECFDC2DE6D1CE0036C2CE /* Exceptions for "Shared" folder in "yclifeliveactivityExtension" target */,
+				098ED0372DE747F00036C2CE /* Exceptions for "Shared" folder in "yclifemealwidgetExtension" target */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		098ECF6C2DE6C2CB0036C2CE /* yclifemainwidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				098ECF7A2DE6C2CD0036C2CE /* Exceptions for "yclifemainwidget" folder in "yclifemainwidgetExtension" target */,
+			);
+			path = yclifemainwidget;
+			sourceTree = "<group>";
+		};
+		098ECF822DE6C3760036C2CE /* yclifelockwidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				098ECF902DE6C3770036C2CE /* Exceptions for "yclifelockwidget" folder in "yclifelockwidgetExtension" target */,
+			);
+			path = yclifelockwidget;
+			sourceTree = "<group>";
+		};
+		098ECFC42DE6CC710036C2CE /* yclifeliveactivity */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				098ED01B2DE6D92E0036C2CE /* Exceptions for "yclifeliveactivity" folder in "yangcheonlife" target */,
+				098ECFD42DE6CC720036C2CE /* Exceptions for "yclifeliveactivity" folder in "yclifeliveactivityExtension" target */,
+			);
+			path = yclifeliveactivity;
+			sourceTree = "<group>";
+		};
+		098ED0272DE747440036C2CE /* yclifemealwidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				098ED0352DE747460036C2CE /* Exceptions for "yclifemealwidget" folder in "yclifemealwidgetExtension" target */,
+			);
+			path = yclifemealwidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -158,25 +324,249 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		09828DDF2D7F479C00E5FD95 /* Frameworks */ = {
+		098ECF662DE6C2CB0036C2CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09828DE42D7F479C00E5FD95 /* SwiftUI.framework in Frameworks */,
-				09828DE32D7F479C00E5FD95 /* WidgetKit.framework in Frameworks */,
+				098ECF6B2DE6C2CB0036C2CE /* SwiftUI.framework in Frameworks */,
+				098ECF6A2DE6C2CB0036C2CE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ECF7C2DE6C3760036C2CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ECF812DE6C3760036C2CE /* SwiftUI.framework in Frameworks */,
+				098ECF802DE6C3760036C2CE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ECFBE2DE6CC710036C2CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ECFC32DE6CC710036C2CE /* SwiftUI.framework in Frameworks */,
+				098ECFC22DE6CC710036C2CE /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ED0212DE747440036C2CE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ED0262DE747440036C2CE /* SwiftUI.framework in Frameworks */,
+				098ED0252DE747440036C2CE /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		094B1A8E2DE2D604005E29E4 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				094B1A8D2DE2D604005E29E4 /* AppConstants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		094B1A912DE2D604005E29E4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */,
+				094B1A902DE2D604005E29E4 /* WiFiModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		094B1A962DE2D604005E29E4 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */,
+				098ECF632DE6C0D40036C2CE /* FirebaseService.swift */,
+				094B1A922DE2D604005E29E4 /* AppUpdateService.swift */,
+				094B1A932DE2D604005E29E4 /* NotificationService.swift */,
+				094B1A942DE2D604005E29E4 /* ScheduleService.swift */,
+				094B1A952DE2D604005E29E4 /* WiFiService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		094B1A982DE2D604005E29E4 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				094B1A972DE2D604005E29E4 /* TimeUtility.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		094B1A992DE2D604005E29E4 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				094B1A8E2DE2D604005E29E4 /* Constants */,
+				094B1A912DE2D604005E29E4 /* Models */,
+				094B1A962DE2D604005E29E4 /* Services */,
+				094B1A982DE2D604005E29E4 /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		094B1AAA2DE2D623005E29E4 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		094B1AAC2DE2D623005E29E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AAB2DE2D623005E29E4 /* MealTabView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		094B1AAD2DE2D623005E29E4 /* Meal */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AAA2DE2D623005E29E4 /* ViewModels */,
+				094B1AAC2DE2D623005E29E4 /* Views */,
+			);
+			path = Meal;
+			sourceTree = "<group>";
+		};
+		094B1AAF2DE2D623005E29E4 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AAE2DE2D623005E29E4 /* ScheduleTabViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		094B1AB22DE2D623005E29E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AB02DE2D623005E29E4 /* ScheduleGridView.swift */,
+				094B1AB12DE2D623005E29E4 /* ScheduleTabView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		094B1AB32DE2D623005E29E4 /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AAF2DE2D623005E29E4 /* ViewModels */,
+				094B1AB22DE2D623005E29E4 /* Views */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		094B1AB52DE2D623005E29E4 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AB42DE2D623005E29E4 /* SettingsTabViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		094B1ABA2DE2D623005E29E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AB62DE2D623005E29E4 /* AdvancedSettingsView.swift */,
+				094B1AB72DE2D623005E29E4 /* ClassGradeSettingsView.swift */,
+				094B1AB82DE2D623005E29E4 /* SettingsTabView.swift */,
+				094B1AB92DE2D623005E29E4 /* SubjectSelectionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		094B1ABB2DE2D623005E29E4 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AB52DE2D623005E29E4 /* ViewModels */,
+				094B1ABA2DE2D623005E29E4 /* Views */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		094B1ABC2DE2D623005E29E4 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		094B1ABE2DE2D623005E29E4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				094B1ABD2DE2D623005E29E4 /* WiFiConnectionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		094B1ABF2DE2D623005E29E4 /* WiFi */ = {
+			isa = PBXGroup;
+			children = (
+				094B1ABC2DE2D623005E29E4 /* ViewModels */,
+				094B1ABE2DE2D623005E29E4 /* Views */,
+			);
+			path = WiFi;
+			sourceTree = "<group>";
+		};
+		094B1AC02DE2D623005E29E4 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				094B1AAD2DE2D623005E29E4 /* Meal */,
+				094B1AB32DE2D623005E29E4 /* Schedule */,
+				094B1ABB2DE2D623005E29E4 /* Settings */,
+				094B1ABF2DE2D623005E29E4 /* WiFi */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		094B1ACD2DE2D64C005E29E4 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				094B1ACB2DE2D64C005E29E4 /* InitialSetupView.swift */,
+				094B1ACC2DE2D64C005E29E4 /* LoadingView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		094B1AD12DE2D64C005E29E4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				094B1ACE2DE2D64C005E29E4 /* Collection+Extension.swift */,
+				094B1ACF2DE2D64C005E29E4 /* Color+Extension.swift */,
+				094B1AD02DE2D64C005E29E4 /* View+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		094B1AD22DE2D64C005E29E4 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				094B1ACD2DE2D64C005E29E4 /* Components */,
+				094B1AD12DE2D64C005E29E4 /* Extensions */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		0969EFE12C2A7C04002C4F44 = {
 			isa = PBXGroup;
 			children = (
+				098ED03B2DE748A20036C2CE /* yclifemealwidgetExtension.entitlements */,
+				098ECFD52DE6CCAD0036C2CE /* yclifeliveactivityExtension.entitlements */,
+				098ECFA02DE6C9ED0036C2CE /* yclifelockwidgetExtension.entitlements */,
+				098ECF9F2DE6C9E30036C2CE /* yclifemainwidgetExtension.entitlements */,
 				0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */,
 				09828DFA2D7F484400E5FD95 /* Shared */,
 				0969EFEC2C2A7C04002C4F44 /* yangcheonlife */,
-				09828DE52D7F479C00E5FD95 /* yclifewidget */,
+				098ECF6C2DE6C2CB0036C2CE /* yclifemainwidget */,
+				098ECF822DE6C3760036C2CE /* yclifelockwidget */,
+				098ECFC42DE6CC710036C2CE /* yclifeliveactivity */,
+				098ED0272DE747440036C2CE /* yclifemealwidget */,
 				0969EFEB2C2A7C04002C4F44 /* Products */,
 				F65D034D03D29CF9324008A6 /* Pods */,
 				9723D769D7144062BDC836AB /* Frameworks */,
@@ -187,7 +577,10 @@
 			isa = PBXGroup;
 			children = (
 				0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */,
-				09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */,
+				098ECF692DE6C2CB0036C2CE /* yclifemainwidgetExtension.appex */,
+				098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */,
+				098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */,
+				098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -195,32 +588,19 @@
 		0969EFEC2C2A7C04002C4F44 /* yangcheonlife */ = {
 			isa = PBXGroup;
 			children = (
-				0922D0562D8870F1008E9C74 /* FirebaseManager.swift */,
-				0979643B2D8865D10008BADC /* FirebaseUnsubscribeManager.swift */,
+				094B1AD22DE2D64C005E29E4 /* Shared */,
+				094B1AC02DE2D623005E29E4 /* Features */,
+				094B1A992DE2D604005E29E4 /* Core */,
 				0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */,
 				0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */,
-				0910E0822D74D1140041ED8C /* SubjectSelectionView.swift */,
-				0990FEC52C2AA31E008EF97D /* InitialSetup.swift */,
-				0950CE402D79662600222453 /* ScheduleManager.swift */,
 				0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */,
-				0969F0032C2A7DFD002C4F44 /* ScheduleViewModel.swift */,
-				0969F0042C2A7DFD002C4F44 /* ScheduleItem.swift */,
-				0969EFFD2C2A7DB7002C4F44 /* SettingsTab.swift */,
-				09828DC02D7F421700E5FD95 /* WiFiConnectionManager.swift */,
-				09828DBE2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift */,
-				0969EFFE2C2A7DB7002C4F44 /* TimeTableTab.swift */,
-				0969EFFF2C2A7DB7002C4F44 /* LunchTab.swift */,
 				0969EFFC2C2A7C14002C4F44 /* Info.plist */,
 				0969EFFB2C2A7C11002C4F44 /* yangcheonlife.entitlements */,
 				0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */,
 				0969EFEF2C2A7C04002C4F44 /* ContentView.swift */,
-				0922D0582D8877AE008E9C74 /* UpdateAnnouncementView.swift */,
 				0969EFF12C2A7C05002C4F44 /* Assets.xcassets */,
 				0969EFF32C2A7C05002C4F44 /* Preview Content */,
 				0969F01D2C2A843C002C4F44 /* AppDelegate.swift */,
-				0910E0842D74D80E0041ED8C /* LocalNotificationManager.swift */,
-				096D77C92D773CD000AD63FD /* AppUpdateService.swift */,
-				096D77CB2D773CDE00AD63FD /* UpdateRequiredView.swift */,
 				096DE6922C2B8DA900651DE1 /* Localizable.strings */,
 			);
 			path = yangcheonlife;
@@ -271,34 +651,102 @@
 			buildRules = (
 			);
 			dependencies = (
-				09828DF02D7F479E00E5FD95 /* PBXTargetDependency */,
+				098ECF752DE6C2CD0036C2CE /* PBXTargetDependency */,
+				098ECF8B2DE6C3770036C2CE /* PBXTargetDependency */,
+				098ECFCF2DE6CC720036C2CE /* PBXTargetDependency */,
+				098ED0302DE747460036C2CE /* PBXTargetDependency */,
 			);
 			name = yangcheonlife;
 			productName = yangcheonlife;
 			productReference = 0969EFEA2C2A7C04002C4F44 /* yangcheonlife.app */;
 			productType = "com.apple.product-type.application";
 		};
-		09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */ = {
+		098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 09828DF32D7F479E00E5FD95 /* Build configuration list for PBXNativeTarget "yclifewidgetExtension" */;
+			buildConfigurationList = 098ECF772DE6C2CD0036C2CE /* Build configuration list for PBXNativeTarget "yclifemainwidgetExtension" */;
 			buildPhases = (
-				09828DDE2D7F479C00E5FD95 /* Sources */,
-				09828DDF2D7F479C00E5FD95 /* Frameworks */,
-				09828DE02D7F479C00E5FD95 /* Resources */,
+				098ECF652DE6C2CB0036C2CE /* Sources */,
+				098ECF662DE6C2CB0036C2CE /* Frameworks */,
+				098ECF672DE6C2CB0036C2CE /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				09828DE52D7F479C00E5FD95 /* yclifewidget */,
-				09828DFA2D7F484400E5FD95 /* Shared */,
+				098ECF6C2DE6C2CB0036C2CE /* yclifemainwidget */,
 			);
-			name = yclifewidgetExtension;
+			name = yclifemainwidgetExtension;
 			packageProductDependencies = (
 			);
-			productName = yclifewidgetExtension;
-			productReference = 09828DE22D7F479C00E5FD95 /* yclifewidgetExtension.appex */;
+			productName = yclifemainwidgetExtension;
+			productReference = 098ECF692DE6C2CB0036C2CE /* yclifemainwidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 098ECF8D2DE6C3770036C2CE /* Build configuration list for PBXNativeTarget "yclifelockwidgetExtension" */;
+			buildPhases = (
+				098ECF7B2DE6C3760036C2CE /* Sources */,
+				098ECF7C2DE6C3760036C2CE /* Frameworks */,
+				098ECF7D2DE6C3760036C2CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				098ECF822DE6C3760036C2CE /* yclifelockwidget */,
+			);
+			name = yclifelockwidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = yclifelockwidgetExtension;
+			productReference = 098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 098ECFD32DE6CC720036C2CE /* Build configuration list for PBXNativeTarget "yclifeliveactivityExtension" */;
+			buildPhases = (
+				098ECFBD2DE6CC710036C2CE /* Sources */,
+				098ECFBE2DE6CC710036C2CE /* Frameworks */,
+				098ECFBF2DE6CC710036C2CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				098ECFC42DE6CC710036C2CE /* yclifeliveactivity */,
+			);
+			name = yclifeliveactivityExtension;
+			packageProductDependencies = (
+			);
+			productName = yclifeliveactivityExtension;
+			productReference = 098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		098ED0232DE747440036C2CE /* yclifemealwidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 098ED0322DE747460036C2CE /* Build configuration list for PBXNativeTarget "yclifemealwidgetExtension" */;
+			buildPhases = (
+				098ED0202DE747440036C2CE /* Sources */,
+				098ED0212DE747440036C2CE /* Frameworks */,
+				098ED0222DE747440036C2CE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				098ED0272DE747440036C2CE /* yclifemealwidget */,
+			);
+			name = yclifemealwidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = yclifemealwidgetExtension;
+			productReference = 098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -308,14 +756,23 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					0969EFE92C2A7C04002C4F44 = {
 						CreatedOnToolsVersion = 16.0;
 					};
-					09828DE12D7F479C00E5FD95 = {
-						CreatedOnToolsVersion = 16.2;
+					098ECF682DE6C2CB0036C2CE = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					098ECF7E2DE6C3760036C2CE = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					098ECFC02DE6CC710036C2CE = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					098ED0232DE747440036C2CE = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
@@ -336,7 +793,10 @@
 			projectRoot = "";
 			targets = (
 				0969EFE92C2A7C04002C4F44 /* yangcheonlife */,
-				09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */,
+				098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */,
+				098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */,
+				098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */,
+				098ED0232DE747440036C2CE /* yclifemealwidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -354,7 +814,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		09828DE02D7F479C00E5FD95 /* Resources */ = {
+		098ECF672DE6C2CB0036C2CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ECF7D2DE6C3760036C2CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ECFBF2DE6CC710036C2CE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ED0222DE747440036C2CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -372,9 +853,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-yangcheonlife/Pods-yangcheonlife-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-yangcheonlife/Pods-yangcheonlife-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -411,42 +896,97 @@
 			buildActionMask = 2147483647;
 			files = (
 				0969F01E2C2A843C002C4F44 /* AppDelegate.swift in Sources */,
-				09828DC12D7F421800E5FD95 /* WiFiConnectionManager.swift in Sources */,
-				0922D0592D8877AE008E9C74 /* UpdateAnnouncementView.swift in Sources */,
 				0969EFF02C2A7C04002C4F44 /* ContentView.swift in Sources */,
-				096D77CC2D773CDE00AD63FD /* UpdateRequiredView.swift in Sources */,
+				094B1A9A2DE2D604005E29E4 /* TimeUtility.swift in Sources */,
+				094B1A9B2DE2D604005E29E4 /* AppConstants.swift in Sources */,
+				094B1A9C2DE2D604005E29E4 /* NotificationService.swift in Sources */,
+				094B1AD32DE2D64C005E29E4 /* Collection+Extension.swift in Sources */,
+				094B1AD42DE2D64C005E29E4 /* Color+Extension.swift in Sources */,
+				094B1AD52DE2D64C005E29E4 /* View+Extension.swift in Sources */,
+				094B1AD62DE2D64C005E29E4 /* LoadingView.swift in Sources */,
+				094B1AD72DE2D64C005E29E4 /* InitialSetupView.swift in Sources */,
+				094B1A9D2DE2D604005E29E4 /* ScheduleModels.swift in Sources */,
+				094B1A9E2DE2D604005E29E4 /* WiFiModels.swift in Sources */,
+				098ED0172DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */,
+				094B1A9F2DE2D604005E29E4 /* WiFiService.swift in Sources */,
+				098ECF642DE6C0D40036C2CE /* FirebaseService.swift in Sources */,
+				094B1AA02DE2D604005E29E4 /* AppUpdateService.swift in Sources */,
+				094B1AA12DE2D604005E29E4 /* ScheduleService.swift in Sources */,
 				0969F0202C2A844D002C4F44 /* SceneDelegate.swift in Sources */,
-				0969F0002C2A7DB8002C4F44 /* LunchTab.swift in Sources */,
-				0969F0012C2A7DB8002C4F44 /* SettingsTab.swift in Sources */,
-				096D77CA2D773CD000AD63FD /* AppUpdateService.swift in Sources */,
-				0950CE412D79662600222453 /* ScheduleManager.swift in Sources */,
-				0969F0022C2A7DB8002C4F44 /* TimeTableTab.swift in Sources */,
-				0910E0852D74D80E0041ED8C /* LocalNotificationManager.swift in Sources */,
-				0922D0572D8870F1008E9C74 /* FirebaseManager.swift in Sources */,
-				09828DBF2D7F3ACF00E5FD95 /* PhysicalEducationAlertManager.swift in Sources */,
-				0910E0832D74D1140041ED8C /* SubjectSelectionView.swift in Sources */,
-				0979643C2D8865D10008BADC /* FirebaseUnsubscribeManager.swift in Sources */,
-				0969F0052C2A7DFD002C4F44 /* ScheduleItem.swift in Sources */,
-				0969F0062C2A7DFD002C4F44 /* ScheduleViewModel.swift in Sources */,
-				0990FEC62C2AA326008EF97D /* InitialSetup.swift in Sources */,
+				094B1AC12DE2D623005E29E4 /* ScheduleTabView.swift in Sources */,
+				094B1AC22DE2D623005E29E4 /* WiFiConnectionView.swift in Sources */,
+				094B1AC32DE2D623005E29E4 /* ClassGradeSettingsView.swift in Sources */,
+				094B1AC42DE2D623005E29E4 /* ScheduleGridView.swift in Sources */,
+				094B1AC52DE2D623005E29E4 /* MealTabView.swift in Sources */,
+				094B1AC62DE2D623005E29E4 /* AdvancedSettingsView.swift in Sources */,
+				094B1AC72DE2D623005E29E4 /* ScheduleTabViewModel.swift in Sources */,
+				094B1AC82DE2D623005E29E4 /* SettingsTabViewModel.swift in Sources */,
+				094B1AC92DE2D623005E29E4 /* SettingsTabView.swift in Sources */,
+				094B1ACA2DE2D623005E29E4 /* SubjectSelectionView.swift in Sources */,
 				0969EFEE2C2A7C04002C4F44 /* yangcheonlifeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		09828DDE2D7F479C00E5FD95 /* Sources */ = {
+		098ECF652DE6C2CB0036C2CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				098ECF9C2DE6C9B10036C2CE /* AppConstants.swift in Sources */,
+				098ECF9B2DE6C9A00036C2CE /* ScheduleModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ECF7B2DE6C3760036C2CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ECF9E2DE6C9D50036C2CE /* AppConstants.swift in Sources */,
+				098ECF9D2DE6C9CD0036C2CE /* ScheduleModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ECFBD2DE6CC710036C2CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ECFE02DE6D1FE0036C2CE /* ScheduleModels.swift in Sources */,
+				098ED0182DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */,
+				098ECFDF2DE6D1EC0036C2CE /* AppConstants.swift in Sources */,
+				098ED0192DE6D5DE0036C2CE /* TimeUtility.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		098ED0202DE747440036C2CE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098ED0B32DE74B020036C2CE /* AppConstants.swift in Sources */,
+				098ED0B42DE74B1D0036C2CE /* ScheduleModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		09828DF02D7F479E00E5FD95 /* PBXTargetDependency */ = {
+		098ECF752DE6C2CD0036C2CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 09828DE12D7F479C00E5FD95 /* yclifewidgetExtension */;
-			targetProxy = 09828DEF2D7F479E00E5FD95 /* PBXContainerItemProxy */;
+			target = 098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */;
+			targetProxy = 098ECF742DE6C2CD0036C2CE /* PBXContainerItemProxy */;
+		};
+		098ECF8B2DE6C3770036C2CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */;
+			targetProxy = 098ECF8A2DE6C3770036C2CE /* PBXContainerItemProxy */;
+		};
+		098ECFCF2DE6CC720036C2CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */;
+			targetProxy = 098ECFCE2DE6CC720036C2CE /* PBXContainerItemProxy */;
+		};
+		098ED0302DE747460036C2CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 098ED0232DE747440036C2CE /* yclifemealwidgetExtension */;
+			targetProxy = 098ED02F2DE747460036C2CE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -594,7 +1134,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -616,7 +1156,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.3;
+				MARKETING_VERSION = 4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -633,7 +1173,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -655,7 +1195,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.3;
+				MARKETING_VERSION = 4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -664,27 +1204,27 @@
 			};
 			name = Release;
 		};
-		09828DF42D7F479E00E5FD95 /* Debug */ = {
+		098ECF782DE6C2CD0036C2CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = yclifewidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = yclifemainwidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = yclifewidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = yclifewidget;
+				INFOPLIST_FILE = yclifemainwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifemainwidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.3;
-				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifewidget;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifemainwidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -693,27 +1233,201 @@
 			};
 			name = Debug;
 		};
-		09828DF52D7F479E00E5FD95 /* Release */ = {
+		098ECF792DE6C2CD0036C2CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
-				CODE_SIGN_ENTITLEMENTS = yclifewidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = yclifemainwidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = yclifewidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = yclifewidget;
+				INFOPLIST_FILE = yclifemainwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifemainwidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.3;
-				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifewidget;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifemainwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		098ECF8E2DE6C3770036C2CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifelockwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifelockwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifelockwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifelockwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		098ECF8F2DE6C3770036C2CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifelockwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifelockwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifelockwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifelockwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		098ECFD12DE6CC720036C2CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifeliveactivityExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifeliveactivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifeliveactivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifeliveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		098ECFD22DE6CC720036C2CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifeliveactivityExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifeliveactivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifeliveactivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifeliveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		098ED0332DE747460036C2CE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifemealwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifemealwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifemealwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifemealwidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		098ED0342DE747460036C2CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = yclifemealwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = yclifemealwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = yclifemealwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.yclifemealwidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -743,11 +1457,38 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		09828DF32D7F479E00E5FD95 /* Build configuration list for PBXNativeTarget "yclifewidgetExtension" */ = {
+		098ECF772DE6C2CD0036C2CE /* Build configuration list for PBXNativeTarget "yclifemainwidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				09828DF42D7F479E00E5FD95 /* Debug */,
-				09828DF52D7F479E00E5FD95 /* Release */,
+				098ECF782DE6C2CD0036C2CE /* Debug */,
+				098ECF792DE6C2CD0036C2CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		098ECF8D2DE6C3770036C2CE /* Build configuration list for PBXNativeTarget "yclifelockwidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				098ECF8E2DE6C3770036C2CE /* Debug */,
+				098ECF8F2DE6C3770036C2CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		098ECFD32DE6CC720036C2CE /* Build configuration list for PBXNativeTarget "yclifeliveactivityExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				098ECFD12DE6CC720036C2CE /* Debug */,
+				098ECFD22DE6CC720036C2CE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		098ED0322DE747460036C2CE /* Build configuration list for PBXNativeTarget "yclifemealwidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				098ED0332DE747460036C2CE /* Debug */,
+				098ED0342DE747460036C2CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

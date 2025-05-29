@@ -1,0 +1,24 @@
+{
+  "source": "/Users/neridisoq/Documents/Projects/YangcheonLife-Swift-Refactoring/yangcheonlife/Shared/Extensions/View+Extension.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "확인",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "확인",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 97
+        }
+      }
+    ]
+  },
+  "version": 1
+}
