@@ -152,9 +152,14 @@ class LiveActivityManager: ObservableObject {
         case .breakTime(_):
             return .breakTime
         case .lunchTime:
-            return .lunchTime // 점심시간은 별도 처리
-        case .preClass(_):
-            return .preClass
+            return .lunchTime
+        case .preClass(let period):
+            // 5교시 전 (13:00 ~ 13:10)은 쉬는시간으로 표시
+            if period == 5 {
+                return .breakTime
+            } else {
+                return .preClass
+            }
         case .afterSchool:
             return .afterSchool
         }

@@ -42,6 +42,86 @@ class WiFiService: NSObject, ObservableObject {
         return await connectToWiFi(type: connectionType)
     }
     
+    /// 아침자습 시간 WiFi 연결 제안 (7:30 - 8:10)
+    func getMorningStudyWiFiSuggestion() -> WiFiConnectionType? {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: Date())
+        let minute = calendar.component(.minute, from: Date())
+        let currentTimeInMinutes = hour * 60 + minute
+        let morningStudyStart = 7 * 60 + 30  // 7:30
+        let morningStudyEnd = 8 * 60 + 10    // 8:10
+        
+        // 아침자습 시간대인지 확인
+        guard currentTimeInMinutes >= morningStudyStart && currentTimeInMinutes <= morningStudyEnd else {
+            return nil
+        }
+        
+        // 저장된 학년반 정보 가져오기
+        let defaultGrade = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let defaultClass = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
+        
+        // 유효한 학년반인지 확인 후 WiFi 추천
+        if defaultGrade > 0 && defaultClass > 0 &&
+           AppConstants.School.grades.contains(defaultGrade) &&
+           AppConstants.School.classes.contains(defaultClass) {
+            return .regularClassroom(grade: defaultGrade, classNumber: defaultClass)
+        }
+        
+        return nil
+    }
+    
+    /// 점심자습 시간 WiFi 연결 제안 (12:10 - 13:00)
+    func getLunchStudyWiFiSuggestion() -> WiFiConnectionType? {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: Date())
+        let minute = calendar.component(.minute, from: Date())
+        let currentTimeInMinutes = hour * 60 + minute
+        let lunchStudyStart = 12 * 60 + 10  // 12:10
+        let lunchStudyEnd = 13 * 60         // 13:00
+        
+        // 점심자습 시간대인지 확인
+        guard currentTimeInMinutes >= lunchStudyStart && currentTimeInMinutes <= lunchStudyEnd else {
+            return nil
+        }
+        
+        // 저장된 학년반 정보 가져오기
+        let defaultGrade = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let defaultClass = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
+        
+        // 유효한 학년반인지 확인 후 WiFi 추천
+        if defaultGrade > 0 && defaultClass > 0 &&
+           AppConstants.School.grades.contains(defaultGrade) &&
+           AppConstants.School.classes.contains(defaultClass) {
+            return .regularClassroom(grade: defaultGrade, classNumber: defaultClass)
+        }
+        
+        return nil
+    }
+    
+    /// 현재 시간이 아침자습 시간인지 확인
+    func isMorningStudyTime() -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: Date())
+        let minute = calendar.component(.minute, from: Date())
+        let currentTimeInMinutes = hour * 60 + minute
+        let morningStudyStart = 7 * 60 + 30  // 7:30
+        let morningStudyEnd = 8 * 60 + 10    // 8:10
+        
+        return currentTimeInMinutes >= morningStudyStart && currentTimeInMinutes <= morningStudyEnd
+    }
+    
+    /// 현재 시간이 점심자습 시간인지 확인
+    func isLunchStudyTime() -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: Date())
+        let minute = calendar.component(.minute, from: Date())
+        let currentTimeInMinutes = hour * 60 + minute
+        let lunchStudyStart = 12 * 60 + 10  // 12:10
+        let lunchStudyEnd = 13 * 60         // 13:00
+        
+        return currentTimeInMinutes >= lunchStudyStart && currentTimeInMinutes <= lunchStudyEnd
+    }
+    
     /// 현재 수업 기반 WiFi 연결 제안
     func getSuggestedWiFiConnection(for scheduleItem: ScheduleItem) -> WiFiConnectionType? {
         // 정보 수업은 WiFi 제안하지 않음

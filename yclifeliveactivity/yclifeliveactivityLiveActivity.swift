@@ -82,12 +82,22 @@ struct ClassLiveActivityView: View {
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         } else {
-                            Text("쉬는 시간")
-                                .font(.headline)
-                                .fontWeight(.bold)
-                            Text("Break Time")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            // 5교시 전 쉬는시간인지 확인
+                            if let nextClass = context.state.nextClass, nextClass.period == 5 {
+                                Text("쉬는시간")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                Text("Before 5th Period")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("쉬는 시간")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                Text("Break Time")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 }
@@ -140,7 +150,36 @@ struct ClassLiveActivityView: View {
                             Text("Lunch Time")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                        } else {
+                        }
+                        // 점심시간 중이고 다음이 5교시인 경우
+                        else if context.state.currentStatus == .lunchTime {
+                            Text("5교시")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                            Text("5th Period")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        // 5교시 전 쉬는시간 중이고 다음이 5교시인 경우
+                        else if context.state.currentStatus == .breakTime || context.state.currentStatus == .preClass {
+                            if let currentClass = context.state.currentClass {
+                                // 수업 중이 아니라면 다음 수업 표시
+                                Text("수업 끝")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                Text("End of Day")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("수업 끝")
+                                    .font(.headline)
+                                    .fontWeight(.bold)
+                                Text("End of Day")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        else {
                             Text("수업 끝")
                                 .font(.headline)
                                 .fontWeight(.bold)
@@ -159,10 +198,31 @@ struct ClassLiveActivityView: View {
     }
     
     private func getProgressValue(context: ActivityViewContext<ClassActivityAttributes>) -> Double {
-        let totalMinutes = 50.0 // 수업 시간
+        let status = context.state.currentStatus
         let remaining = Double(context.state.remainingMinutes)
+        
+        var totalMinutes: Double
+        
+        switch status {
+        case .inClass:
+            totalMinutes = 50.0 // 수업 시간
+        case .breakTime:
+            totalMinutes = 10.0 // 쉬는시간
+        case .lunchTime:
+            totalMinutes = 50.0 // 점심시간 (12:10 ~ 13:00)
+        case .preClass:
+            // 5교시 전 쉬는시간 (13:00 ~ 13:10)은 10분
+            if let currentClass = context.state.currentClass, currentClass.period == 5 {
+                totalMinutes = 10.0
+            } else {
+                totalMinutes = 10.0 // 일반 수업 전 시간
+            }
+        default:
+            totalMinutes = 50.0 // 기본값
+        }
+        
         let elapsed = totalMinutes - remaining
-        return elapsed / totalMinutes
+        return max(0, min(1, elapsed / totalMinutes))
     }
 }
 

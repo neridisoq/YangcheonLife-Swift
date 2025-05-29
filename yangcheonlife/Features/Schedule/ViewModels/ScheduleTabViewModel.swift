@@ -71,6 +71,36 @@ class ScheduleTabViewModel: ObservableObject {
             return
         }
         
+        // 아침자습 시간 확인 및 WiFi 추천
+        if wifiService.isMorningStudyTime() {
+            suggestedWiFiConnection = wifiService.getMorningStudyWiFiSuggestion()
+            currentClassInfo = ScheduleItem(
+                grade: actualGrade,
+                classNumber: actualClass,
+                weekday: weekdayIndex,
+                weekdayString: TimeUtility.weekdayIndexToKorean(weekdayIndex),
+                period: 0,
+                classroom: "\(actualGrade)학년 \(actualClass)반",
+                subject: "아침자습"
+            )
+            return
+        }
+        
+        // 점심자습 시간 확인 및 WiFi 추천
+        if wifiService.isLunchStudyTime() {
+            suggestedWiFiConnection = wifiService.getLunchStudyWiFiSuggestion()
+            currentClassInfo = ScheduleItem(
+                grade: actualGrade,
+                classNumber: actualClass,
+                weekday: weekdayIndex,
+                weekdayString: TimeUtility.weekdayIndexToKorean(weekdayIndex),
+                period: 0,
+                classroom: "\(actualGrade)학년 \(actualClass)반",
+                subject: "점심시간"
+            )
+            return
+        }
+        
         let currentStatus = TimeUtility.getCurrentPeriodStatus(at: now)
         
         switch currentStatus {

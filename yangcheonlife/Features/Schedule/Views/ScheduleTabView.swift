@@ -152,20 +152,38 @@ struct ScheduleTabView: View {
                         
                         switch currentStatus {
                         case .inClass(_):
-                            Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
-                                .bodyStyle()
+                            // 아침자습이나 점심자습이면 수업 중이라는 표현을 사용하지 않음
+                            if currentClass.subject == "아침자습" || currentClass.subject == "점심시간" {
+                                Text("\(viewModel.getDisplaySubject(for: currentClass))")
+                                    .bodyStyle()
+                            } else {
+                                Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
+                                    .bodyStyle()
+                            }
                         case .breakTime(_):
                             Text("쉬는시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
                                 .bodyStyle()
                         case .lunchTime:
-                            Text("점심시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
-                                .bodyStyle()
+                            // 점심자습 시간이면 다른 표시 방식 사용
+                            if currentClass.subject == "점심시간" {
+                                Text("\(viewModel.getDisplaySubject(for: currentClass))")
+                                    .bodyStyle()
+                            } else {
+                                Text("점심시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
+                                    .bodyStyle()
+                            }
                         case .preClass(_):
                             Text("수업 10분 전 - \(viewModel.getDisplaySubject(for: currentClass))")
                                 .bodyStyle()
                         default:
-                            Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
-                                .bodyStyle()
+                            // 아침자습이나 점심자습이면 수업 중이라는 표현을 사용하지 않음
+                            if currentClass.subject == "아침자습" || currentClass.subject == "점심시간" {
+                                Text("\(viewModel.getDisplaySubject(for: currentClass))")
+                                    .bodyStyle()
+                            } else {
+                                Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
+                                    .bodyStyle()
+                            }
                         }
                         
                         let displayClassroom = viewModel.getDisplayClassroom(for: currentClass)

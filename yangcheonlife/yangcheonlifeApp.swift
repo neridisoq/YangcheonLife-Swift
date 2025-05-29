@@ -43,6 +43,9 @@ struct YangcheonLifeApp: App {
         
         // 앱 시작 시 필요한 초기화 작업
         Task {
+            // iCloud 설정 동기화 (앱 시작시)
+            iCloudSyncService.shared.syncFromiCloud()
+            
             // 알림 권한 상태 확인
             await notificationService.checkAuthorizationStatus()
             

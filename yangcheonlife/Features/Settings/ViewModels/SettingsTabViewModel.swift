@@ -2,6 +2,7 @@
 import SwiftUI
 import Foundation
 import WidgetKit
+import Combine
 
 class SettingsTabViewModel: ObservableObject {
     
@@ -16,10 +17,13 @@ class SettingsTabViewModel: ObservableObject {
     
     // MARK: - Private Properties
     private let userDefaults = UserDefaults.standard
+    private let iCloudSync = iCloudSyncService.shared
+    private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Initialization
     init() {
         loadSettings()
+        setupiCloudSync()
     }
     
     // MARK: - Public Methods
@@ -49,6 +53,9 @@ class SettingsTabViewModel: ObservableObject {
         defaultGrade = grade
         userDefaults.set(grade, forKey: AppConstants.UserDefaultsKeys.defaultGrade)
         
+        // iCloud 동기화
+        iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.defaultGrade, syncKey: iCloudSyncService.SyncKeys.defaultGrade, value: grade)
+        
         // Firebase 토픽 구독 업데이트
         if oldGrade != grade && defaultClass > 0 {
             FirebaseService.shared.switchTopic(to: grade, classNumber: defaultClass)
@@ -63,6 +70,9 @@ class SettingsTabViewModel: ObservableObject {
         defaultClass = classNumber
         userDefaults.set(classNumber, forKey: AppConstants.UserDefaultsKeys.defaultClass)
         
+        // iCloud 동기화
+        iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.defaultClass, syncKey: iCloudSyncService.SyncKeys.defaultClass, value: classNumber)
+        
         // Firebase 토픽 구독 업데이트
         if oldClass != classNumber && defaultGrade > 0 {
             FirebaseService.shared.switchTopic(to: defaultGrade, classNumber: classNumber)
@@ -75,6 +85,10 @@ class SettingsTabViewModel: ObservableObject {
     func saveNotificationsEnabled(_ enabled: Bool) {
         notificationsEnabled = enabled
         userDefaults.set(enabled, forKey: AppConstants.UserDefaultsKeys.notificationsEnabled)
+        
+        // iCloud 동기화
+        iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.notificationsEnabled, syncKey: iCloudSyncService.SyncKeys.notificationsEnabled, value: enabled)
+        
         updateSharedUserDefaults()
     }
     
@@ -82,6 +96,9 @@ class SettingsTabViewModel: ObservableObject {
     func savePhysicalEducationAlertEnabled(_ enabled: Bool) {
         physicalEducationAlertEnabled = enabled
         userDefaults.set(enabled, forKey: AppConstants.UserDefaultsKeys.physicalEducationAlertEnabled)
+        
+        // iCloud 동기화
+        iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.physicalEducationAlertEnabled, syncKey: iCloudSyncService.SyncKeys.physicalEducationAlertEnabled, value: enabled)
         
         // 체육 알림 설정 업데이트
         Task {
@@ -105,6 +122,9 @@ class SettingsTabViewModel: ObservableObject {
         
         userDefaults.set(timeString, forKey: AppConstants.UserDefaultsKeys.physicalEducationAlertTime)
         
+        // iCloud 동기화
+        iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.physicalEducationAlertTime, syncKey: iCloudSyncService.SyncKeys.physicalEducationAlertTime, value: timeString)
+        
         // 체육 알림 다시 설정 (시간 변경사항 반영)
         if physicalEducationAlertEnabled {
             Task {
@@ -119,6 +139,10 @@ class SettingsTabViewModel: ObservableObject {
     func saveWifiSuggestionEnabled(_ enabled: Bool) {
         wifiSuggestionEnabled = enabled
         userDefaults.set(enabled, forKey: AppConstants.UserDefaultsKeys.wifiSuggestionEnabled)
+        
+        // iCloud 동기화
+        iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.wifiSuggestionEnabled, syncKey: iCloudSyncService.SyncKeys.wifiSuggestionEnabled, value: enabled)
+        
         updateSharedUserDefaults()
     }
     
@@ -129,6 +153,11 @@ class SettingsTabViewModel: ObservableObject {
         // 투명도 적용
         let adjustedColor = color.opacity(0.3)
         adjustedColor.saveToUserDefaults(key: AppConstants.UserDefaultsKeys.cellBackgroundColor)
+        
+        // iCloud 동기화 (색상 데이터)
+        if let colorData = userDefaults.data(forKey: AppConstants.UserDefaultsKeys.cellBackgroundColor) {
+            iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.cellBackgroundColor, syncKey: iCloudSyncService.SyncKeys.cellBackgroundColor, value: colorData)
+        }
         
         updateSharedUserDefaults()
     }
@@ -286,5 +315,32 @@ class SettingsTabViewModel: ObservableObject {
         selections.forEach { key, value in
             userDefaults.set(value, forKey: key)
         }
+    }
+    
+    /// iCloud 동기화 설정
+    private func setupiCloudSync() {
+        // iCloud 변경사항 감지
+        NotificationCenter.default.publisher(for: NSNotification.Name("iCloudSyncCompleted"))
+            .sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.loadSettings()
+                }
+            }
+            .store(in: &cancellables)
+        
+        // 앱 시작 시 iCloud에서 설정 로드
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.iCloudSync.syncFromiCloud()
+        }
+    }
+    
+    /// 탐구과목 선택사항 iCloud 동기화 (기존 로직 유지)
+    func syncSubjectSelection(key: String, value: String) {
+        userDefaults.set(value, forKey: key)
+        
+        // 동적 syncKey 생성 (기존 방식)
+        let syncKey = "sync_\(key)"
+        iCloudSync.syncSetting(localKey: key, syncKey: syncKey, value: value)
+        updateSharedUserDefaults()
     }
 }

@@ -303,7 +303,23 @@ struct TimeUtility {
             return max(0, Int(timeDifference / 60))
             
         case .preClass(let period), .breakTime(let period):
-            // 수업 전이면 수업 시작까지 남은 시간
+            // 5교시 전 쉬는시간 (13:00 ~ 13:10)인 경우 특별 처리
+            if period == 5 {
+                let calendar = Calendar.current
+                let hour = calendar.component(.hour, from: date)
+                let minute = calendar.component(.minute, from: date)
+                let currentTotalMinutes = hour * 60 + minute
+                
+                // 13:00 ~ 13:10 가정 (5교시 전 쉬는시간)
+                let fifthPeriodStart = 13 * 60 + 10 // 13:10
+                
+                if currentTotalMinutes >= 13 * 60 && currentTotalMinutes < fifthPeriodStart {
+                    // 5교시 시작까지 남은 시간
+                    return max(0, fifthPeriodStart - currentTotalMinutes)
+                }
+            }
+            
+            // 일반 수업 전이면 수업 시작까지 남은 시간
             guard let startTime = getPeriodStartTime(period: period) else { return nil }
             
             let calendar = Calendar.current
@@ -316,16 +332,14 @@ struct TimeUtility {
             return max(0, Int(timeDifference / 60))
             
         case .lunchTime:
-            // 점심시간이면 5교시 시작까지 남은 시간
-            guard let startTime = getPeriodStartTime(period: 5) else { return nil }
-            
+            // 점심시간이면 13:00(점심시간 끝)까지 남은 시간
             let calendar = Calendar.current
-            guard let nextClassTime = calendar.date(bySettingHour: startTime.hour,
-                                                   minute: startTime.minute,
+            guard let lunchEndTime = calendar.date(bySettingHour: 13,
+                                                   minute: 0,
                                                    second: 0,
                                                    of: date) else { return nil }
             
-            let timeDifference = nextClassTime.timeIntervalSince(date)
+            let timeDifference = lunchEndTime.timeIntervalSince(date)
             return max(0, Int(timeDifference / 60))
             
         default:

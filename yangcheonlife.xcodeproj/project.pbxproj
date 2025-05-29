@@ -63,6 +63,7 @@
 		098ED0312DE747460036C2CE /* yclifemealwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		098ED0B32DE74B020036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
 		098ED0B42DE74B1D0036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
+		098ED0B62DE7ECD90036C2CE /* iCloudSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0B52DE7ECD90036C2CE /* iCloudSyncService.swift */; };
 		0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */ = {isa = PBXBuildFile; fileRef = 0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */; };
 /* End PBXBuildFile section */
 
@@ -174,6 +175,7 @@
 		098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = yclifemealwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		098ED03B2DE748A20036C2CE /* yclifemealwidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifemealwidgetExtension.entitlements; sourceTree = "<group>"; };
+		098ED0B52DE7ECD90036C2CE /* iCloudSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudSyncService.swift; sourceTree = "<group>"; };
 		0999C1A42D7FA81A00DDB78D /* yclifewidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = yclifewidgetExtension.entitlements; sourceTree = "<group>"; };
 		0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comsi.helgisnw.metestfile.json; sourceTree = "<group>"; };
 		15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_yangcheonlife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -383,6 +385,7 @@
 		094B1A962DE2D604005E29E4 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				098ED0B52DE7ECD90036C2CE /* iCloudSyncService.swift */,
 				098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */,
 				098ECF632DE6C0D40036C2CE /* FirebaseService.swift */,
 				094B1A922DE2D604005E29E4 /* AppUpdateService.swift */,
@@ -900,6 +903,7 @@
 				094B1A9A2DE2D604005E29E4 /* TimeUtility.swift in Sources */,
 				094B1A9B2DE2D604005E29E4 /* AppConstants.swift in Sources */,
 				094B1A9C2DE2D604005E29E4 /* NotificationService.swift in Sources */,
+				098ED0B62DE7ECD90036C2CE /* iCloudSyncService.swift in Sources */,
 				094B1AD32DE2D64C005E29E4 /* Collection+Extension.swift in Sources */,
 				094B1AD42DE2D64C005E29E4 /* Color+Extension.swift in Sources */,
 				094B1AD52DE2D64C005E29E4 /* View+Extension.swift in Sources */,

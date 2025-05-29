@@ -138,8 +138,13 @@ struct ClassSubjectSelectionView: View {
                 }
                 .pickerStyle(DefaultPickerStyle())
                 .onChange(of: selectedSubject) { newValue in
-                    // 선택한 과목을 UserDefaults에 저장
-                    UserDefaults.standard.set(newValue, forKey: "selected\(className)Subject")
+                    // iCloud 동기화와 함께 저장
+                    let key = "selected\(className)Subject"
+                    UserDefaults.standard.set(newValue, forKey: key)
+                    
+                    // iCloud 동기화
+                    let syncKey = "sync_\(key)"
+                    iCloudSyncService.shared.syncSetting(localKey: key, syncKey: syncKey, value: newValue)
                     
                     // 알림 재설정 트리거
                     triggerNotificationReset()
@@ -183,6 +188,7 @@ struct ClassSubjectSelectionView: View {
             )
         }
     }
+    
     
     // 과목 선택 시 알림 재설정을 트리거하는 함수
     private func triggerNotificationReset() {
