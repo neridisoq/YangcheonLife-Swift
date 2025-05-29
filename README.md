@@ -45,9 +45,6 @@
 
 이 앱은 영어와 한국어및 일본어와 중국어를 모두 지원합니다. 기기 설정에서 언어를 변경할 수 있습니다.
 
-## 라이선스
-
-본 프로젝트는 [Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0)](https://creativecommons.org/licenses/by-nd/4.0/deed.ko) 라이선스에 따라 배포됩니다.
 
 ## 사용 소스
 
