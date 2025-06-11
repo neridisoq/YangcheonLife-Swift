@@ -249,11 +249,8 @@ class FirebaseService: NSObject, ObservableObject {
         // 앱 상태 확인
         let appState = UIApplication.shared.applicationState
         if appState != .active {
-            print("📱 앱이 백그라운드 상태입니다. Live Activity 시작 요청을 저장합니다.")
-            // 포그라운드로 올 때 시작하도록 플래그 저장
-            UserDefaults.standard.set(true, forKey: "pendingLiveActivityStart")
-            UserDefaults.standard.set(grade, forKey: "pendingLiveActivityGrade")
-            UserDefaults.standard.set(classNumber, forKey: "pendingLiveActivityClass")
+            print("📱 앱이 백그라운드 상태입니다. NotificationServiceExtension에서 처리됩니다.")
+            // NotificationServiceExtension에서 이미 처리하므로 여기서는 아무것도 하지 않음
             return
         }
         

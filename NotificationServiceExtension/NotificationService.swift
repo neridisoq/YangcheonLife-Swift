@@ -6,12 +6,21 @@ import Foundation
 import ActivityKit
 #endif
 
+// Note: 다음 파일들이 NotificationServiceExtension 타겟에 추가되어야 합니다:
+// - yclifeliveactivity/LiveActivityModels.swift
+// - yangcheonlife/Core/Models/ScheduleModels.swift  
+// - Shared/SharedUserDefaults.swift
+// - yangcheonlife/Core/Constants/AppConstants.swift
+//
+// 주의: LiveActivityManager.swift는 추가하지 마세요 (UIApplication, Combine 의존성 때문)
+
 class NotificationService: UNNotificationServiceExtension {
     
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
     
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        print("🔔 [NotificationService] Extension 호출됨!!!")
         self.contentHandler = contentHandler
         bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
         
@@ -72,59 +81,65 @@ class NotificationService: UNNotificationServiceExtension {
     private func handleLiveActivityStart() {
         print("🔔 [NotificationService] Live Activity 시작 요청")
         
-        #if canImport(ActivityKit)
-        guard #available(iOS 18.0, *) else {
-            print("🔔 [NotificationService] iOS 18.0 이상 필요")
-            return
-        }
-        
-        // ActivityKit 권한 확인
-        let authInfo = ActivityAuthorizationInfo()
-        guard authInfo.areActivitiesEnabled else {
-            print("🔔 [NotificationService] Live Activities 비활성화됨")
-            return
-        }
-        
         // App Group UserDefaults에서 학년/반 정보 가져오기
         let groupDefaults = UserDefaults(suiteName: "group.com.helgisnw.yangcheonlife")
+        
+        // 기존 데이터 확인
+        print("🔔 [NotificationService] 기존 App Group 데이터 확인:")
+        print("   - defaultGrade: \(groupDefaults?.integer(forKey: "defaultGrade") ?? -1)")
+        print("   - defaultClass: \(groupDefaults?.integer(forKey: "defaultClass") ?? -1)")
+        print("   - 이전 pendingLiveActivityStart: \(groupDefaults?.bool(forKey: "pendingLiveActivityStart") ?? false)")
+        
         let grade = groupDefaults?.integer(forKey: "defaultGrade") ?? 0
         let classNumber = groupDefaults?.integer(forKey: "defaultClass") ?? 0
         
         guard grade > 0 && classNumber > 0 else {
-            print("🔔 [NotificationService] 유효하지 않은 학년/반: \(grade)학년 \(classNumber)반")
+            print("🔔 [NotificationService] ❌ 유효하지 않은 학년/반: \(grade)학년 \(classNumber)반")
+            print("🔔 [NotificationService] 기본값으로 3학년 1반 설정")
+            
+            // 기본값 설정
+            let defaultGrade = 3
+            let defaultClass = 1
+            
+            // 대기 요청 저장 (기본값 사용)
+            groupDefaults?.set(true, forKey: "pendingLiveActivityStart")
+            groupDefaults?.set(defaultGrade, forKey: "pendingLiveActivityGrade")
+            groupDefaults?.set(defaultClass, forKey: "pendingLiveActivityClass")
+            groupDefaults?.set(Date().timeIntervalSince1970, forKey: "pendingLiveActivityTimestamp")
+            groupDefaults?.synchronize() // 강제 동기화
+            
+            print("🔔 [NotificationService] ✅ 기본값으로 대기 요청 저장 완료: \(defaultGrade)학년 \(defaultClass)반")
             return
         }
         
-        print("🔔 [NotificationService] Live Activity 시작 시도: \(grade)학년 \(classNumber)반")
+        print("🔔 [NotificationService] Extension에서는 직접 Live Activity 시작 불가")
+        print("🔔 [NotificationService] 메인 앱에 시작 요청 신호 저장: \(grade)학년 \(classNumber)반")
         
-        // 기존 활동 확인 및 종료
-        for activity in Activity<ClassActivityAttributes>.activities {
-            Task {
-                await activity.end(nil, dismissalPolicy: .immediate)
-            }
-        }
+        // Extension에서는 Live Activity를 직접 시작할 수 없으므로 
+        // App Group UserDefaults를 통해 메인 앱에 신호를 보냄
+        groupDefaults?.set(true, forKey: "pendingLiveActivityStart")
+        groupDefaults?.set(grade, forKey: "pendingLiveActivityGrade")
+        groupDefaults?.set(classNumber, forKey: "pendingLiveActivityClass")
+        groupDefaults?.set(Date().timeIntervalSince1970, forKey: "pendingLiveActivityTimestamp")
         
-        // Live Activity 시작
-        do {
-            let attributes = ClassActivityAttributes(grade: grade, classNumber: classNumber)
-            let initialState = ClassActivityAttributes.ContentState(
-                currentStatus: getCurrentStatus(),
-                currentClass: getCurrentClass(grade: grade, classNumber: classNumber),
-                nextClass: getNextClass(grade: grade, classNumber: classNumber),
-                remainingMinutes: getRemainingMinutes(),
-                lastUpdated: Date()
-            )
-            
-            let activity = try Activity<ClassActivityAttributes>.request(
-                attributes: attributes,
-                content: ActivityContent(state: initialState, staleDate: nil)
-            )
-            
-            print("🔔 [NotificationService] Live Activity 시작 성공: \(activity.id)")
-        } catch {
-            print("🔔 [NotificationService] Live Activity 시작 실패: \(error)")
+        // 강제 동기화로 확실히 저장
+        groupDefaults?.synchronize()
+        
+        // 저장 확인
+        let savedFlag = groupDefaults?.bool(forKey: "pendingLiveActivityStart") ?? false
+        let savedGrade = groupDefaults?.integer(forKey: "pendingLiveActivityGrade") ?? 0
+        let savedClass = groupDefaults?.integer(forKey: "pendingLiveActivityClass") ?? 0
+        
+        print("🔔 [NotificationService] 저장 확인:")
+        print("   - pendingLiveActivityStart: \(savedFlag)")
+        print("   - pendingLiveActivityGrade: \(savedGrade)")
+        print("   - pendingLiveActivityClass: \(savedClass)")
+        
+        if savedFlag && savedGrade > 0 && savedClass > 0 {
+            print("🔔 [NotificationService] ✅ 대기 요청 저장 성공! 메인 앱 활성화 시 Live Activity가 시작됩니다")
+        } else {
+            print("🔔 [NotificationService] ❌ 대기 요청 저장 실패!")
         }
-        #endif
     }
     
     private func handleLiveActivityStop() {
@@ -147,23 +162,7 @@ class NotificationService: UNNotificationServiceExtension {
     
     @available(iOS 18.0, *)
     private func getCurrentStatus() -> ClassStatus {
-        // 현재 시간에 따른 상태 반환 (단순화된 버전)
-        let calendar = Calendar.current
-        let now = Date()
-        let hour = calendar.component(.hour, from: now)
-        
-        switch hour {
-        case 0..<8:
-            return .beforeSchool
-        case 8..<12:
-            return .inClass
-        case 12..<13:
-            return .lunchTime
-        case 13..<17:
-            return .inClass
-        default:
-            return .afterSchool
-        }
+        return ExtensionTimeUtility.getCurrentStatus()
     }
     
     @available(iOS 18.0, *)
@@ -175,33 +174,11 @@ class NotificationService: UNNotificationServiceExtension {
             return nil
         }
         
-        // 현재 교시 계산 (단순화된 버전)
-        let calendar = Calendar.current
-        let now = Date()
-        let hour = calendar.component(.hour, from: now)
-        let minute = calendar.component(.minute, from: now)
-        
-        var currentPeriod: Int = 0
-        switch hour {
-        case 9:
-            currentPeriod = 1
-        case 10:
-            currentPeriod = 2
-        case 11:
-            currentPeriod = 3
-        case 12:
-            currentPeriod = 4
-        case 14:
-            currentPeriod = 5
-        case 15:
-            currentPeriod = 6
-        case 16:
-            currentPeriod = 7
-        default:
+        guard let currentPeriod = ExtensionTimeUtility.getCurrentPeriodNumber() else {
             return nil
         }
         
-        let weekdayIndex = calendar.component(.weekday, from: now) - 2 // 월요일=0
+        let weekdayIndex = ExtensionTimeUtility.getCurrentWeekdayIndex()
         guard weekdayIndex >= 0 && weekdayIndex < 5 else { return nil } // 월-금만
         
         let dailySchedule = scheduleData.getDailySchedule(for: weekdayIndex)
@@ -209,12 +186,15 @@ class NotificationService: UNNotificationServiceExtension {
             return nil
         }
         
+        let timeString = ExtensionTimeUtility.getPeriodTimeString(period: currentPeriod)
+        let timeComponents = timeString.components(separatedBy: " - ")
+        
         return ClassInfo(
             period: currentPeriod,
             subject: scheduleItem.subject,
             classroom: scheduleItem.classroom,
-            startTime: "\(hour):00",
-            endTime: "\(hour):50"
+            startTime: timeComponents.first ?? "",
+            endTime: timeComponents.last ?? ""
         )
     }
     
@@ -225,10 +205,6 @@ class NotificationService: UNNotificationServiceExtension {
     }
     
     private func getRemainingMinutes() -> Int {
-        // 남은 시간 계산 (단순화된 버전)
-        let calendar = Calendar.current
-        let now = Date()
-        let minute = calendar.component(.minute, from: now)
-        return 50 - minute
+        return ExtensionTimeUtility.getRemainingMinutes()
     }
 }

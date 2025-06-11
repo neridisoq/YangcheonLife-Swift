@@ -70,7 +70,7 @@ struct SettingsTabView: View {
                         .foregroundColor(.secondary)
                 }
                 
-                Spacer()
+
                 
                 if liveActivityManager.isActivityRunning {
                     Text("실행 중")

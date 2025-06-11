@@ -220,9 +220,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // Check for updates when app enters foreground
     func applicationWillEnterForeground(_ application: UIApplication) {
+        print("📱 [AppDelegate] ✅ applicationWillEnterForeground 호출됨")
         AppUpdateService.shared.checkForUpdates()
         
-        // 대기 중인 Live Activity 시작 처리
+        // Extension에서 저장한 대기 중인 Live Activity 시작 처리
         handlePendingLiveActivityStart()
         
         // 라이브 액티비티 업데이트
@@ -234,12 +235,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // 앱 활성화 시 위젯 데이터 동기화
     func applicationDidBecomeActive(_ application: UIApplication) {
         // 위젯 데이터 동기화
+        print("📱 [AppDelegate] ✅ applicationDidBecomeActive 호출됨")
         print("🔄 앱 활성화: 위젯 데이터 동기화 시작")
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
         SharedUserDefaults.shared.printAllValues()
         WidgetCenter.shared.reloadAllTimelines()
         
-        // 대기 중인 Live Activity 시작 처리 (포그라운드 전환 시에도 확인)
+        // Extension에서 저장한 대기 중인 Live Activity 시작 처리
         handlePendingLiveActivityStart()
         
         // 라이브 액티비티 업데이트
@@ -252,26 +254,78 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // MARK: - Pending Live Activity 처리
     
-    /// 대기 중인 Live Activity 시작 처리
+    /// SwiftUI에서 호출하는 대기 중인 Live Activity 처리 (public)
+    func handlePendingLiveActivityStartFromSwiftUI() {
+        print("📱 [AppDelegate] SwiftUI에서 대기 중인 Live Activity 처리 요청")
+        handlePendingLiveActivityStart()
+    }
+    
+    /// Extension에서 저장한 대기 중인 Live Activity 시작 처리
     private func handlePendingLiveActivityStart() {
-        guard UserDefaults.standard.bool(forKey: "pendingLiveActivityStart") else {
+        print("📱 [AppDelegate] 대기 중인 Live Activity 확인 시작")
+        
+        let groupDefaults = UserDefaults(suiteName: "group.com.helgisnw.yangcheonlife")
+        
+        // App Group UserDefaults 강제 동기화
+        groupDefaults?.synchronize()
+        
+        // App Group UserDefaults 전체 상태 확인
+        print("📱 [AppDelegate] App Group UserDefaults 상태:")
+        print("   - pendingLiveActivityStart: \(groupDefaults?.bool(forKey: "pendingLiveActivityStart") ?? false)")
+        print("   - pendingLiveActivityGrade: \(groupDefaults?.integer(forKey: "pendingLiveActivityGrade") ?? -1)")
+        print("   - pendingLiveActivityClass: \(groupDefaults?.integer(forKey: "pendingLiveActivityClass") ?? -1)")
+        
+        // 타임스탬프도 확인
+        let timestamp = groupDefaults?.double(forKey: "pendingLiveActivityTimestamp") ?? 0
+        if timestamp > 0 {
+            print("   - pendingLiveActivityTimestamp: \(Date(timeIntervalSince1970: timestamp))")
+        }
+        
+        let isPending = groupDefaults?.bool(forKey: "pendingLiveActivityStart") ?? false
+        
+        guard isPending else {
+            print("📱 [AppDelegate] ❌ 대기 중인 Live Activity 없음")
+            
+            // Extension에서 저장했는데도 없다면 App Group 설정 문제일 수 있음
+            print("📱 [AppDelegate] App Group 설정 확인:")
+            print("   - App Group Suite Name: group.com.helgisnw.yangcheonlife")
+            print("   - UserDefaults 객체: \(groupDefaults != nil ? "생성됨" : "nil")")
+            
+            // 혹시 다른 키들이 있는지 확인
+            if let allKeys = groupDefaults?.dictionaryRepresentation().keys {
+                print("   - 사용 가능한 모든 키: \(Array(allKeys))")
+            }
             return
         }
         
-        let grade = UserDefaults.standard.integer(forKey: "pendingLiveActivityGrade")
-        let classNumber = UserDefaults.standard.integer(forKey: "pendingLiveActivityClass")
+        let grade = groupDefaults?.integer(forKey: "pendingLiveActivityGrade") ?? 0
+        let classNumber = groupDefaults?.integer(forKey: "pendingLiveActivityClass") ?? 0
         
-        print("📱 대기 중인 Live Activity 시작 처리: \(grade)학년 \(classNumber)반")
+        print("📱 [AppDelegate] ✅ 대기 중인 Live Activity 발견!")
+        print("📱 [AppDelegate] Extension에서 요청한 Live Activity 시작 처리: \(grade)학년 \(classNumber)반")
+        print("📱 [AppDelegate] 요청 시간: \(Date(timeIntervalSince1970: timestamp))")
         
-        // 플래그 초기화
-        UserDefaults.standard.set(false, forKey: "pendingLiveActivityStart")
-        UserDefaults.standard.removeObject(forKey: "pendingLiveActivityGrade")
-        UserDefaults.standard.removeObject(forKey: "pendingLiveActivityClass")
+        // 플래그 초기화 (사용 전에 먼저 초기화)
+        groupDefaults?.set(false, forKey: "pendingLiveActivityStart")
+        groupDefaults?.removeObject(forKey: "pendingLiveActivityGrade")
+        groupDefaults?.removeObject(forKey: "pendingLiveActivityClass")
+        groupDefaults?.removeObject(forKey: "pendingLiveActivityTimestamp")
+        groupDefaults?.synchronize()
         
-        // Live Activity 시작
+        print("📱 [AppDelegate] 대기 플래그 초기화 완료")
+        
+        // Live Activity 시작 (약간의 지연 후 실행)
         if grade > 0 && classNumber > 0 {
-            LiveActivityManager.shared.startLiveActivity(grade: grade, classNumber: classNumber)
-            print("✅ 대기 중이던 Live Activity 시작 완료: \(grade)학년 \(classNumber)반")
+            print("📱 [AppDelegate] Live Activity 시작 시도: \(grade)학년 \(classNumber)반")
+            
+            // 앱이 완전히 활성화될 때까지 0.3초 대기 후 시작
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                print("📱 [AppDelegate] 지연 후 Live Activity 시작 실행")
+                LiveActivityManager.shared.startLiveActivity(grade: grade, classNumber: classNumber)
+                print("📱 [AppDelegate] ✅ Extension 요청으로 Live Activity 시작 완료: \(grade)학년 \(classNumber)반")
+            }
+        } else {
+            print("📱 [AppDelegate] ❌ 유효하지 않은 학년/반 정보: \(grade)학년 \(classNumber)반")
         }
     }
     

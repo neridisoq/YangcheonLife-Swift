@@ -51,21 +51,57 @@ class LiveActivityManager: ObservableObject {
             return 
         }
         
-        // 앱 상태 확인 - 백그라운드에서는 Live Activity 시작 불가
+        // Extension에서는 앱 상태 확인을 스킵
+        #if !EXTENSION
+        startLiveActivityWithRetry(grade: grade, classNumber: classNumber)
+        #else
+        performStartLiveActivity(grade: grade, classNumber: classNumber)
+        #endif
+        #endif
+    }
+    
+    /// 재시도 로직이 포함된 Live Activity 시작
+    private func startLiveActivityWithRetry(grade: Int, classNumber: Int, attempt: Int = 1) {
+        #if canImport(ActivityKit)
+        guard #available(iOS 18.0, *) else { return }
+        
         let appState = UIApplication.shared.applicationState
-        if appState != .active {
-            print("❌ Live Activity는 앱이 포그라운드에 있을 때만 시작할 수 있습니다.")
-            print("   현재 앱 상태: \(appState == .background ? "백그라운드" : "비활성")")
-            print("   해결 방법: 앱을 포그라운드로 가져온 후 다시 시도하세요.")
+        print("🔍 Live Activity 시작 시도 #\(attempt) - 앱 상태: \(appState == .active ? "Active" : appState == .inactive ? "Inactive" : "Background")")
+        
+        // 앱이 활성 상태가 아니고 시도 횟수가 3회 미만이면 0.5초 후 재시도
+        if appState != .active && attempt < 3 {
+            print("⏱️ 앱이 완전히 활성화될 때까지 0.5초 대기 후 재시도...")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.startLiveActivityWithRetry(grade: grade, classNumber: classNumber, attempt: attempt + 1)
+            }
             return
         }
+        
+        // 3번 시도 후에도 활성 상태가 아니면 경고만 출력하고 계속 진행
+        if appState != .active {
+            print("⚠️ 앱이 완전히 활성화되지 않았지만 Live Activity 시작을 시도합니다.")
+        }
+        
+        performStartLiveActivity(grade: grade, classNumber: classNumber)
+        #endif
+    }
+    
+    /// 실제 Live Activity 시작 로직
+    private func performStartLiveActivity(grade: Int, classNumber: Int) {
+        #if canImport(ActivityKit)
+        guard #available(iOS 18.0, *) else { return }
         
         let authInfo = ActivityAuthorizationInfo()
         print("🔍 Live Activity Authorization Status: \(authInfo.areActivitiesEnabled)")
         print("🔍 Live Activity 기기 설정 상태:")
         print("   - Device supports Live Activities: \(ActivityAuthorizationInfo().areActivitiesEnabled)")
         print("   - Current activities count: \(Activity<ClassActivityAttributes>.activities.count)")
-        print("   - App State: \(appState == .active ? "Active (포그라운드)" : "Not Active")")
+        #if !EXTENSION
+        let appState = UIApplication.shared.applicationState
+        print("   - App State: \(appState == .active ? "Active (포그라운드)" : appState == .inactive ? "Inactive" : "Background")")
+        #else
+        print("   - App State: Extension (상태 확인 불가)")
+        #endif
         
         guard authInfo.areActivitiesEnabled else {
             print("❌ Live Activities are not enabled")
@@ -96,9 +132,9 @@ class LiveActivityManager: ObservableObject {
             DispatchQueue.main.async {
                 self.currentActivity = activity
             }
-            print("Live Activity started successfully")
+            print("✅ Live Activity started successfully")
         } catch {
-            print("Failed to start Live Activity: \(error)")
+            print("❌ Failed to start Live Activity: \(error)")
         }
         #endif
     }

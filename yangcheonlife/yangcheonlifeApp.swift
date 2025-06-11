@@ -33,6 +33,22 @@ struct YangcheonLifeApp: App {
                 .onAppear {
                     setupApp()
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    print("📱 [SwiftUI] willEnterForegroundNotification 수신")
+                    // 즉시 실행하지 않고 약간의 지연 후 실행
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        print("📱 [SwiftUI] 지연 후 대기 Live Activity 처리 실행")
+                        appDelegate.handlePendingLiveActivityStartFromSwiftUI()
+                    }
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    print("📱 [SwiftUI] didBecomeActiveNotification 수신")
+                    // 즉시 실행하지 않고 약간의 지연 후 실행
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        print("📱 [SwiftUI] 지연 후 대기 Live Activity 처리 실행")
+                        appDelegate.handlePendingLiveActivityStartFromSwiftUI()
+                    }
+                }
         }
     }
     

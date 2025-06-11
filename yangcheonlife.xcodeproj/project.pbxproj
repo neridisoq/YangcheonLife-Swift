@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		08B30CAAB05D77B62693589B /* Pods_yangcheonlife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */; };
 		0925B2932DF8F1C8000D18BB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0925B2922DF8F1C8000D18BB /* GoogleService-Info.plist */; };
+		0925B2DB2DF90513000D18BB /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0925B2D42DF90513000D18BB /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0925B2F12DF906CE000D18BB /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
+		0925B37F2DF90887000D18BB /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
 		094B1A9A2DE2D604005E29E4 /* TimeUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A972DE2D604005E29E4 /* TimeUtility.swift */; };
 		094B1A9B2DE2D604005E29E4 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
 		094B1A9C2DE2D604005E29E4 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A932DE2D604005E29E4 /* NotificationService.swift */; };
@@ -56,7 +59,6 @@
 		098ECFDF2DE6D1EC0036C2CE /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
 		098ECFE02DE6D1FE0036C2CE /* ScheduleModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */; };
 		098ED0172DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */; };
-		098ED0182DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098ED0162DE6D59F0036C2CE /* LiveActivityManager.swift */; };
 		098ED0192DE6D5DE0036C2CE /* TimeUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A972DE2D604005E29E4 /* TimeUtility.swift */; };
 		098ED0252DE747440036C2CE /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69B2C2BA58A00651DE1 /* WidgetKit.framework */; };
 		098ED0262DE747440036C2CE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096DE69D2C2BA58A00651DE1 /* SwiftUI.framework */; };
@@ -68,6 +70,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0925B2D92DF90513000D18BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0925B2D32DF90513000D18BB;
+			remoteInfo = NotificationServiceExtension;
+		};
 		098ECF742DE6C2CD0036C2CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0969EFE22C2A7C04002C4F44 /* Project object */;
@@ -117,6 +126,7 @@
 			files = (
 				098ECF762DE6C2CD0036C2CE /* yclifemainwidgetExtension.appex in Embed Foundation Extensions */,
 				098ECFD02DE6CC720036C2CE /* yclifeliveactivityExtension.appex in Embed Foundation Extensions */,
+				0925B2DB2DF90513000D18BB /* NotificationServiceExtension.appex in Embed Foundation Extensions */,
 				098ECF8C2DE6C3770036C2CE /* yclifelockwidgetExtension.appex in Embed Foundation Extensions */,
 				098ED0312DE747460036C2CE /* yclifemealwidgetExtension.appex in Embed Foundation Extensions */,
 			);
@@ -127,6 +137,7 @@
 
 /* Begin PBXFileReference section */
 		0925B2922DF8F1C8000D18BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0925B2D42DF90513000D18BB /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		094B1A8D2DE2D604005E29E4 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModels.swift; sourceTree = "<group>"; };
 		094B1A902DE2D604005E29E4 /* WiFiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiModels.swift; sourceTree = "<group>"; };
@@ -184,6 +195,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0925B2DF2DF90513000D18BB /* Exceptions for "NotificationServiceExtension" folder in "NotificationServiceExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0925B2D32DF90513000D18BB /* NotificationServiceExtension */;
+		};
+		0925B2F32DF906F0000D18BB /* Exceptions for "yclifeliveactivity" folder in "NotificationServiceExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LiveActivityModels.swift,
+			);
+			target = 0925B2D32DF90513000D18BB /* NotificationServiceExtension */;
+		};
+		0925B2F52DF90742000D18BB /* Exceptions for "Shared" folder in "NotificationServiceExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SharedUserDefaults.swift,
+			);
+			target = 0925B2D32DF90513000D18BB /* NotificationServiceExtension */;
+		};
 		098ECF7A2DE6C2CD0036C2CE /* Exceptions for "yclifemainwidget" folder in "yclifemainwidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -270,6 +302,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		0925B2D52DF90513000D18BB /* NotificationServiceExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0925B2DF2DF90513000D18BB /* Exceptions for "NotificationServiceExtension" folder in "NotificationServiceExtension" target */,
+			);
+			path = NotificationServiceExtension;
+			sourceTree = "<group>";
+		};
 		09828DFA2D7F484400E5FD95 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -278,6 +318,7 @@
 				098ECF972DE6C97C0036C2CE /* Exceptions for "Shared" folder in "yclifelockwidgetExtension" target */,
 				098ECFDC2DE6D1CE0036C2CE /* Exceptions for "Shared" folder in "yclifeliveactivityExtension" target */,
 				098ED0372DE747F00036C2CE /* Exceptions for "Shared" folder in "yclifemealwidgetExtension" target */,
+				0925B2F52DF90742000D18BB /* Exceptions for "Shared" folder in "NotificationServiceExtension" target */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -303,6 +344,7 @@
 			exceptions = (
 				098ED01B2DE6D92E0036C2CE /* Exceptions for "yclifeliveactivity" folder in "yangcheonlife" target */,
 				098ECFD42DE6CC720036C2CE /* Exceptions for "yclifeliveactivity" folder in "yclifeliveactivityExtension" target */,
+				0925B2F32DF906F0000D18BB /* Exceptions for "yclifeliveactivity" folder in "NotificationServiceExtension" target */,
 			);
 			path = yclifeliveactivity;
 			sourceTree = "<group>";
@@ -318,6 +360,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0925B2D12DF90513000D18BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0969EFE72C2A7C04002C4F44 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -570,6 +619,7 @@
 				098ECF822DE6C3760036C2CE /* yclifelockwidget */,
 				098ECFC42DE6CC710036C2CE /* yclifeliveactivity */,
 				098ED0272DE747440036C2CE /* yclifemealwidget */,
+				0925B2D52DF90513000D18BB /* NotificationServiceExtension */,
 				0969EFEB2C2A7C04002C4F44 /* Products */,
 				F65D034D03D29CF9324008A6 /* Pods */,
 				9723D769D7144062BDC836AB /* Frameworks */,
@@ -584,6 +634,7 @@
 				098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */,
 				098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */,
 				098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */,
+				0925B2D42DF90513000D18BB /* NotificationServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -639,6 +690,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0925B2D32DF90513000D18BB /* NotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0925B2DE2DF90513000D18BB /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */;
+			buildPhases = (
+				0925B2D02DF90513000D18BB /* Sources */,
+				0925B2D12DF90513000D18BB /* Frameworks */,
+				0925B2D22DF90513000D18BB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0925B2D52DF90513000D18BB /* NotificationServiceExtension */,
+			);
+			name = NotificationServiceExtension;
+			packageProductDependencies = (
+			);
+			productName = NotificationServiceExtension;
+			productReference = 0925B2D42DF90513000D18BB /* NotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		0969EFE92C2A7C04002C4F44 /* yangcheonlife */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0969EFF82C2A7C05002C4F44 /* Build configuration list for PBXNativeTarget "yangcheonlife" */;
@@ -658,6 +731,7 @@
 				098ECF8B2DE6C3770036C2CE /* PBXTargetDependency */,
 				098ECFCF2DE6CC720036C2CE /* PBXTargetDependency */,
 				098ED0302DE747460036C2CE /* PBXTargetDependency */,
+				0925B2DA2DF90513000D18BB /* PBXTargetDependency */,
 			);
 			name = yangcheonlife;
 			productName = yangcheonlife;
@@ -759,9 +833,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					0925B2D32DF90513000D18BB = {
+						CreatedOnToolsVersion = 26.0;
+					};
 					0969EFE92C2A7C04002C4F44 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -800,11 +877,19 @@
 				098ECF7E2DE6C3760036C2CE /* yclifelockwidgetExtension */,
 				098ECFC02DE6CC710036C2CE /* yclifeliveactivityExtension */,
 				098ED0232DE747440036C2CE /* yclifemealwidgetExtension */,
+				0925B2D32DF90513000D18BB /* NotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		0925B2D22DF90513000D18BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0969EFE82C2A7C04002C4F44 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -894,6 +979,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0925B2D02DF90513000D18BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0925B37F2DF90887000D18BB /* AppConstants.swift in Sources */,
+				0925B2F12DF906CE000D18BB /* ScheduleModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0969EFE62C2A7C04002C4F44 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -954,7 +1048,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				098ECFE02DE6D1FE0036C2CE /* ScheduleModels.swift in Sources */,
-				098ED0182DE6D59F0036C2CE /* LiveActivityManager.swift in Sources */,
 				098ECFDF2DE6D1EC0036C2CE /* AppConstants.swift in Sources */,
 				098ED0192DE6D5DE0036C2CE /* TimeUtility.swift in Sources */,
 			);
@@ -972,6 +1065,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0925B2DA2DF90513000D18BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0925B2D32DF90513000D18BB /* NotificationServiceExtension */;
+			targetProxy = 0925B2D92DF90513000D18BB /* PBXContainerItemProxy */;
+		};
 		098ECF752DE6C2CD0036C2CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 098ECF682DE6C2CB0036C2CE /* yclifemainwidgetExtension */;
@@ -1009,6 +1107,64 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0925B2DC2DF90513000D18BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationServiceExtension/NotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.NotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0925B2DD2DF90513000D18BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = NotificationServiceExtension/NotificationServiceExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XGYNZ99X76;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.helgisnw.yangcheonlife.NotificationServiceExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		0969EFF62C2A7C05002C4F44 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1443,6 +1599,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0925B2DE2DF90513000D18BB /* Build configuration list for PBXNativeTarget "NotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0925B2DC2DF90513000D18BB /* Debug */,
+				0925B2DD2DF90513000D18BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0969EFE52C2A7C04002C4F44 /* Build configuration list for PBXProject "yangcheonlife" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
