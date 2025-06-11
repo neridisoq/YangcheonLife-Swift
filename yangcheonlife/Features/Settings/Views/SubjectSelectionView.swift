@@ -219,7 +219,7 @@ struct ClassSubjectSelectionView: View {
                 
                 DispatchQueue.main.async {
                     // 원본 데이터 저장
-                    let originalData = ScheduleData(
+                    let _ = ScheduleData(
                         grade: grade,
                         classNumber: classNumber,
                         lastUpdated: Date(),

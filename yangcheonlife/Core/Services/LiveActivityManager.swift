@@ -17,7 +17,9 @@ class LiveActivityManager: ObservableObject {
         get { _currentActivity as? Activity<ClassActivityAttributes> }
         set { 
             _currentActivity = newValue
-            objectWillChange.send()
+            DispatchQueue.main.async {
+                self.objectWillChange.send()
+            }
         }
     }
     #endif
@@ -26,7 +28,28 @@ class LiveActivityManager: ObservableObject {
     var isActivityRunning: Bool {
         #if canImport(ActivityKit)
         if #available(iOS 18.0, *) {
-            return currentActivity != nil && currentActivity?.activityState == .active
+            // 현재 Activity 상태 검증
+            if let activity = currentActivity {
+                let state = activity.activityState
+                print("📊 [ActivityCheck] Current activity state: \(state)")
+                
+                // 종료된 Activity라면 currentActivity를 nil로 설정
+                if state == .ended || state == .dismissed {
+                    print("📊 [ActivityCheck] Activity is ended/dismissed, clearing reference")
+                    currentActivity = nil
+                    return false
+                }
+                
+                return state == .active
+            } else {
+                // currentActivity가 nil이면 시스템에서 활성 Activity 찾기
+                let activeActivities = Activity<ClassActivityAttributes>.activities.filter { $0.activityState == .active }
+                if let foundActivity = activeActivities.first {
+                    print("📊 [ActivityCheck] Found orphaned active activity, restoring reference")
+                    currentActivity = foundActivity
+                    return true
+                }
+            }
         }
         #endif
         return false
@@ -45,52 +68,21 @@ class LiveActivityManager: ObservableObject {
         }
         #endif
         
-        // 백그라운드에서도 정기적으로 상태 체크
-        startBackgroundHealthCheck()
+        // Apple 정책 준수: 백그라운드 타이머 제거, 이벤트 기반으로만 동작
     }
     
-    /// 백그라운드 상태 건강성 체크 시작
+    /// Apple 정책 준수: 백그라운드 타이머 완전 제거
+    /// Live Activity는 교시 변화 시에만 업데이트, 시간 진행은 시스템에 위임
     private func startBackgroundHealthCheck() {
-        // 5분마다 Live Activity 상태 체크
-        Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
-            self?.performHealthCheck()
-        }
+        // 타이머 제거 - Apple 가이드라인 준수
+        // Live Activity는 이벤트 기반으로만 업데이트
     }
     
-    /// Live Activity 건강성 체크 수행
+    /// Apple 정책 준수: 백그라운드 건강성 체크 제거
+    /// Live Activity 상태는 시스템이 관리하며, 앱은 교시 변화시에만 개입
     private func performHealthCheck() {
-        #if canImport(ActivityKit)
-        guard #available(iOS 18.0, *) else { return }
-        
-        print("🩺 [HealthCheck] Performing Live Activity health check at \(Date())")
-        
-        let shouldBeRunning = TimeUtility.shouldLiveActivityBeRunning()
-        let isCurrentlyRunning = isActivityRunning
-        let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
-        
-        print("🩺 [HealthCheck] Should be running: \(shouldBeRunning)")
-        print("🩺 [HealthCheck] Currently running: \(isCurrentlyRunning)")
-        print("🩺 [HealthCheck] Valid settings: \(hasValidSettings)")
-        
-        if let activity = currentActivity {
-            print("🩺 [HealthCheck] Current activity state: \(activity.activityState)")
-            
-            // Activity가 끝났거나 해제된 경우 currentActivity를 nil로 설정
-            if activity.activityState == .ended || activity.activityState == .dismissed {
-                print("🩺 [HealthCheck] Activity is ended/dismissed, clearing reference")
-                currentActivity = nil
-            }
-        }
-        
-        // 상태 불일치 감지 및 복구
-        if shouldBeRunning && !isCurrentlyRunning && hasValidSettings {
-            print("🩺 [HealthCheck] Detected missing Live Activity, attempting restart...")
-            checkScheduledStartStop()
-        } else if !shouldBeRunning && isCurrentlyRunning {
-            print("🩺 [HealthCheck] Detected unnecessary Live Activity, stopping...")
-            stopLiveActivity()
-        }
-        #endif
+        // 제거됨 - Apple 가이드라인 준수
+        // Live Activity의 건강성은 시스템이 관리
     }
     
     /// Live Activity 시작
@@ -166,11 +158,13 @@ class LiveActivityManager: ObservableObject {
         stopLiveActivity()
         
         let attributes = ClassActivityAttributes(grade: grade, classNumber: classNumber)
+        let (startDate, endDate) = getCurrentPeriodTimes()
         let initialState = ClassActivityAttributes.ContentState(
             currentStatus: getCurrentStatus(),
             currentClass: getCurrentClass(),
             nextClass: getNextClass(),
-            remainingMinutes: getRemainingMinutes(),
+            startDate: startDate,
+            endDate: endDate,
             lastUpdated: Date()
         )
         
@@ -204,17 +198,20 @@ class LiveActivityManager: ObservableObject {
         
         print("🔄 Updating Live Activity - State: \(activity.activityState)")
         
+        let (startDate, endDate) = getCurrentPeriodTimes()
         let newState = ClassActivityAttributes.ContentState(
             currentStatus: getCurrentStatus(),
             currentClass: getCurrentClass(),
             nextClass: getNextClass(),
-            remainingMinutes: getRemainingMinutes(),
+            startDate: startDate,
+            endDate: endDate,
             lastUpdated: Date()
         )
         
-        print("🔄 New state: Status=\(newState.currentStatus.rawValue), Remaining=\(newState.remainingMinutes)min")
+        let remainingMinutes = max(0, Int(newState.endDate.timeIntervalSince(Date()) / 60))
+        print("🔄 New state: Status=\(newState.currentStatus.rawValue), Remaining=\(remainingMinutes)min")
         
-        Task {
+        _Concurrency.Task {
             do {
                 let staleDate = getNextStaleDate()
                 print("🔄 Updating with staleDate: \(staleDate)")
@@ -247,7 +244,7 @@ class LiveActivityManager: ObservableObject {
             self.currentActivity = nil
         }
         
-        Task {
+        _Concurrency.Task {
             await activity.end(nil, dismissalPolicy: .immediate)
         }
         #endif
@@ -263,7 +260,7 @@ class LiveActivityManager: ObservableObject {
             self.currentActivity = nil
         }
         
-        Task {
+        _Concurrency.Task {
             for activity in Activity<ClassActivityAttributes>.activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
             }
@@ -423,8 +420,71 @@ class LiveActivityManager: ObservableObject {
         return nil
     }
     
-    private func getRemainingMinutes() -> Int {
-        return TimeUtility.getMinutesUntilNextClass() ?? 0
+    /// 현재 시간대의 시작/종료 시각 계산 (Apple Live Activity 정책 준수)
+    private func getCurrentPeriodTimes() -> (startDate: Date, endDate: Date) {
+        let calendar = Calendar.current
+        let now = Date()
+        let timeStatus = TimeUtility.getCurrentPeriodStatus()
+        
+        // 학교 시간표: 각 교시별 정확한 시간
+        let periodTimes = [
+            (start: (8, 20), end: (9, 10)),   // 1교시
+            (start: (9, 20), end: (10, 10)),  // 2교시  
+            (start: (10, 20), end: (11, 10)), // 3교시
+            (start: (11, 20), end: (12, 10)), // 4교시
+            (start: (13, 10), end: (14, 0)),  // 5교시
+            (start: (14, 10), end: (15, 0)),  // 6교시
+            (start: (15, 10), end: (16, 0))   // 7교시
+        ]
+        
+        switch timeStatus {
+        case .inClass(let period):
+            // 수업 중: 해당 교시의 시작/종료 시간
+            if period >= 1 && period <= 7 {
+                let periodTime = periodTimes[period - 1]
+                let startDate = calendar.date(bySettingHour: periodTime.start.0, minute: periodTime.start.1, second: 0, of: now) ?? now
+                let endDate = calendar.date(bySettingHour: periodTime.end.0, minute: periodTime.end.1, second: 0, of: now) ?? now
+                return (startDate, endDate)
+            }
+            
+        case .breakTime(let nextPeriod):
+            // 쉬는시간: 이전 교시 종료 시간부터 다음 교시 시작 시간까지
+            if nextPeriod >= 2 && nextPeriod <= 7 {
+                let prevPeriodTime = periodTimes[nextPeriod - 2]
+                let nextPeriodTime = periodTimes[nextPeriod - 1]
+                let startDate = calendar.date(bySettingHour: prevPeriodTime.end.0, minute: prevPeriodTime.end.1, second: 0, of: now) ?? now
+                let endDate = calendar.date(bySettingHour: nextPeriodTime.start.0, minute: nextPeriodTime.start.1, second: 0, of: now) ?? now
+                return (startDate, endDate)
+            }
+            
+        case .lunchTime:
+            // 점심시간: 12:10 - 13:10
+            let startDate = calendar.date(bySettingHour: 12, minute: 10, second: 0, of: now) ?? now
+            let endDate = calendar.date(bySettingHour: 13, minute: 10, second: 0, of: now) ?? now
+            return (startDate, endDate)
+            
+        case .preClass(let period):
+            // 수업 전: 현재 시간부터 해당 교시 시작까지
+            if period >= 1 && period <= 7 {
+                let periodTime = periodTimes[period - 1]
+                let endDate = calendar.date(bySettingHour: periodTime.start.0, minute: periodTime.start.1, second: 0, of: now) ?? now
+                return (now, endDate)
+            }
+            
+        case .beforeSchool:
+            // 등교 전: 현재 시간부터 1교시 시작까지
+            let endDate = calendar.date(bySettingHour: 8, minute: 20, second: 0, of: now) ?? now
+            return (now, endDate)
+            
+        case .afterSchool:
+            // 하교 후: 7교시 종료 시간부터 다음날 1교시 시작까지 (임시)
+            let startDate = calendar.date(bySettingHour: 16, minute: 0, second: 0, of: now) ?? now
+            let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) ?? now
+            return (startDate, endDate)
+        }
+        
+        // 기본값: 현재 시간부터 1시간 후
+        return (now, calendar.date(byAdding: .hour, value: 1, to: now) ?? now)
     }
     
     /// 다음 stale date 계산 (1분 후 또는 More Frequent Updates 활용)
@@ -504,49 +564,45 @@ class LiveActivityManager: ObservableObject {
         }
     }
     
-    /// 시간 기반 Live Activity 자동 관리
-    func checkScheduledStartStop() {
+    /// Apple 정책 준수: 이벤트 기반 Live Activity 관리
+    /// 오직 교시 변화(08:20, 09:10, 09:20, 등) 시점에만 업데이트
+    func updateOnClassPeriodChange() {
         let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
-        print("🔍 checkScheduledStartStop - hasValidSettings: \(hasValidSettings)")
-        guard hasValidSettings else { 
-            print("❌ No valid settings for Live Activity")
-            return 
-        }
+        guard hasValidSettings else { return }
         
         let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
         let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
-        print("🔍 Grade: \(grade), Class: \(classNumber), isActivityRunning: \(isActivityRunning)")
         
-        // 8:00 AM 자동 시작 체크
-        if TimeUtility.isLiveActivityStartTime() {
+        // 학교 시간 중에만 Live Activity 관리
+        if TimeUtility.shouldLiveActivityBeRunning() {
             if !isActivityRunning {
-                print("⏰ 8:00 AM - Starting Live Activity automatically")
+                print("📚 [ClassChange] Starting Live Activity for new class period")
                 startLiveActivity(grade: grade, classNumber: classNumber)
             } else {
-                print("⏰ 8:00 AM - Live Activity already running")
+                print("📚 [ClassChange] Updating Live Activity for class period change")
+                updateLiveActivity()
             }
-        }
-        
-        // 4:30 PM 자동 종료 체크
-        if TimeUtility.isLiveActivityStopTime() {
-            if isActivityRunning {
-                print("⏰ 4:30 PM - Stopping Live Activity automatically")
-                stopLiveActivity()
-            } else {
-                print("⏰ 4:30 PM - Live Activity already stopped")
-            }
-        }
-        
-        // 학교 시간 외에 실행 중이면 종료
-        if !TimeUtility.shouldLiveActivityBeRunning() && isActivityRunning {
-            print("⏰ Outside school hours - Stopping Live Activity")
+        } else if isActivityRunning {
+            print("📚 [ClassChange] Stopping Live Activity - outside school hours")
             stopLiveActivity()
         }
+    }
+    
+    /// 앱 포그라운드 진입시 Live Activity 상태 체크 (한 번만)
+    func checkLiveActivityOnForeground() {
+        let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
+        guard hasValidSettings else { return }
         
-        // 학교 시간 중인데 실행되지 않았으면 시작
-        if TimeUtility.shouldLiveActivityBeRunning() && !isActivityRunning {
-            print("⏰ During school hours - Starting Live Activity")
+        let shouldBeRunning = TimeUtility.shouldLiveActivityBeRunning()
+        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+        
+        if shouldBeRunning && !isActivityRunning {
+            print("📱 [Foreground] Starting Live Activity")
             startLiveActivity(grade: grade, classNumber: classNumber)
+        } else if !shouldBeRunning && isActivityRunning {
+            print("📱 [Foreground] Stopping Live Activity")
+            stopLiveActivity()
         }
     }
     
@@ -555,7 +611,7 @@ class LiveActivityManager: ObservableObject {
         #if canImport(ActivityKit)
         guard #available(iOS 18.0, *) else { return }
         
-        Task {
+        _Concurrency.Task {
             // 현재 Activity의 상태 변화 모니터링
             if let activity = currentActivity {
                 for await state in activity.activityStateUpdates {

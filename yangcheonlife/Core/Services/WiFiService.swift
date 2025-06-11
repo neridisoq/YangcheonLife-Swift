@@ -262,7 +262,7 @@ class WiFiService: NSObject, ObservableObject {
     
     /// 위치 권한 확인
     private func checkLocationPermission() {
-        switch CLLocationManager.authorizationStatus() {
+        switch locationManager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
             hasLocationPermission = true
         default:

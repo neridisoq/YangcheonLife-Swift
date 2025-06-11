@@ -12,8 +12,10 @@ struct ClassActivityAttributes: ActivityAttributes {
         var currentClass: ClassInfo?
         /// 다음 수업 정보
         var nextClass: ClassInfo?
-        /// 남은 시간 (분)
-        var remainingMinutes: Int
+        /// 현재 시간대 시작 시각 (Date)
+        var startDate: Date
+        /// 현재 시간대 종료 시각 (Date)
+        var endDate: Date
         /// 마지막 업데이트 시간
         var lastUpdated: Date
     }

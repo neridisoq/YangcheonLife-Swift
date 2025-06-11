@@ -59,29 +59,41 @@ class FirebaseService: NSObject, ObservableObject {
             return
         }
         
-        let topic = "ios_liveactivity"
-        
-        // 중복 구독 방지
+        // Live Activity와 Wake 토픽 모두 구독
+        let topics = ["ios_liveactivity", "wake"]
         let subscribedTopicsKey = "subscribedFirebaseTopics"
         var subscribedTopics = UserDefaults.standard.stringArray(forKey: subscribedTopicsKey) ?? []
         
-        if subscribedTopics.contains(topic) {
-            print("⚠️ 토픽 '\(topic)'는 이미 구독됨 - 중복 구독 방지")
-            completion(true)
-            return
-        }
+        var pendingSubscriptions = topics.count
+        var allSuccessful = true
         
-        Messaging.messaging().subscribe(toTopic: topic) { [weak self] error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ 토픽 '\(topic)' 구독 실패: \(error.localizedDescription)")
-                    completion(false)
-                } else {
-                    print("✅ 토픽 '\(topic)' 구독 성공")
-                    // 구독 성공 시 목록에 추가
-                    subscribedTopics.append(topic)
-                    UserDefaults.standard.set(subscribedTopics, forKey: subscribedTopicsKey)
-                    completion(true)
+        for topic in topics {
+            // 이미 구독된 토픽 체크
+            if subscribedTopics.contains(topic) {
+                print("⚠️ 토픽 '\(topic)'는 이미 구독됨 - 건너뛰기")
+                pendingSubscriptions -= 1
+                if pendingSubscriptions == 0 {
+                    completion(allSuccessful)
+                }
+                continue
+            }
+            
+            Messaging.messaging().subscribe(toTopic: topic) { [weak self] error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        print("❌ 토픽 '\(topic)' 구독 실패: \(error.localizedDescription)")
+                        allSuccessful = false
+                    } else {
+                        print("✅ 토픽 '\(topic)' 구독 성공")
+                        // 구독 성공 시 목록에 추가
+                        subscribedTopics.append(topic)
+                        UserDefaults.standard.set(subscribedTopics, forKey: subscribedTopicsKey)
+                    }
+                    
+                    pendingSubscriptions -= 1
+                    if pendingSubscriptions == 0 {
+                        completion(allSuccessful)
+                    }
                 }
             }
         }

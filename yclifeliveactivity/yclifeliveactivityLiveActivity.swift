@@ -22,7 +22,7 @@ struct ClassLiveActivity: Widget {
                     ClassStatusView(status: context.state.currentStatus)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    TimeRemainingView(minutes: context.state.remainingMinutes)
+                    TimeRemainingView(startDate: context.state.startDate, endDate: context.state.endDate)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     ClassInfoView(
@@ -35,9 +35,13 @@ struct ClassLiveActivity: Widget {
                 Text(context.state.currentStatus.emoji)
                     .font(.caption2)
             } compactTrailing: {
-                Text("\(context.state.remainingMinutes)분")
+                // Apple 정책 준수: 간결한 분 단위 표시로 공간 절약
+                Text(context.state.endDate, style: .timer)
                     .font(.caption2)
                     .fontWeight(.medium)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             } minimal: {
                 Text(context.state.currentStatus.emoji)
             }
@@ -104,23 +108,34 @@ struct ClassLiveActivityView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
-            // 진행 바와 시간 (중앙)
-            VStack(spacing: 6) {
-                Text("\(context.state.remainingMinutes)분")
+            // Apple 정책 준수: 시스템 내장 시간 표시 사용  
+            VStack(spacing: 4) {
+                // 간결한 타이머 형식으로 공간 절약
+                Text(context.state.endDate, style: .timer)
                     .font(.title3)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
-                
-                // 진행 바
-                ProgressView(value: getProgressValue(context: context), total: 1.0)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .orange))
-                    .frame(height: 4)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 
                 Text("남음")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                
+                // TimelineView로 진행바 계산
+                TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                    let now = timeline.date
+                    let totalDuration = context.state.endDate.timeIntervalSince(context.state.startDate)
+                    let elapsed = now.timeIntervalSince(context.state.startDate)
+                    let progress = min(max(elapsed / totalDuration, 0), 1)
+                    
+                    ProgressView(value: progress)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .orange))
+                        .frame(height: 4)
+                }
             }
-            .frame(width: 60)
+            .frame(width: 70)
             
             // 다음 시간 (오른쪽)
             VStack(alignment: .trailing, spacing: 8) {
@@ -162,7 +177,7 @@ struct ClassLiveActivityView: View {
                         }
                         // 5교시 전 쉬는시간 중이고 다음이 5교시인 경우
                         else if context.state.currentStatus == .breakTime || context.state.currentStatus == .preClass {
-                            if let currentClass = context.state.currentClass {
+                            if let _ = context.state.currentClass {
                                 // 수업 중이 아니라면 다음 수업 표시
                                 Text("수업 끝")
                                     .font(.headline)
@@ -197,33 +212,6 @@ struct ClassLiveActivityView: View {
         .cornerRadius(12)
     }
     
-    private func getProgressValue(context: ActivityViewContext<ClassActivityAttributes>) -> Double {
-        let status = context.state.currentStatus
-        let remaining = Double(context.state.remainingMinutes)
-        
-        var totalMinutes: Double
-        
-        switch status {
-        case .inClass:
-            totalMinutes = 50.0 // 수업 시간
-        case .breakTime:
-            totalMinutes = 10.0 // 쉬는시간
-        case .lunchTime:
-            totalMinutes = 50.0 // 점심시간 (12:10 ~ 13:00)
-        case .preClass:
-            // 5교시 전 쉬는시간 (13:00 ~ 13:10)은 10분
-            if let currentClass = context.state.currentClass, currentClass.period == 5 {
-                totalMinutes = 10.0
-            } else {
-                totalMinutes = 10.0 // 일반 수업 전 시간
-            }
-        default:
-            totalMinutes = 50.0 // 기본값
-        }
-        
-        let elapsed = totalMinutes - remaining
-        return max(0, min(1, elapsed / totalMinutes))
-    }
 }
 
 @available(iOS 18.0, *)
@@ -279,22 +267,21 @@ struct ClassStatusView: View {
 
 @available(iOS 18.0, *)
 struct TimeRemainingView: View {
-    let minutes: Int
+    let startDate: Date
+    let endDate: Date
     
     var body: some View {
+        // Apple 정책 준수: 간결한 타이머 형식 사용
         VStack(spacing: 2) {
             Text("⏱️")
                 .font(.title3)
-            if minutes > 0 {
-                Text("\(minutes)분")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                Text("남음")
-                    .font(.caption2)
-            } else {
-                Text("-")
-                    .font(.caption2)
-            }
+            
+            Text(endDate, style: .timer)
+                .font(.caption2)
+                .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
     }
 }

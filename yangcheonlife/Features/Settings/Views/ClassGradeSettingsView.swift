@@ -24,8 +24,8 @@ struct ClassGradeSettingsView: View {
         }
         .navigationBarTitle(NSLocalizedString("ClassSettings", comment: ""), displayMode: .inline)
         .onDisappear {
-            let oldGrade = UserDefaults.standard.integer(forKey: "defaultGrade")
-            let oldClass = UserDefaults.standard.integer(forKey: "defaultClass")
+            let _ = UserDefaults.standard.integer(forKey: "defaultGrade")
+            let _ = UserDefaults.standard.integer(forKey: "defaultClass")
             UserDefaults.standard.set(defaultGrade, forKey: "defaultGrade")
             UserDefaults.standard.set(defaultClass, forKey: "defaultClass")
             if notificationsEnabled {

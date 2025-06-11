@@ -1,6 +1,12 @@
 // AdvancedSettingsView.swift - 고급 설정 뷰
 import SwiftUI
 
+// MARK: - Import Result
+enum ImportResult {
+    case success
+    case failure(String)
+}
+
 struct AdvancedSettingsView: View {
     
     // MARK: - Properties
@@ -15,6 +21,9 @@ struct AdvancedSettingsView: View {
     @State private var showResetAlert = false
     @State private var showExportAlert = false
     @State private var exportedData = ""
+    @State private var showImportSheet = false
+    @State private var importData = ""
+    @State private var importResult: ImportResult?
     
     // MARK: - Body
     var body: some View {
@@ -28,6 +37,11 @@ struct AdvancedSettingsView: View {
                 
                 Button("설정 데이터 내보내기") {
                     exportSettings()
+                }
+                .foregroundColor(.appPrimary)
+                
+                Button("설정 데이터 불러오기") {
+                    showImportSheet = true
                 }
                 .foregroundColor(.appPrimary)
             }
@@ -113,6 +127,40 @@ struct AdvancedSettingsView: View {
         } message: {
             Text("설정 데이터가 생성되었습니다. 복사하여 백업하세요.")
         }
+        .sheet(isPresented: $showImportSheet) {
+            ImportDataView(
+                importData: $importData,
+                onImport: { data in
+                    importSettings(data)
+                },
+                onCancel: {
+                    showImportSheet = false
+                    importData = ""
+                }
+            )
+        }
+        .alert(item: Binding<AlertItem?>(
+            get: {
+                if let result = importResult {
+                    switch result {
+                    case .success:
+                        return AlertItem(id: "success", title: "성공", message: "설정 데이터를 성공적으로 불러왔습니다.")
+                    case .failure(let error):
+                        return AlertItem(id: "failure", title: "실패", message: "설정 데이터 불러오기에 실패했습니다.\n\(error)")
+                    }
+                }
+                return nil
+            },
+            set: { _ in
+                importResult = nil
+            }
+        )) { item in
+            Alert(
+                title: Text(item.title),
+                message: Text(item.message),
+                dismissButton: .default(Text("확인"))
+            )
+        }
     }
     
     // MARK: - Private Methods
@@ -127,6 +175,33 @@ struct AdvancedSettingsView: View {
             showExportAlert = true
         } catch {
             print("❌ 설정 내보내기 실패: \(error)")
+        }
+    }
+    
+    /// 설정 불러오기
+    private func importSettings(_ jsonString: String) {
+        do {
+            guard let data = jsonString.data(using: .utf8) else {
+                importResult = .failure("잘못된 데이터 형식입니다.")
+                return
+            }
+            
+            let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+            guard let dictionary = jsonObject as? [String: Any] else {
+                importResult = .failure("JSON 형식이 올바르지 않습니다.")
+                return
+            }
+            
+            let success = viewModel.importAppData(dictionary)
+            if success {
+                importResult = .success
+                showImportSheet = false
+                importData = ""
+            } else {
+                importResult = .failure("설정 데이터 형식이 올바르지 않거나 버전이 호환되지 않습니다.")
+            }
+        } catch {
+            importResult = .failure("JSON 파싱 실패: \(error.localizedDescription)")
         }
     }
     
@@ -198,6 +273,67 @@ struct AdvancedSettingsView: View {
             print("   - 설정된 학년/반: \(grade)학년 \(classNumber)반")
         } else {
             print("   - 경고: 학년/반이 설정되지 않음")
+        }
+    }
+}
+
+// MARK: - Alert Item
+struct AlertItem: Identifiable {
+    let id: String
+    let title: String
+    let message: String
+}
+
+// MARK: - Import Data View
+struct ImportDataView: View {
+    @Binding var importData: String
+    let onImport: (String) -> Void
+    let onCancel: () -> Void
+    
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("설정 데이터 불러오기")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .padding(.horizontal)
+                
+                Text("내보내기로 생성한 JSON 데이터를 붙여넣으세요.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("JSON 데이터")
+                        .font(.headline)
+                        .padding(.horizontal)
+                    
+                    TextEditor(text: $importData)
+                        .font(.system(.body, design: .monospaced))
+                        .padding(8)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                        .frame(minHeight: 200)
+                }
+                
+                Spacer()
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("취소") {
+                        onCancel()
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("불러오기") {
+                        onImport(importData)
+                    }
+                    .disabled(importData.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
         }
     }
 }

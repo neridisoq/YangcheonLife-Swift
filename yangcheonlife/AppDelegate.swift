@@ -25,12 +25,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // 위젯과 데이터 공유를 위한 UserDefaults 동기화
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
         
-        // 백그라운드 앱 갱신 활성화
-        UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
-        
         // 알림 권한 요청 및 설정 (NotificationService에서 이미 delegate 설정됨)
         // UNUserNotificationCenter.current().delegate = self
-        Task {
+        _Concurrency.Task {
             let granted = await NotificationService.shared.requestAuthorization()
             print("📱 알림 권한: \(granted)")
             
@@ -46,6 +43,15 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                     // Firebase 토픽 구독
                     if grade > 0 && classNumber > 0 {
                         FirebaseService.shared.subscribeToTopic(grade: grade, classNumber: classNumber)
+                    }
+                    
+                    // Live Activity Wake 토픽 구독 (항상 구독)
+                    FirebaseService.shared.subscribeToLiveActivityTopic { success in
+                        if success {
+                            print("✅ Live Activity 및 Wake 토픽 구독 완료")
+                        } else {
+                            print("❌ Live Activity 또는 Wake 토픽 구독 실패")
+                        }
                     }
                     
                     // 체육 수업 알림 설정
@@ -70,6 +76,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         return true
     }
+    
+    // MARK: - App Lifecycle for Live Activity
     
     // Firebase 토픽 구독 해제 처리 - 별도의 메서드로 분리
     private func handleFirebaseUnsubscribe() {
@@ -96,68 +104,79 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // 백그라운드 위젯 업데이트 작업 처리
     private func handleWidgetRefresh(task: BGAppRefreshTask) {
-        print("🔄 [Background] Widget refresh task started at \(Date())")
+        let startTime = Date()
+        print("🔄 [Background] Widget refresh task started at \(startTime)")
+        print("🔄 [Background] App state: \(UIApplication.shared.applicationState.rawValue)")
         
-        // 다음 백그라운드 작업 스케줄링
+        // 다음 백그라운드 작업 스케줄링 (먼저 예약)
         scheduleWidgetRefresh()
         
+        // 작업 완료 플래그
+        var isTaskCompleted = false
+        
         // 위젯 데이터 업데이트 및 타임라인 갱신
-        let updateTask = Task {
-            do {
-                // 위젯 데이터 동기화
-                SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
-                print("🔄 [Background] UserDefaults synchronized")
-                
-                // 위젯 타임라인 갱신
-                WidgetCenter.shared.reloadAllTimelines()
-                print("🔄 [Background] Widget timelines reloaded")
-                
-                // Live Activity 상태 체크 및 업데이트
-                let isRunning = LiveActivityManager.shared.isActivityRunning
-                print("🔄 [Background] Live Activity running: \(isRunning)")
-                
-                if isRunning {
-                    LiveActivityManager.shared.updateLiveActivity()
-                    print("🔄 [Background] Live Activity updated")
-                } else {
-                    print("🔄 [Background] Live Activity not running, checking if should start...")
-                    LiveActivityManager.shared.checkScheduledStartStop()
-                }
-                
-                print("✅ [Background] All tasks completed at \(Date())")
+        let updateTask = _Concurrency.Task {
+            // 위젯 데이터 동기화
+            SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+            print("🔄 [Background] UserDefaults synchronized")
+            
+            // Apple 정책 준수: 백그라운드에서 Live Activity 처리 제거
+            // Live Activity는 앱이 포그라운드에서 교시 변화시에만 업데이트
+            
+            // 위젯 타임라인 갱신
+            WidgetCenter.shared.reloadAllTimelines()
+            print("🔄 [Background] Widget timelines reloaded")
+            
+            let duration = Date().timeIntervalSince(startTime)
+            print("✅ [Background] All tasks completed in \(String(format: "%.2f", duration))s")
+            
+            if !isTaskCompleted {
+                isTaskCompleted = true
                 task.setTaskCompleted(success: true)
-                
-            } catch {
-                print("❌ [Background] Task failed: \(error)")
-                task.setTaskCompleted(success: false)
             }
         }
         
         // 작업 완료 또는 제한 시간 도달 시 처리
         task.expirationHandler = {
-            print("⚠️ [Background] Task expired, cancelling...")
+            let duration = Date().timeIntervalSince(startTime)
+            print("⚠️ [Background] Task expired after \(String(format: "%.2f", duration))s")
             updateTask.cancel()
-            task.setTaskCompleted(success: false)
+            
+            if !isTaskCompleted {
+                isTaskCompleted = true
+                task.setTaskCompleted(success: false)
+            }
         }
-        
-        // 작업 완료 시 호출
-        Task {
-            await updateTask.value
-            task.setTaskCompleted(success: true)
-        }
+    }
+    
+    /// Apple 정책 준수: 백그라운드 Live Activity 처리 완전 제거
+    /// Live Activity는 앱이 포그라운드에서 교시 변화시에만 업데이트
+    private func performLiveActivityBackgroundUpdate() async {
+        // 제거됨 - Apple 가이드라인 준수
+        // 백그라운드에서 Live Activity 처리 금지
     }
     
     // 백그라운드 위젯 업데이트 작업 스케줄링
     func scheduleWidgetRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: "com.helgisnw.yangcheonlife.widgetrefresh")
-        // 5분 후에 실행 (적절한 간격으로 배터리 효율성 개선)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 300)
+        
+        // 학교 시간에 따른 스케줄링 간격 조정
+        let isSchoolTime = TimeUtility.shouldLiveActivityBeRunning()
+        let interval: TimeInterval = isSchoolTime ? 180 : 600  // 학교시간: 3분, 그외: 10분
+        
+        request.earliestBeginDate = Date(timeIntervalSinceNow: interval)
         
         do {
             try BGTaskScheduler.shared.submit(request)
-            print("📆 다음 백그라운드 위젯 및 라이브 액티비티 업데이트 작업 예약됨")
+            let nextTime = Date(timeIntervalSinceNow: interval)
+            print("📆 다음 백그라운드 작업 예약됨: \(nextTime) (간격: \(Int(interval/60))분)")
         } catch {
             print("❌ 백그라운드 작업 예약 실패: \(error)")
+            
+            // 실패시 재시도 (1분 후)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+                self?.scheduleWidgetRefresh()
+            }
         }
     }
 
@@ -169,10 +188,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
         // 위젯 타임라인 갱신
         WidgetCenter.shared.reloadAllTimelines()
-        // 라이브 액티비티 업데이트
-        LiveActivityManager.shared.updateLiveActivity()
-        // 시간 기반 자동 시작/종료 체크
-        LiveActivityManager.shared.checkScheduledStartStop()
+        // Apple 정책 준수: 백그라운드에서 Live Activity 업데이트 제거
         
         print("✅ 백그라운드 앱 갱신에서 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 완료")
         completionHandler(.newData)
@@ -243,9 +259,67 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             FirebaseService.shared.handleRemoteLiveActivityStart(userInfo: userInfo)
         case "stop_live_activity":
             FirebaseService.shared.handleRemoteLiveActivityStop(userInfo: userInfo)
+        case "wake_live_activity":
+            handleWakeLiveActivity(userInfo: userInfo)
         default:
             print("⚠️ 알 수 없는 메시지 타입: \(type)")
         }
+    }
+    
+    /// FCM으로 Live Activity 깨우기 처리
+    private func handleWakeLiveActivity(userInfo: [AnyHashable: Any]) {
+        let timestamp = Date()
+        print("⏰ [FCM Wake] Live Activity 깨우기 신호 수신: \(timestamp)")
+        
+        // 백그라운드 상태에서도 동작하도록 비동기 처리
+        _Concurrency.Task {
+            await performFCMWakeActions()
+        }
+    }
+    
+    /// FCM 깨우기로 수행할 작업들
+    private func performFCMWakeActions() async {
+        print("⏰ [FCM Wake] Live Activity 상태 체크 및 업데이트 시작")
+        
+        let manager = LiveActivityManager.shared
+        let isRunning = manager.isActivityRunning
+        let shouldBeRunning = TimeUtility.shouldLiveActivityBeRunning()
+        let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
+        
+        print("⏰ [FCM Wake] 상태 확인:")
+        print("   - Currently running: \(isRunning)")
+        print("   - Should be running: \(shouldBeRunning)")
+        print("   - Valid settings: \(hasValidSettings)")
+        print("   - App state: \(UIApplication.shared.applicationState.rawValue)")
+        
+        if shouldBeRunning && hasValidSettings {
+            if isRunning {
+                // 실행 중이면 업데이트
+                manager.updateLiveActivity()
+                print("⏰ [FCM Wake] Live Activity 업데이트 완료")
+            } else {
+                // 실행 중이 아니면 시작
+                let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+                let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+                print("⏰ [FCM Wake] Live Activity 시작 (Grade: \(grade), Class: \(classNumber))")
+                manager.startLiveActivity(grade: grade, classNumber: classNumber)
+                
+                // 시작 후 상태 모니터링 활성화
+                manager.startActivityStateMonitoring()
+            }
+        } else if isRunning && !shouldBeRunning {
+            // 학교 시간이 아닌데 실행 중이면 종료
+            print("⏰ [FCM Wake] Live Activity 종료 (학교 시간 외)")
+            manager.stopLiveActivity()
+        } else {
+            print("⏰ [FCM Wake] 조건 불충족 - 작업 없음")
+        }
+        
+        // Apple 정책 준수: Live Activity는 이벤트 기반으로만 업데이트
+        
+        // 위젯도 함께 업데이트
+        WidgetCenter.shared.reloadAllTimelines()
+        print("⏰ [FCM Wake] 모든 작업 완료")
     }
     
     // Check for updates when app enters foreground
@@ -256,10 +330,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // Extension에서 저장한 대기 중인 Live Activity 시작 처리
         handlePendingLiveActivityStart()
         
-        // 라이브 액티비티 업데이트
-        LiveActivityManager.shared.updateLiveActivity()
-        // 시간 기반 자동 시작/종료 체크
-        LiveActivityManager.shared.checkScheduledStartStop()
+        // Apple 정책 준수: 포그라운드에서만 Live Activity 상태 체크
+        LiveActivityManager.shared.checkLiveActivityOnForeground()
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
     }
@@ -276,10 +348,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // Extension에서 저장한 대기 중인 Live Activity 시작 처리
         handlePendingLiveActivityStart()
         
-        // 라이브 액티비티 업데이트
-        LiveActivityManager.shared.updateLiveActivity()
-        // 시간 기반 자동 시작/종료 체크
-        LiveActivityManager.shared.checkScheduledStartStop()
+        // Apple 정책 준수: 포그라운드에서만 Live Activity 상태 체크
+        LiveActivityManager.shared.checkLiveActivityOnForeground()
         print("✅ 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 요청 완료")
         
         // 다음 백그라운드 작업 스케줄링
@@ -365,10 +435,38 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // 앱이 백그라운드로 이동할 때 호출
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // 라이브 액티비티 업데이트 (백그라운드 진입 전 마지막 업데이트)
-        LiveActivityManager.shared.updateLiveActivity()
-        // 다음 백그라운드 작업 스케줄링
+        print("📱 [AppDelegate] 앱이 백그라운드로 이동: \(Date())")
+        
+        // Live Activity 상태 보존 및 업데이트
+        let manager = LiveActivityManager.shared
+        let isRunning = manager.isActivityRunning
+        let shouldBeRunning = TimeUtility.shouldLiveActivityBeRunning()
+        
+        print("📱 [Background Entry] Live Activity status:")
+        print("   - Currently running: \(isRunning)")
+        print("   - Should be running: \(shouldBeRunning)")
+        
+        if shouldBeRunning {
+            if isRunning {
+                // 백그라운드 진입 전 마지막 업데이트
+                manager.updateLiveActivity()
+                print("📱 [Background Entry] Live Activity updated before background")
+            } else {
+                // 학교 시간인데 Live Activity가 없으면 시작
+                let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
+                if hasValidSettings {
+                    let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+                    let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+                    print("📱 [Background Entry] Starting Live Activity before background")
+                    manager.startLiveActivity(grade: grade, classNumber: classNumber)
+                }
+            }
+        }
+        
+        // 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
+        
+        // 상태 모니터링 확인
+        manager.startActivityStateMonitoring()
     }
 }
-

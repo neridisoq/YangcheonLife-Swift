@@ -61,6 +61,9 @@ class ScheduleTabViewModel: ObservableObject {
     
     /// 현재 수업 정보 업데이트
     func updateCurrentClassInfo(scheduleData: ScheduleData?) {
+        // 이전 교시 정보 저장 (Apple 정책 준수: 교시 변화 감지용)
+        let previousPeriod = TimeUtility.getCurrentPeriodNumber()
+        
         guard let scheduleData = scheduleData else {
             currentClassInfo = nil
             suggestedWiFiConnection = nil
@@ -143,6 +146,15 @@ class ScheduleTabViewModel: ObservableObject {
         default:
             currentClassInfo = nil
             suggestedWiFiConnection = nil
+        }
+        
+        // Apple 정책 준수: 교시 변화 감지시에만 Live Activity 업데이트
+        let currentPeriod = TimeUtility.getCurrentPeriodNumber()
+        if previousPeriod != currentPeriod {
+            print("📚 [PeriodChange] Period changed from \(previousPeriod ?? -1) to \(currentPeriod ?? -1)")
+            DispatchQueue.main.async {
+                LiveActivityManager.shared.updateOnClassPeriodChange()
+            }
         }
     }
     

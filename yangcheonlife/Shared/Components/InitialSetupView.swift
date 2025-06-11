@@ -208,7 +208,7 @@ struct InitialSetupView: View {
         // 알림 권한 요청 (필요한 경우)
         if notificationsEnabled {
             Task {
-                await NotificationService.shared.requestAuthorization()
+                let _ = await NotificationService.shared.requestAuthorization()
                 
                 // 시간표 로드 및 알림 설정
                 await ScheduleService.shared.loadSchedule(grade: selectedGrade, classNumber: selectedClass)

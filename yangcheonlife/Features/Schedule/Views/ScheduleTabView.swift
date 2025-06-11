@@ -48,11 +48,9 @@ struct ScheduleTabView: View {
             .onReceive(viewModel.timer) { _ in
                 viewModel.updateCurrentClassInfo(scheduleData: scheduleService.currentScheduleData)
                 
-                // Live Activity 업데이트
-                liveActivityManager.updateLiveActivity()
-                
-                // 시간 기반 자동 시작/종료 체크
-                liveActivityManager.checkScheduledStartStop()
+                // Apple 정책 준수: 타이머 기반 Live Activity 업데이트 제거
+                // Live Activity는 교시 변화 시에만 업데이트
+                // 시간 진행은 시스템이 자동 처리
             }
             .loadingOverlay(isLoading: scheduleService.isLoading)
             .errorAlert(
