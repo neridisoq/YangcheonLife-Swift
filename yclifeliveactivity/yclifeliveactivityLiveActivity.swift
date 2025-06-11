@@ -119,10 +119,6 @@ struct ClassLiveActivityView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 
-                Text("남음")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                
                 // TimelineView로 진행바 계산
                 TimelineView(.periodic(from: .now, by: 1)) { timeline in
                     let now = timeline.date
@@ -132,10 +128,14 @@ struct ClassLiveActivityView: View {
                     
                     ProgressView(value: progress)
                         .progressViewStyle(LinearProgressViewStyle(tint: .orange))
-                        .frame(height: 4)
+                        .frame(height: 6)
                 }
+                
+                Text("남음")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
-            .frame(width: 70)
+            .frame(width: 90)
             
             // 다음 시간 (오른쪽)
             VStack(alignment: .trailing, spacing: 8) {
