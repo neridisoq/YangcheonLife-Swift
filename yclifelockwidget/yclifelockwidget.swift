@@ -81,11 +81,35 @@ struct LockWidgetProvider: TimelineProvider {
             classNumber: finalClass
         )
         
-        // 다음 갱신 시간 계산 (5분 후)
-        let nextRefreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: currentDate) ?? currentDate
+        // 다음 갱신 시간 계산 (n:00, n:05 패턴으로 정렬)
+        let nextRefreshDate = getNextAlignedRefreshTime(from: currentDate)
         let timeline = Timeline(entries: [entry], policy: .after(nextRefreshDate))
         
         completion(timeline)
+    }
+    
+    private func getNextAlignedRefreshTime(from date: Date) -> Date {
+        let calendar = Calendar.current
+        let currentMinute = calendar.component(.minute, from: date)
+        
+        // 다음 n:00 또는 n:05 시점으로 설정 (5분 간격)
+        let targetMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+        
+        // 현재 분보다 큰 가장 가까운 목표 분 찾기
+        if let nextTargetMinute = targetMinutes.first(where: { $0 > currentMinute }) {
+            // 같은 시간 내에서 다음 목표 분으로 설정
+            var components = calendar.dateComponents([.year, .month, .day, .hour], from: date)
+            components.minute = nextTargetMinute
+            components.second = 0
+            return calendar.date(from: components) ?? date
+        } else {
+            // 다음 시간의 00분으로 설정
+            var components = calendar.dateComponents([.year, .month, .day, .hour], from: date)
+            components.hour = (components.hour ?? 0) + 1
+            components.minute = 0
+            components.second = 0
+            return calendar.date(from: components) ?? date
+        }
     }
 }
 

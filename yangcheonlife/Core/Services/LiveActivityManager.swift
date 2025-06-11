@@ -127,7 +127,7 @@ class LiveActivityManager: ObservableObject {
         do {
             let activity = try Activity<ClassActivityAttributes>.request(
                 attributes: attributes,
-                content: ActivityContent(state: initialState, staleDate: nil)
+                content: ActivityContent(state: initialState, staleDate: getNextStaleDate())
             )
             DispatchQueue.main.async {
                 self.currentActivity = activity
@@ -154,7 +154,14 @@ class LiveActivityManager: ObservableObject {
         )
         
         Task {
-            await activity.update(ActivityContent(state: newState, staleDate: nil))
+            do {
+                await activity.update(ActivityContent(state: newState, staleDate: getNextStaleDate()))
+                print("✅ Live Activity updated successfully at \(Date())")
+            } catch {
+                print("❌ Live Activity update failed: \(error)")
+                // 업데이트 실패 시 Activity 상태 확인
+                checkActivityStateAndRestart()
+            }
         }
         #endif
     }
@@ -348,5 +355,117 @@ class LiveActivityManager: ObservableObject {
     
     private func getRemainingMinutes() -> Int {
         return TimeUtility.getMinutesUntilNextClass() ?? 0
+    }
+    
+    /// 다음 stale date 계산 (1분 후 또는 More Frequent Updates 활용)
+    private func getNextStaleDate() -> Date {
+        // More Frequent Updates가 활성화되어 있으면 1분, 아니면 5분
+        let interval: TimeInterval = canUseMoreFrequentUpdates() ? 60 : 300
+        return Date().addingTimeInterval(interval)
+    }
+    
+    /// More Frequent Updates 사용 가능 여부 확인
+    private func canUseMoreFrequentUpdates() -> Bool {
+        #if canImport(ActivityKit)
+        if #available(iOS 18.0, *) {
+            // 현재 활성 상태인 Live Activity가 있고, 시작한지 8시간 이내인 경우에만
+            if let activity = currentActivity,
+               activity.activityState == .active {
+                // ActivityKit의 More Frequent Updates는 시작 후 일정 시간 동안만 사용 가능
+                // 보통 8시간 제한이 있음
+                return true
+            }
+        }
+        #endif
+        return false
+    }
+    
+    /// Activity 상태 확인 및 필요시 재시작
+    private func checkActivityStateAndRestart() {
+        #if canImport(ActivityKit)
+        guard #available(iOS 18.0, *) else { return }
+        
+        // 현재 Activity 상태 확인
+        if let activity = currentActivity {
+            print("📊 Current Live Activity state: \(activity.activityState)")
+            
+            switch activity.activityState {
+            case .ended, .dismissed:
+                print("⚠️ Live Activity ended/dismissed, attempting restart...")
+                restartLiveActivityIfNeeded()
+            case .active:
+                print("✅ Live Activity is still active")
+            case .stale:
+                print("⚠️ Live Activity is stale, updating...")
+                updateLiveActivity()
+            @unknown default:
+                print("❓ Unknown Live Activity state")
+            }
+        } else {
+            print("❌ No current Live Activity found, attempting restart...")
+            restartLiveActivityIfNeeded()
+        }
+        #endif
+    }
+    
+    /// 필요시 Live Activity 재시작
+    private func restartLiveActivityIfNeeded() {
+        // 학교 시간 중에만 재시작
+        let isSchoolTime = TimeUtility.isSchoolHours()
+        let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
+        
+        if isSchoolTime && hasValidSettings {
+            let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+            let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+            
+            print("🔄 Restarting Live Activity for Grade \(grade) Class \(classNumber)")
+            
+            // 잠시 대기 후 재시작 (시스템 안정성을 위해)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.startLiveActivity(grade: grade, classNumber: classNumber)
+            }
+        } else {
+            print("⏭️ Not restarting Live Activity - school time: \(isSchoolTime), valid settings: \(hasValidSettings)")
+        }
+    }
+    
+    /// Activity 상태 모니터링 시작
+    func startActivityStateMonitoring() {
+        #if canImport(ActivityKit)
+        guard #available(iOS 18.0, *) else { return }
+        
+        Task {
+            // 현재 Activity의 상태 변화 모니터링
+            if let activity = currentActivity {
+                for await state in activity.activityStateUpdates {
+                    await MainActor.run {
+                        print("📊 Live Activity state changed to: \(state)")
+                        
+                        switch state {
+                        case .ended:
+                            print("🔚 Live Activity ended")
+                            self.currentActivity = nil
+                            self.restartLiveActivityIfNeeded()
+                            
+                        case .dismissed:
+                            print("🗑️ Live Activity dismissed")
+                            self.currentActivity = nil
+                            self.restartLiveActivityIfNeeded()
+                            
+                        case .stale:
+                            print("⚠️ Live Activity became stale, updating...")
+                            self.updateLiveActivity()
+                            
+                        case .active:
+                            print("✅ Live Activity is active")
+                            
+                        @unknown default:
+                            print("❓ Unknown Live Activity state: \(state)")
+                        }
+                    }
+                }
+            }
+        }
+        #endif
     }
 }

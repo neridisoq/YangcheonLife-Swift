@@ -55,6 +55,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                     
                     // 위젯 타임라인 갱신
                     WidgetCenter.shared.reloadAllTimelines()
+                    
+                    // Live Activity 상태 모니터링 시작
+                    LiveActivityManager.shared.startActivityStateMonitoring()
                 }
             }
         }
@@ -122,8 +125,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // 백그라운드 위젯 업데이트 작업 스케줄링
     func scheduleWidgetRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: "com.helgisnw.yangcheonlife.widgetrefresh")
-        // 30초 후에 실행 (라이브 액티비티 업데이트를 위해 더 자주 실행)
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 30)
+        // 5분 후에 실행 (적절한 간격으로 배터리 효율성 개선)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 300)
         
         do {
             try BGTaskScheduler.shared.submit(request)

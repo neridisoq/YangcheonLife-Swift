@@ -747,9 +747,26 @@ class MainWidgetDataService {
     
     func getNextRefreshTime(from date: Date) -> Date {
         let calendar = Calendar.current
+        let currentMinute = calendar.component(.minute, from: date)
         
-        // Refresh every 1 minute
-        return calendar.date(byAdding: .minute, value: 1, to: date) ?? date
+        // 다음 n:00 또는 n:05 시점으로 설정 (5분 간격)
+        let targetMinutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+        
+        // 현재 분보다 큰 가장 가까운 목표 분 찾기
+        if let nextTargetMinute = targetMinutes.first(where: { $0 > currentMinute }) {
+            // 같은 시간 내에서 다음 목표 분으로 설정
+            var components = calendar.dateComponents([.year, .month, .day, .hour], from: date)
+            components.minute = nextTargetMinute
+            components.second = 0
+            return calendar.date(from: components) ?? date
+        } else {
+            // 다음 시간의 00분으로 설정
+            var components = calendar.dateComponents([.year, .month, .day, .hour], from: date)
+            components.hour = (components.hour ?? 0) + 1
+            components.minute = 0
+            components.second = 0
+            return calendar.date(from: components) ?? date
+        }
     }
     
     private func getCurrentPeriod(at date: Date) -> Int? {

@@ -33,8 +33,8 @@ class ScheduleTabViewModel: ObservableObject {
     private let wifiService = WiFiService.shared
     private var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Timer for periodic updates
-    lazy var timer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+    // MARK: - Timer for periodic updates (1분 간격으로 변경)
+    lazy var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     
     // MARK: - Initialization
     init() {
