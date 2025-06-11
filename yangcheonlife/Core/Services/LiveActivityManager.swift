@@ -38,7 +38,57 @@ class LiveActivityManager: ObservableObject {
             // 앱 시작 시 기존 활성 상태인 Live Activity 찾기
             if let existingActivity = Activity<ClassActivityAttributes>.activities.first {
                 currentActivity = existingActivity
+                print("🔍 Found existing Live Activity: \(existingActivity.activityState)")
+            } else {
+                print("🔍 No existing Live Activity found")
             }
+        }
+        #endif
+        
+        // 백그라운드에서도 정기적으로 상태 체크
+        startBackgroundHealthCheck()
+    }
+    
+    /// 백그라운드 상태 건강성 체크 시작
+    private func startBackgroundHealthCheck() {
+        // 5분마다 Live Activity 상태 체크
+        Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
+            self?.performHealthCheck()
+        }
+    }
+    
+    /// Live Activity 건강성 체크 수행
+    private func performHealthCheck() {
+        #if canImport(ActivityKit)
+        guard #available(iOS 18.0, *) else { return }
+        
+        print("🩺 [HealthCheck] Performing Live Activity health check at \(Date())")
+        
+        let shouldBeRunning = TimeUtility.shouldLiveActivityBeRunning()
+        let isCurrentlyRunning = isActivityRunning
+        let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
+        
+        print("🩺 [HealthCheck] Should be running: \(shouldBeRunning)")
+        print("🩺 [HealthCheck] Currently running: \(isCurrentlyRunning)")
+        print("🩺 [HealthCheck] Valid settings: \(hasValidSettings)")
+        
+        if let activity = currentActivity {
+            print("🩺 [HealthCheck] Current activity state: \(activity.activityState)")
+            
+            // Activity가 끝났거나 해제된 경우 currentActivity를 nil로 설정
+            if activity.activityState == .ended || activity.activityState == .dismissed {
+                print("🩺 [HealthCheck] Activity is ended/dismissed, clearing reference")
+                currentActivity = nil
+            }
+        }
+        
+        // 상태 불일치 감지 및 복구
+        if shouldBeRunning && !isCurrentlyRunning && hasValidSettings {
+            print("🩺 [HealthCheck] Detected missing Live Activity, attempting restart...")
+            checkScheduledStartStop()
+        } else if !shouldBeRunning && isCurrentlyRunning {
+            print("🩺 [HealthCheck] Detected unnecessary Live Activity, stopping...")
+            stopLiveActivity()
         }
         #endif
     }
@@ -142,8 +192,17 @@ class LiveActivityManager: ObservableObject {
     /// Live Activity 업데이트
     func updateLiveActivity() {
         #if canImport(ActivityKit)
-        guard #available(iOS 18.0, *),
-              let activity = currentActivity else { return }
+        guard #available(iOS 18.0, *) else {
+            print("❌ iOS 18.0+ required for Live Activity")
+            return
+        }
+        
+        guard let activity = currentActivity else {
+            print("❌ No current activity to update")
+            return
+        }
+        
+        print("🔄 Updating Live Activity - State: \(activity.activityState)")
         
         let newState = ClassActivityAttributes.ContentState(
             currentStatus: getCurrentStatus(),
@@ -153,12 +212,23 @@ class LiveActivityManager: ObservableObject {
             lastUpdated: Date()
         )
         
+        print("🔄 New state: Status=\(newState.currentStatus.rawValue), Remaining=\(newState.remainingMinutes)min")
+        
         Task {
             do {
-                await activity.update(ActivityContent(state: newState, staleDate: getNextStaleDate()))
+                let staleDate = getNextStaleDate()
+                print("🔄 Updating with staleDate: \(staleDate)")
+                
+                await activity.update(ActivityContent(state: newState, staleDate: staleDate))
                 print("✅ Live Activity updated successfully at \(Date())")
+                
+                // 업데이트 후 상태 재확인
+                print("📊 Activity state after update: \(activity.activityState)")
+                
             } catch {
                 print("❌ Live Activity update failed: \(error)")
+                print("📊 Activity state when failed: \(activity.activityState)")
+                
                 // 업데이트 실패 시 Activity 상태 확인
                 checkActivityStateAndRestart()
             }
@@ -368,12 +438,17 @@ class LiveActivityManager: ObservableObject {
     private func canUseMoreFrequentUpdates() -> Bool {
         #if canImport(ActivityKit)
         if #available(iOS 18.0, *) {
-            // 현재 활성 상태인 Live Activity가 있고, 시작한지 8시간 이내인 경우에만
+            // 현재 활성 상태인 Live Activity가 있는 경우
             if let activity = currentActivity,
                activity.activityState == .active {
-                // ActivityKit의 More Frequent Updates는 시작 후 일정 시간 동안만 사용 가능
-                // 보통 8시간 제한이 있음
-                return true
+                
+                // iOS 설정에서 More Frequent Updates가 활성화되어 있는지 체크
+                // 이 정보는 ActivityAuthorizationInfo를 통해 확인할 수 있음
+                let authInfo = ActivityAuthorizationInfo()
+                let isFrequentUpdatesEnabled = authInfo.areActivitiesEnabled
+                
+                print("🔍 More Frequent Updates available: \(isFrequentUpdatesEnabled)")
+                return isFrequentUpdatesEnabled
             }
         }
         #endif
@@ -411,10 +486,10 @@ class LiveActivityManager: ObservableObject {
     /// 필요시 Live Activity 재시작
     private func restartLiveActivityIfNeeded() {
         // 학교 시간 중에만 재시작
-        let isSchoolTime = TimeUtility.isSchoolHours()
+        let shouldBeRunning = TimeUtility.shouldLiveActivityBeRunning()
         let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
         
-        if isSchoolTime && hasValidSettings {
+        if shouldBeRunning && hasValidSettings {
             let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
             let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
             
@@ -425,7 +500,53 @@ class LiveActivityManager: ObservableObject {
                 self.startLiveActivity(grade: grade, classNumber: classNumber)
             }
         } else {
-            print("⏭️ Not restarting Live Activity - school time: \(isSchoolTime), valid settings: \(hasValidSettings)")
+            print("⏭️ Not restarting Live Activity - should be running: \(shouldBeRunning), valid settings: \(hasValidSettings)")
+        }
+    }
+    
+    /// 시간 기반 Live Activity 자동 관리
+    func checkScheduledStartStop() {
+        let hasValidSettings = UserDefaults.standard.integer(forKey: "defaultGrade") > 0
+        print("🔍 checkScheduledStartStop - hasValidSettings: \(hasValidSettings)")
+        guard hasValidSettings else { 
+            print("❌ No valid settings for Live Activity")
+            return 
+        }
+        
+        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
+        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
+        print("🔍 Grade: \(grade), Class: \(classNumber), isActivityRunning: \(isActivityRunning)")
+        
+        // 8:00 AM 자동 시작 체크
+        if TimeUtility.isLiveActivityStartTime() {
+            if !isActivityRunning {
+                print("⏰ 8:00 AM - Starting Live Activity automatically")
+                startLiveActivity(grade: grade, classNumber: classNumber)
+            } else {
+                print("⏰ 8:00 AM - Live Activity already running")
+            }
+        }
+        
+        // 4:30 PM 자동 종료 체크
+        if TimeUtility.isLiveActivityStopTime() {
+            if isActivityRunning {
+                print("⏰ 4:30 PM - Stopping Live Activity automatically")
+                stopLiveActivity()
+            } else {
+                print("⏰ 4:30 PM - Live Activity already stopped")
+            }
+        }
+        
+        // 학교 시간 외에 실행 중이면 종료
+        if !TimeUtility.shouldLiveActivityBeRunning() && isActivityRunning {
+            print("⏰ Outside school hours - Stopping Live Activity")
+            stopLiveActivity()
+        }
+        
+        // 학교 시간 중인데 실행되지 않았으면 시작
+        if TimeUtility.shouldLiveActivityBeRunning() && !isActivityRunning {
+            print("⏰ During school hours - Starting Live Activity")
+            startLiveActivity(grade: grade, classNumber: classNumber)
         }
     }
     

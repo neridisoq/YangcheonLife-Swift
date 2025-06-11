@@ -96,23 +96,48 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     // 백그라운드 위젯 업데이트 작업 처리
     private func handleWidgetRefresh(task: BGAppRefreshTask) {
+        print("🔄 [Background] Widget refresh task started at \(Date())")
+        
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
         
         // 위젯 데이터 업데이트 및 타임라인 갱신
         let updateTask = Task {
-            // 위젯 데이터 동기화
-            SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
-            // 위젯 타임라인 갱신
-            WidgetCenter.shared.reloadAllTimelines()
-            // 라이브 액티비티 업데이트
-            LiveActivityManager.shared.updateLiveActivity()
-            print("✅ 백그라운드에서 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 완료: \(Date())")
+            do {
+                // 위젯 데이터 동기화
+                SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+                print("🔄 [Background] UserDefaults synchronized")
+                
+                // 위젯 타임라인 갱신
+                WidgetCenter.shared.reloadAllTimelines()
+                print("🔄 [Background] Widget timelines reloaded")
+                
+                // Live Activity 상태 체크 및 업데이트
+                let isRunning = LiveActivityManager.shared.isActivityRunning
+                print("🔄 [Background] Live Activity running: \(isRunning)")
+                
+                if isRunning {
+                    LiveActivityManager.shared.updateLiveActivity()
+                    print("🔄 [Background] Live Activity updated")
+                } else {
+                    print("🔄 [Background] Live Activity not running, checking if should start...")
+                    LiveActivityManager.shared.checkScheduledStartStop()
+                }
+                
+                print("✅ [Background] All tasks completed at \(Date())")
+                task.setTaskCompleted(success: true)
+                
+            } catch {
+                print("❌ [Background] Task failed: \(error)")
+                task.setTaskCompleted(success: false)
+            }
         }
         
         // 작업 완료 또는 제한 시간 도달 시 처리
         task.expirationHandler = {
+            print("⚠️ [Background] Task expired, cancelling...")
             updateTask.cancel()
+            task.setTaskCompleted(success: false)
         }
         
         // 작업 완료 시 호출
@@ -146,6 +171,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         WidgetCenter.shared.reloadAllTimelines()
         // 라이브 액티비티 업데이트
         LiveActivityManager.shared.updateLiveActivity()
+        // 시간 기반 자동 시작/종료 체크
+        LiveActivityManager.shared.checkScheduledStartStop()
         
         print("✅ 백그라운드 앱 갱신에서 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 완료")
         completionHandler(.newData)
@@ -231,6 +258,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // 라이브 액티비티 업데이트
         LiveActivityManager.shared.updateLiveActivity()
+        // 시간 기반 자동 시작/종료 체크
+        LiveActivityManager.shared.checkScheduledStartStop()
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
     }
@@ -249,6 +278,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         
         // 라이브 액티비티 업데이트
         LiveActivityManager.shared.updateLiveActivity()
+        // 시간 기반 자동 시작/종료 체크
+        LiveActivityManager.shared.checkScheduledStartStop()
         print("✅ 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 요청 완료")
         
         // 다음 백그라운드 작업 스케줄링

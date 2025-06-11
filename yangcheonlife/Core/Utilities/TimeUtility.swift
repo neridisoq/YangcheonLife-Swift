@@ -275,13 +275,60 @@ struct TimeUtility {
         return "\(timeInfo.0) - \(timeInfo.1)"
     }
     
-    /// 현재 시간이 학교 시간인지 확인 (7시 ~ 17시)
+    /// 현재 시간이 학교 시간인지 확인 (7시 ~ 17시) - 기존 로직 유지
     static func isSchoolHours(at date: Date = Date()) -> Bool {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: date)
         let weekdayIndex = getCurrentWeekdayIndex(at: date)
         
         return weekdayIndex >= 0 && hour >= 7 && hour < 17
+    }
+    
+    /// Live Activity를 위한 정확한 학교 시간 체크 (8시 ~ 16시 30분)
+    static func isLiveActivitySchoolHours(at date: Date = Date()) -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        let weekdayIndex = getCurrentWeekdayIndex(at: date)
+        
+        guard weekdayIndex >= 0 else { return false } // 주말은 false
+        
+        let currentTotalMinutes = hour * 60 + minute
+        let schoolStartMinutes = 8 * 60  // 8:00
+        let schoolEndMinutes = 16 * 60 + 30  // 16:30
+        
+        return currentTotalMinutes >= schoolStartMinutes && currentTotalMinutes <= schoolEndMinutes
+    }
+    
+    /// Live Activity 자동 시작 시간인지 확인 (8:00 AM)
+    static func isLiveActivityStartTime(at date: Date = Date()) -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        let weekdayIndex = getCurrentWeekdayIndex(at: date)
+        
+        print("🕐 Time check - Hour: \(hour), Minute: \(minute), Weekday: \(weekdayIndex)")
+        
+        // 8:00~8:05 사이에 시작 (정확히 8:00만 체크하면 놓칠 수 있음)
+        let isRightTime = weekdayIndex >= 0 && hour == 8 && minute >= 0 && minute <= 5
+        print("🕐 isLiveActivityStartTime: \(isRightTime)")
+        
+        return isRightTime
+    }
+    
+    /// Live Activity 자동 종료 시간인지 확인 (4:30 PM)
+    static func isLiveActivityStopTime(at date: Date = Date()) -> Bool {
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minute = calendar.component(.minute, from: date)
+        let weekdayIndex = getCurrentWeekdayIndex(at: date)
+        
+        return weekdayIndex >= 0 && hour == 16 && minute == 30
+    }
+    
+    /// 현재 시간이 Live Activity가 실행되어야 하는 시간인지 확인
+    static func shouldLiveActivityBeRunning(at date: Date = Date()) -> Bool {
+        return isLiveActivitySchoolHours(at: date)
     }
     
     /// 다음 수업까지 남은 시간 계산 (분 단위)

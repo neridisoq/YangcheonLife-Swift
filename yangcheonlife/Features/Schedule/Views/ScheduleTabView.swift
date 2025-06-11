@@ -50,6 +50,9 @@ struct ScheduleTabView: View {
                 
                 // Live Activity 업데이트
                 liveActivityManager.updateLiveActivity()
+                
+                // 시간 기반 자동 시작/종료 체크
+                liveActivityManager.checkScheduledStartStop()
             }
             .loadingOverlay(isLoading: scheduleService.isLoading)
             .errorAlert(

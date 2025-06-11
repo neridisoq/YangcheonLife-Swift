@@ -21,6 +21,11 @@ struct ClassActivityAttributes: ActivityAttributes {
     /// 학년, 반 정보 (변경되지 않는 속성)
     var grade: Int
     var classNumber: Int
+    
+    /// More Frequent Updates 지원 설정
+    public var prefersFrequentUpdates: Bool {
+        return true  // 학교 시간표는 실시간성이 중요하므로 빠른 업데이트 선호
+    }
 }
 
 /// 수업 상태 열거형

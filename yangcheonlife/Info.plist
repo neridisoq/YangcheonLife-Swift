@@ -12,6 +12,8 @@
 	<string>Wi-Fi 연결 기능을 사용하기 위해 권한이 필요합니다.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
