@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		08B30CAAB05D77B62693589B /* Pods_yangcheonlife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D6641FCA23D26ED23BBACB /* Pods_yangcheonlife.framework */; };
-		0922D0552D8869C1008E9C74 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */; };
+		0925B2932DF8F1C8000D18BB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0925B2922DF8F1C8000D18BB /* GoogleService-Info.plist */; };
 		094B1A9A2DE2D604005E29E4 /* TimeUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A972DE2D604005E29E4 /* TimeUtility.swift */; };
 		094B1A9B2DE2D604005E29E4 /* AppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A8D2DE2D604005E29E4 /* AppConstants.swift */; };
 		094B1A9C2DE2D604005E29E4 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094B1A932DE2D604005E29E4 /* NotificationService.swift */; };
@@ -126,7 +126,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0925B2922DF8F1C8000D18BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		094B1A8D2DE2D604005E29E4 /* AppConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConstants.swift; sourceTree = "<group>"; };
 		094B1A8F2DE2D604005E29E4 /* ScheduleModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleModels.swift; sourceTree = "<group>"; };
 		094B1A902DE2D604005E29E4 /* WiFiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WiFiModels.swift; sourceTree = "<group>"; };
@@ -595,11 +595,11 @@
 				094B1AC02DE2D623005E29E4 /* Features */,
 				094B1A992DE2D604005E29E4 /* Core */,
 				0999C1A52D7FAA4600DDB78D /* comsi.helgisnw.metestfile.json */,
-				0922D0542D8869C1008E9C74 /* GoogleService-Info.plist */,
 				0969F01F2C2A844A002C4F44 /* SceneDelegate.swift */,
 				0969EFFC2C2A7C14002C4F44 /* Info.plist */,
 				0969EFFB2C2A7C11002C4F44 /* yangcheonlife.entitlements */,
 				0969EFED2C2A7C04002C4F44 /* yangcheonlifeApp.swift */,
+				0925B2922DF8F1C8000D18BB /* GoogleService-Info.plist */,
 				0969EFEF2C2A7C04002C4F44 /* ContentView.swift */,
 				0969EFF12C2A7C05002C4F44 /* Assets.xcassets */,
 				0969EFF32C2A7C05002C4F44 /* Preview Content */,
@@ -811,7 +811,7 @@
 			files = (
 				0999C1A62D7FAA5B00DDB78D /* comsi.helgisnw.metestfile.json in Resources */,
 				0969EFF52C2A7C05002C4F44 /* Preview Assets.xcassets in Resources */,
-				0922D0552D8869C1008E9C74 /* GoogleService-Info.plist in Resources */,
+				0925B2932DF8F1C8000D18BB /* GoogleService-Info.plist in Resources */,
 				096DE6942C2B8DA900651DE1 /* Localizable.strings in Resources */,
 				0969EFF22C2A7C05002C4F44 /* Assets.xcassets in Resources */,
 			);
@@ -1138,7 +1138,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;
@@ -1177,7 +1177,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = yangcheonlife/yangcheonlife.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"yangcheonlife/Preview Content\"";
 				DEVELOPMENT_TEAM = XGYNZ99X76;
 				ENABLE_PREVIEWS = YES;

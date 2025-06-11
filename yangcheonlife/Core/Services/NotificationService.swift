@@ -286,6 +286,16 @@ extension NotificationService: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
+        let userInfo = notification.request.content.userInfo
+        print("📩 Firebase 알림 수신 (포그라운드): \(userInfo)")
+        print("📩 전체 userInfo 구조 (포그라운드):")
+        for (key, value) in userInfo {
+            print("   \(key): \(value)")
+        }
+        
+        // Firebase 메시지인지 확인하고 Live Activity 원격 제어 처리
+        handleFirebaseMessage(userInfo: userInfo)
+        
         completionHandler([.banner, .sound, .badge])
     }
     
@@ -297,6 +307,42 @@ extension NotificationService: UNUserNotificationCenterDelegate {
     ) {
         // 알림 응답에 따른 추가 처리 가능
         print("📱 알림 응답 받음: \(response.notification.request.identifier)")
+        
+        let userInfo = response.notification.request.content.userInfo
+        print("📩 Firebase 알림 탭됨: \(userInfo)")
+        
+        // Firebase 메시지 처리
+        handleFirebaseMessage(userInfo: userInfo)
+        
         completionHandler()
+    }
+    
+    // MARK: - Firebase 메시지 처리
+    
+    /// Firebase 메시지 처리 공통 메서드
+    private func handleFirebaseMessage(userInfo: [AnyHashable: Any]) {
+        // data 필드에서 메시지 타입 확인
+        var messageType: String?
+        if let data = userInfo["data"] as? [String: Any] {
+            messageType = data["type"] as? String
+        } else {
+            messageType = userInfo["type"] as? String
+        }
+        
+        guard let type = messageType else {
+            print("⚠️ Firebase 메시지 타입을 찾을 수 없음: \(userInfo)")
+            return
+        }
+        
+        print("📩 Firebase 메시지 타입: \(type)")
+        
+        switch type {
+        case "start_live_activity":
+            FirebaseService.shared.handleRemoteLiveActivityStart(userInfo: userInfo)
+        case "stop_live_activity":
+            FirebaseService.shared.handleRemoteLiveActivityStop(userInfo: userInfo)
+        default:
+            print("⚠️ 알 수 없는 Firebase 메시지 타입: \(type)")
+        }
     }
 }

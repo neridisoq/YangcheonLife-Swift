@@ -800,6 +800,11 @@ class MainWidgetDataService {
             startPeriod = (currentPeriod ?? 0) + 1
         }
         
+        // 7교시 이후에는 다음 수업이 없으므로 nil 반환 (석식 시간으로 넘어가도록)
+        if startPeriod > 7 {
+            return nil
+        }
+        
         // Find next class
         for period in startPeriod...7 {
             if let classItem = dailySchedule.first(where: { $0.period == period }) {

@@ -26,7 +26,7 @@ class LiveActivityManager: ObservableObject {
     var isActivityRunning: Bool {
         #if canImport(ActivityKit)
         if #available(iOS 18.0, *) {
-            return currentActivity != nil
+            return currentActivity != nil && currentActivity?.activityState == .active
         }
         #endif
         return false
@@ -46,15 +46,35 @@ class LiveActivityManager: ObservableObject {
     /// Live Activity 시작
     func startLiveActivity(grade: Int, classNumber: Int) {
         #if canImport(ActivityKit)
-        guard #available(iOS 18.0, *) else { return }
+        guard #available(iOS 18.0, *) else { 
+            print("❌ iOS 18.0 이상이 필요합니다. 현재 iOS 버전이 지원되지 않습니다.")
+            return 
+        }
+        
+        // 앱 상태 확인 - 백그라운드에서는 Live Activity 시작 불가
+        let appState = UIApplication.shared.applicationState
+        if appState != .active {
+            print("❌ Live Activity는 앱이 포그라운드에 있을 때만 시작할 수 있습니다.")
+            print("   현재 앱 상태: \(appState == .background ? "백그라운드" : "비활성")")
+            print("   해결 방법: 앱을 포그라운드로 가져온 후 다시 시도하세요.")
+            return
+        }
         
         let authInfo = ActivityAuthorizationInfo()
         print("🔍 Live Activity Authorization Status: \(authInfo.areActivitiesEnabled)")
+        print("🔍 Live Activity 기기 설정 상태:")
+        print("   - Device supports Live Activities: \(ActivityAuthorizationInfo().areActivitiesEnabled)")
+        print("   - Current activities count: \(Activity<ClassActivityAttributes>.activities.count)")
+        print("   - App State: \(appState == .active ? "Active (포그라운드)" : "Not Active")")
         
         guard authInfo.areActivitiesEnabled else {
-            print("❌ Live Activities are not enabled - Check Settings > Privacy & Security > Live Activities")
+            print("❌ Live Activities are not enabled")
+            print("❌ 해결 방법: 설정 > 개인정보 보호 및 보안 > Live Activities 활성화")
+            print("❌ 또는 설정 > 알림 > Live Activities 활성화")
             return
         }
+        
+        print("✅ Live Activity 권한 확인 완료 - 시작 가능")
         
         // 기존 활동이 있으면 종료
         stopLiveActivity()

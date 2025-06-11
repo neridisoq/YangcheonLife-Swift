@@ -8,7 +8,8 @@ import FirebaseMessaging
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        // Firebase 초기화 및 설정
+        // Firebase 초기화 및 설정 (최우선으로 실행)
+        print("🔥 AppDelegate에서 Firebase 초기화 시작")
         FirebaseService.shared.initialize()
         
         // Firebase 토픽 구독 해제 처리를 별도의 큐에서 실행
@@ -27,8 +28,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // 백그라운드 앱 갱신 활성화
         UIApplication.shared.setMinimumBackgroundFetchInterval(UIApplication.backgroundFetchIntervalMinimum)
         
-        // 알림 권한 요청 및 설정
-        UNUserNotificationCenter.current().delegate = NotificationService.shared
+        // 알림 권한 요청 및 설정 (NotificationService에서 이미 delegate 설정됨)
+        // UNUserNotificationCenter.current().delegate = self
         Task {
             let granted = await NotificationService.shared.requestAuthorization()
             print("📱 알림 권한: \(granted)")
@@ -155,6 +156,15 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     /// APNS 등록 성공
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("📱 APNS 등록 성공")
+        print("📱 Device Token: \(deviceToken.map { String(format: "%02.2hhx", $0) }.joined())")
+        
+        // APNs 환경 확인
+        #if DEBUG
+        print("📱 APNs 환경: Development (DEBUG)")
+        #else
+        print("📱 APNs 환경: Production (RELEASE)")
+        #endif
+        
         Messaging.messaging().apnsToken = deviceToken
     }
     
@@ -165,10 +175,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     
     /// Firebase 원격 알림 수신 (백그라운드/종료 상태)
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("📩 Firebase 원격 알림 수신: \(userInfo)")
+        print("📩 Firebase 원격 알림 수신 (백그라운드/종료): \(userInfo)")
+        print("📩 전체 userInfo 구조:")
+        for (key, value) in userInfo {
+            print("   \(key): \(value)")
+        }
         
         // Firebase가 메시지를 처리하도록 함
         Messaging.messaging().appDidReceiveMessage(userInfo)
+        
+        // Live Activity 원격 제어 처리
+        handleRemoteLiveActivityControl(userInfo: userInfo)
         
         // 라이브 액티비티 업데이트 (원격 알림으로 인한 업데이트)
         LiveActivityManager.shared.updateLiveActivity()
@@ -176,9 +193,38 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         completionHandler(.newData)
     }
     
+    /// Live Activity 원격 제어 처리
+    private func handleRemoteLiveActivityControl(userInfo: [AnyHashable: Any]) {
+        // data 필드에서 메시지 타입 확인
+        var messageType: String?
+        if let data = userInfo["data"] as? [String: Any] {
+            messageType = data["type"] as? String
+        } else {
+            messageType = userInfo["type"] as? String
+        }
+        
+        guard let type = messageType else { 
+            print("⚠️ 메시지 타입을 찾을 수 없음: \(userInfo)")
+            return 
+        }
+        
+        switch type {
+        case "start_live_activity":
+            FirebaseService.shared.handleRemoteLiveActivityStart(userInfo: userInfo)
+        case "stop_live_activity":
+            FirebaseService.shared.handleRemoteLiveActivityStop(userInfo: userInfo)
+        default:
+            print("⚠️ 알 수 없는 메시지 타입: \(type)")
+        }
+    }
+    
     // Check for updates when app enters foreground
     func applicationWillEnterForeground(_ application: UIApplication) {
         AppUpdateService.shared.checkForUpdates()
+        
+        // 대기 중인 Live Activity 시작 처리
+        handlePendingLiveActivityStart()
+        
         // 라이브 액티비티 업데이트
         LiveActivityManager.shared.updateLiveActivity()
         // 다음 백그라운드 작업 스케줄링
@@ -192,12 +238,41 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
         SharedUserDefaults.shared.printAllValues()
         WidgetCenter.shared.reloadAllTimelines()
+        
+        // 대기 중인 Live Activity 시작 처리 (포그라운드 전환 시에도 확인)
+        handlePendingLiveActivityStart()
+        
         // 라이브 액티비티 업데이트
         LiveActivityManager.shared.updateLiveActivity()
         print("✅ 위젯 타임라인 리로드 및 라이브 액티비티 업데이트 요청 완료")
         
         // 다음 백그라운드 작업 스케줄링
         scheduleWidgetRefresh()
+    }
+    
+    // MARK: - Pending Live Activity 처리
+    
+    /// 대기 중인 Live Activity 시작 처리
+    private func handlePendingLiveActivityStart() {
+        guard UserDefaults.standard.bool(forKey: "pendingLiveActivityStart") else {
+            return
+        }
+        
+        let grade = UserDefaults.standard.integer(forKey: "pendingLiveActivityGrade")
+        let classNumber = UserDefaults.standard.integer(forKey: "pendingLiveActivityClass")
+        
+        print("📱 대기 중인 Live Activity 시작 처리: \(grade)학년 \(classNumber)반")
+        
+        // 플래그 초기화
+        UserDefaults.standard.set(false, forKey: "pendingLiveActivityStart")
+        UserDefaults.standard.removeObject(forKey: "pendingLiveActivityGrade")
+        UserDefaults.standard.removeObject(forKey: "pendingLiveActivityClass")
+        
+        // Live Activity 시작
+        if grade > 0 && classNumber > 0 {
+            LiveActivityManager.shared.startLiveActivity(grade: grade, classNumber: classNumber)
+            print("✅ 대기 중이던 Live Activity 시작 완료: \(grade)학년 \(classNumber)반")
+        }
     }
     
     // 앱이 백그라운드로 이동할 때 호출
@@ -208,3 +283,4 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         scheduleWidgetRefresh()
     }
 }
+

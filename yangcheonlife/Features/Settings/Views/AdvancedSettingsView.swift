@@ -9,6 +9,7 @@ struct AdvancedSettingsView: View {
     // MARK: - Environment Objects
     @EnvironmentObject var scheduleService: ScheduleService
     @EnvironmentObject var notificationService: NotificationService
+    @EnvironmentObject var liveActivityManager: LiveActivityManager
     
     // MARK: - State
     @State private var showResetAlert = false
@@ -62,8 +63,33 @@ struct AdvancedSettingsView: View {
                         .foregroundColor(notificationService.isAuthorized ? .successColor : .errorColor)
                 }
                 
+                HStack {
+                    Text("Live Activity 상태")
+                    Spacer()
+                    Text(liveActivityManager.isActivityRunning ? "실행 중" : "중지됨")
+                        .foregroundColor(liveActivityManager.isActivityRunning ? .successColor : .secondary)
+                }
+                
                 Button("알림 권한 상태 새로고침") {
                     notificationService.checkAuthorizationStatus()
+                }
+                .foregroundColor(.appPrimary)
+            }
+            
+            // Live Activity 테스트 섹션
+            Section("Live Activity 테스트") {
+                Button("Live Activity 시작 테스트") {
+                    testStartLiveActivity()
+                }
+                .foregroundColor(.appPrimary)
+                
+                Button("Live Activity 중지 테스트") {
+                    testStopLiveActivity()
+                }
+                .foregroundColor(.warningColor)
+                
+                Button("Live Activity 권한 확인") {
+                    checkLiveActivityPermissions()
                 }
                 .foregroundColor(.appPrimary)
             }
@@ -133,6 +159,46 @@ struct AdvancedSettingsView: View {
         scheduleService.currentScheduleData = nil
         
         print("✅ 시간표 캐시가 삭제되었습니다")
+    }
+    
+    // MARK: - Live Activity 테스트 메서드들
+    
+    /// Live Activity 시작 테스트
+    private func testStartLiveActivity() {
+        let grade = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let classNumber = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
+        
+        print("🧪 Live Activity 수동 시작 테스트")
+        print("   - 학년: \(grade), 반: \(classNumber)")
+        
+        if grade > 0 && classNumber > 0 {
+            liveActivityManager.startLiveActivity(grade: grade, classNumber: classNumber)
+        } else {
+            print("❌ 유효하지 않은 학년/반 정보. 설정에서 학년/반을 먼저 설정하세요.")
+        }
+    }
+    
+    /// Live Activity 중지 테스트
+    private func testStopLiveActivity() {
+        print("🧪 Live Activity 수동 중지 테스트")
+        liveActivityManager.stopLiveActivity()
+    }
+    
+    /// Live Activity 권한 확인
+    private func checkLiveActivityPermissions() {
+        print("🧪 Live Activity 권한 상태 확인")
+        print("   - 현재 실행 상태: \(liveActivityManager.isActivityRunning)")
+        
+        // LiveActivityManager의 메서드를 통해 확인
+        let grade = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let classNumber = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
+        
+        if grade > 0 && classNumber > 0 {
+            // 권한 확인만 하고 실제로 시작하지는 않음
+            print("   - 설정된 학년/반: \(grade)학년 \(classNumber)반")
+        } else {
+            print("   - 경고: 학년/반이 설정되지 않음")
+        }
     }
 }
 
