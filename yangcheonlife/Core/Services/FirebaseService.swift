@@ -267,9 +267,13 @@ class FirebaseService: NSObject, ObservableObject {
         }
         
         // Live Activity 시작
-        DispatchQueue.main.async {
-            LiveActivityManager.shared.startLiveActivity(grade: grade, classNumber: classNumber)
-            print("✅ Live Activity 원격 시작 완료: \(grade)학년 \(classNumber)반")
+        if #available(iOS 18.0, *) {
+            DispatchQueue.main.async {
+                LiveActivityManager.shared.startLiveActivity(grade: grade, classNumber: classNumber)
+                print("✅ Live Activity 원격 시작 완료: \(grade)학년 \(classNumber)반")
+            }
+        } else {
+            print("❌ iOS 18.0 이상이 필요합니다.")
         }
     }
     
@@ -291,9 +295,13 @@ class FirebaseService: NSObject, ObservableObject {
         }
         
         // Live Activity 종료
-        DispatchQueue.main.async {
-            LiveActivityManager.shared.stopLiveActivity()
-            print("✅ Live Activity 원격 종료 완료")
+        if #available(iOS 18.0, *) {
+            DispatchQueue.main.async {
+                LiveActivityManager.shared.stopLiveActivity()
+                print("✅ Live Activity 원격 종료 완료")
+            }
+        } else {
+            print("❌ iOS 18.0 이상이 필요합니다.")
         }
     }
 }
@@ -312,14 +320,6 @@ extension FirebaseService: MessagingDelegate {
         
         // 토큰이 갱신될 때 Live Activity 토픽 구독
         subscribeToLiveActivityTopic()
-        
-        // 현재 설정된 학년/반으로 다시 구독
-        let grade = UserDefaults.standard.integer(forKey: "defaultGrade")
-        let classNumber = UserDefaults.standard.integer(forKey: "defaultClass")
-        
-        if grade > 0 && classNumber > 0 {
-            subscribeToTopic(grade: grade, classNumber: classNumber)
-        }
     }
     
     // Note: MessagingRemoteMessage 타입이 현재 Firebase SDK 버전에서 사용할 수 없음

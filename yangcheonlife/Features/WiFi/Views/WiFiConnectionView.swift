@@ -41,14 +41,21 @@ struct WiFiConnectionView: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
-            .navigationTitle("학교 WiFi 연결")
+            .navigationTitle(NSLocalizedString(LocalizationKeys.schoolWiFiConnection, comment: ""))
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 loadDefaultSettings()
+                updateLiveActivityOnTabLoad()
             }
             .loadingOverlay(isLoading: wifiService.isConnecting)
-            .alert("WiFi 연결 결과", isPresented: $showResult) {
-                Button("확인", role: .cancel) { }
+            .alert(NSLocalizedString(LocalizationKeys.wifiConnectionResult, comment: ""), isPresented: $showResult) {
+                if let result = connectionResult, !result.isSuccess && result.message.contains(NSLocalizedString(LocalizationKeys.locationPermissionRequiredForWiFi, comment: "")) {
+                    Button(NSLocalizedString(LocalizationKeys.ok, comment: ""), role: .cancel) {
+                        openSettings()
+                    }
+                } else {
+                    Button(NSLocalizedString(LocalizationKeys.ok, comment: ""), role: .cancel) { }
+                }
             } message: {
                 if let result = connectionResult {
                     Text(result.message)
@@ -160,73 +167,81 @@ struct WiFiConnectionView: View {
     
     /// 학년별 안내사항 섹션
     private func gradeInfoSection(grade: Int) -> some View {
-        Section("안내사항") {
+        Section(NSLocalizedString(LocalizationKeys.info, comment: "")) {
             if !wifiService.hasLocationPermission {
                 HStack {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.warningColor)
                     
                     VStack(alignment: .leading) {
-                        Text("위치 권한 필요")
+                        Text(NSLocalizedString(LocalizationKeys.locationPermissionRequired, comment: ""))
                             .bodyStyle()
-                        Text("WiFi 연결을 위해 위치 권한이 필요합니다.")
+                        Text(NSLocalizedString(LocalizationKeys.locationPermissionDescription, comment: ""))
                             .captionStyle()
                     }
                     
                     Spacer()
                     
-                    Button("설정") {
-                        openSettings()
+                    Button(wifiService.locationAuthorizationStatus == .denied ? "설정" : "권한 요청") {
+                        if wifiService.locationAuthorizationStatus == .denied {
+                            openSettings()
+                        } else {
+                            requestLocationPermission()
+                        }
                     }
                     .secondaryButtonStyle()
                 }
             }
             
-            Text("• 학교 WiFi는 SSID가 숨김 설정되어 있습니다.")
+            Text(NSLocalizedString(LocalizationKeys.wifiHiddenSSID, comment: ""))
                 .captionStyle()
             
-            Text("• \(grade)학년 SSID 형식: \(grade)-반번호 (예: \(grade)-5)")
+            Text(String(format: NSLocalizedString(LocalizationKeys.gradeSSIDFormat, comment: ""), grade, grade, grade))
                 .captionStyle()
             
-            Text("• 비밀번호 형식: yangcheon + 학년반번호")
+            Text(NSLocalizedString(LocalizationKeys.passwordFormat, comment: ""))
                 .captionStyle()
             
-            Text("• 예시: \(grade)학년 5반 → SSID: \(grade)-5, 비밀번호: yangcheon\(grade)05")
+            Text(String(format: NSLocalizedString(LocalizationKeys.passwordExample, comment: ""), grade, grade, grade))
                 .captionStyle()
         }
     }
     
     /// 특별실 안내사항 섹션
     private var specialRoomInfoSection: some View {
-        Section("안내사항") {
+        Section(NSLocalizedString(LocalizationKeys.info, comment: "")) {
             if !wifiService.hasLocationPermission {
                 HStack {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.warningColor)
                     
                     VStack(alignment: .leading) {
-                        Text("위치 권한 필요")
+                        Text(NSLocalizedString(LocalizationKeys.locationPermissionRequired, comment: ""))
                             .bodyStyle()
-                        Text("WiFi 연결을 위해 위치 권한이 필요합니다.")
+                        Text(NSLocalizedString(LocalizationKeys.locationPermissionDescription, comment: ""))
                             .captionStyle()
                     }
                     
                     Spacer()
                     
-                    Button("설정") {
-                        openSettings()
+                    Button(wifiService.locationAuthorizationStatus == .denied ? "설정" : "권한 요청") {
+                        if wifiService.locationAuthorizationStatus == .denied {
+                            openSettings()
+                        } else {
+                            requestLocationPermission()
+                        }
                     }
                     .secondaryButtonStyle()
                 }
             }
             
-            Text("• 학교 WiFi는 SSID가 숨김 설정되어 있습니다.")
+            Text(NSLocalizedString(LocalizationKeys.wifiHiddenSSID, comment: ""))
                 .captionStyle()
             
-            Text("• 특별실은 고유한 SSID와 비밀번호를 가집니다.")
+            Text(NSLocalizedString(LocalizationKeys.specialRoomInfo, comment: ""))
                 .captionStyle()
             
-            Text("• 각 특별실의 SSID와 비밀번호는 위 목록을 참고하세요.")
+            Text(NSLocalizedString(LocalizationKeys.specialRoomReference, comment: ""))
                 .captionStyle()
         }
     }
@@ -236,10 +251,10 @@ struct WiFiConnectionView: View {
     /// 탭 제목 반환
     private func tabTitle(for index: Int) -> String {
         switch index {
-        case 0: return "1학년"
-        case 1: return "2학년"
-        case 2: return "3학년"
-        case 3: return "특별실"
+        case 0: return String(format: NSLocalizedString(LocalizationKeys.gradeX, comment: ""), 1)
+        case 1: return String(format: NSLocalizedString(LocalizationKeys.gradeX, comment: ""), 2)
+        case 2: return String(format: NSLocalizedString(LocalizationKeys.gradeX, comment: ""), 3)
+        case 3: return NSLocalizedString(LocalizationKeys.specialRoomWiFi, comment: "")
         default: return ""
         }
     }
@@ -283,10 +298,22 @@ struct WiFiConnectionView: View {
         }
     }
     
+    /// 위치권한 요청
+    private func requestLocationPermission() {
+        wifiService.requestLocationPermission()
+    }
+    
     /// 설정 앱 열기
     private func openSettings() {
         if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(settingsUrl)
+        }
+    }
+    
+    /// 탭 로드시 라이브 액티비티 업데이트
+    private func updateLiveActivityOnTabLoad() {
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.updateLiveActivity()
         }
     }
 }

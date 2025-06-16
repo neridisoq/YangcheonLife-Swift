@@ -13,7 +13,6 @@ struct ScheduleTabView: View {
     
     // MARK: - State Properties
     @StateObject private var viewModel = ScheduleTabViewModel()
-    @StateObject private var liveActivityManager = LiveActivityManager.shared
     @State private var showWiFiConnectionAlert = false
     @State private var wifiConnectionResult: WiFiConnectionResult?
     
@@ -44,6 +43,7 @@ struct ScheduleTabView: View {
             .onAppear {
                 viewModel.setupInitialValues()
                 startPeriodicUpdate()
+                updateLiveActivityOnTabLoad()
             }
             .onReceive(viewModel.timer) { _ in
                 viewModel.updateCurrentClassInfo(scheduleData: scheduleService.currentScheduleData)
@@ -57,8 +57,8 @@ struct ScheduleTabView: View {
                 isPresented: .constant(scheduleService.lastError != nil),
                 error: scheduleService.lastError
             )
-            .alert("WiFi 연결", isPresented: $showWiFiConnectionAlert) {
-                Button("확인", role: .cancel) { }
+            .alert(NSLocalizedString(LocalizationKeys.wifiConnectionResult, comment: ""), isPresented: $showWiFiConnectionAlert) {
+                Button(NSLocalizedString(LocalizationKeys.ok, comment: ""), role: .cancel) { }
             } message: {
                 if let result = wifiConnectionResult {
                     Text(result.message)
@@ -73,28 +73,32 @@ struct ScheduleTabView: View {
     
     /// 시간표 헤더 (학년/반 선택 및 새로고침)
     private var scheduleHeader: some View {
-        HStack {
+        HStack(spacing: 8) {
             Picker(NSLocalizedString("Grade", comment: ""), selection: $viewModel.displayGrade) {
                 ForEach(AppConstants.School.grades, id: \.self) { grade in
-                    Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
+                    Text(String(format: NSLocalizedString("GradeP", comment: ""), grade))
+                        .font(.system(size: 13, weight: .medium))
+                        .tag(grade)
                 }
             }
             .pickerStyle(MenuPickerStyle())
             .onChange(of: viewModel.displayGrade) { _ in
                 loadScheduleData()
             }
-            .frame(maxWidth: 120) // 학년 선택 크기 조정
+            .fixedSize()
 
             Picker(NSLocalizedString("Class", comment: ""), selection: $viewModel.displayClass) {
                 ForEach(AppConstants.School.classes, id: \.self) { classNumber in
-                    Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
+                    Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber))
+                        .font(.system(size: 13, weight: .medium))
+                        .tag(classNumber)
                 }
             }
             .pickerStyle(MenuPickerStyle())
             .onChange(of: viewModel.displayClass) { _ in
                 loadScheduleData()
             }
-            .frame(maxWidth: 120) // 반 선택 크기 조정
+            .fixedSize()
             
             Button(action: {
                 Task {
@@ -126,12 +130,12 @@ struct ScheduleTabView: View {
                 HStack {
                     Image(systemName: "info.circle")
                         .foregroundColor(.infoColor)
-                    Text("현재 표시: \(viewModel.displayGrade)학년 \(viewModel.displayClass)반 | 알림 설정: \(viewModel.actualGrade)학년 \(viewModel.actualClass)반")
+                    Text(String(format: NSLocalizedString(LocalizationKeys.currentDisplay, comment: ""), viewModel.displayGrade, viewModel.displayClass, viewModel.actualGrade, viewModel.actualClass))
                         .captionStyle()
                     Spacer()
                 }
                 
-                Button("이 시간표로 알림 설정하기") {
+                Button(NSLocalizedString(LocalizationKeys.setNotificationForThisSchedule, comment: "")) {
                     updateNotificationSettings()
                 }
                 .secondaryButtonStyle()
@@ -159,11 +163,11 @@ struct ScheduleTabView: View {
                                 Text("\(viewModel.getDisplaySubject(for: currentClass))")
                                     .bodyStyle()
                             } else {
-                                Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
+                                Text(String(format: NSLocalizedString(LocalizationKeys.currentInClass, comment: ""), viewModel.getDisplaySubject(for: currentClass)))
                                     .bodyStyle()
                             }
                         case .breakTime(_):
-                            Text("쉬는시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
+                            Text(String(format: NSLocalizedString(LocalizationKeys.breakTimeNext, comment: ""), viewModel.getDisplaySubject(for: currentClass)))
                                 .bodyStyle()
                         case .lunchTime:
                             // 점심자습 시간이면 다른 표시 방식 사용
@@ -171,11 +175,11 @@ struct ScheduleTabView: View {
                                 Text("\(viewModel.getDisplaySubject(for: currentClass))")
                                     .bodyStyle()
                             } else {
-                                Text("점심시간 - 다음: \(viewModel.getDisplaySubject(for: currentClass))")
+                                Text(String(format: NSLocalizedString(LocalizationKeys.lunchTimeNext, comment: ""), viewModel.getDisplaySubject(for: currentClass)))
                                     .bodyStyle()
                             }
                         case .preClass(_):
-                            Text("수업 10분 전 - \(viewModel.getDisplaySubject(for: currentClass))")
+                            Text(String(format: NSLocalizedString(LocalizationKeys.preClassTime, comment: ""), viewModel.getDisplaySubject(for: currentClass)))
                                 .bodyStyle()
                         default:
                             // 아침자습이나 점심자습이면 수업 중이라는 표현을 사용하지 않음
@@ -183,14 +187,14 @@ struct ScheduleTabView: View {
                                 Text("\(viewModel.getDisplaySubject(for: currentClass))")
                                     .bodyStyle()
                             } else {
-                                Text("현재 \(viewModel.getDisplaySubject(for: currentClass)) 수업 중")
+                                Text(String(format: NSLocalizedString(LocalizationKeys.currentInClass, comment: ""), viewModel.getDisplaySubject(for: currentClass)))
                                     .bodyStyle()
                             }
                         }
                         
                         let displayClassroom = viewModel.getDisplayClassroom(for: currentClass)
                         if !displayClassroom.isEmpty && !displayClassroom.contains("T") {
-                            Text("교실: \(displayClassroom)")
+                            Text(String(format: NSLocalizedString(LocalizationKeys.classroom, comment: ""), displayClassroom))
                                 .captionStyle()
                         }
                     }
@@ -198,7 +202,7 @@ struct ScheduleTabView: View {
                     Spacer()
                 }
                 
-                Button("🔗 \(connectionType.displayName) WiFi 연결하기") {
+                Button(String(format: NSLocalizedString(LocalizationKeys.connectWiFi, comment: ""), connectionType.displayName)) {
                     connectToWiFi(connectionType)
                 }
                 .primaryButtonStyle()
@@ -278,6 +282,13 @@ struct ScheduleTabView: View {
                 wifiConnectionResult = result
                 showWiFiConnectionAlert = true
             }
+        }
+    }
+    
+    /// 탭 로드시 라이브 액티비티 업데이트
+    private func updateLiveActivityOnTabLoad() {
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.updateLiveActivity()
         }
     }
     

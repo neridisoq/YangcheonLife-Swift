@@ -197,10 +197,9 @@ struct UpdateAnnouncementView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    featureItem("🔄", "완전히 새로워진 앱 구조")
-                    featureItem("⚡", "더 빠르고 안정적인 성능")
-                    featureItem("🎨", "개선된 사용자 인터페이스")
-                    featureItem("🛠", "버그 수정 및 최적화")
+                    featureItem("최적화")
+                    featureItem("라이브 액티비티")
+                    featureItem("위젯 오류시 삭제후 다시 추가")
                 }
                 
                 Button("확인") {
@@ -222,11 +221,8 @@ struct UpdateAnnouncementView: View {
     }
     
     /// 기능 항목 뷰
-    private func featureItem(_ icon: String, _ text: String) -> some View {
+    private func featureItem(_ text: String) -> some View {
         HStack(spacing: 12) {
-            Text(icon)
-                .font(.title3)
-            
             Text(text)
                 .bodyStyle()
             

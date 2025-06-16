@@ -31,7 +31,7 @@ struct InitialSetupView: View {
                 bottomButtons
             }
             .appPadding()
-            .navigationTitle("초기 설정")
+            .navigationTitle(NSLocalizedString(LocalizationKeys.initialSetup, comment: ""))
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -82,12 +82,12 @@ struct InitialSetupView: View {
                 .font(.system(size: 80))
                 .foregroundColor(.appPrimary)
             
-            Text("양천고 라이프에 오신 것을 환영합니다!")
+            Text(NSLocalizedString(LocalizationKeys.welcomeMessage, comment: ""))
                 .font(.title2)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
             
-            Text("학교 생활을 더욱 편리하게 만들어드릴 몇 가지 설정을 진행하겠습니다.")
+            Text(NSLocalizedString(LocalizationKeys.setupDescription, comment: ""))
                 .bodyStyle()
                 .multilineTextAlignment(.center)
         }
@@ -97,34 +97,34 @@ struct InitialSetupView: View {
     private var gradeClassStep: some View {
         VStack(spacing: 30) {
             VStack(spacing: 8) {
-                Text("학년과 반을 선택해주세요")
+                Text(NSLocalizedString(LocalizationKeys.selectGradeClass, comment: ""))
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                Text("시간표와 알림 서비스를 위해 필요합니다.")
+                Text(NSLocalizedString(LocalizationKeys.gradeClassRequired, comment: ""))
                     .captionStyle()
             }
             
             VStack(spacing: 20) {
                 VStack(alignment: .leading) {
-                    Text("학년")
+                    Text(NSLocalizedString(LocalizationKeys.grade, comment: ""))
                         .bodyStyle()
                     
                     Picker("학년", selection: $selectedGrade) {
                         ForEach(AppConstants.School.grades, id: \.self) { grade in
-                            Text("\(grade)학년").tag(grade)
+                            Text(String(format: NSLocalizedString(LocalizationKeys.gradeX, comment: ""), grade)).tag(grade)
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
                 
                 VStack(alignment: .leading) {
-                    Text("반")
+                    Text(NSLocalizedString(LocalizationKeys.classKey, comment: ""))
                         .bodyStyle()
                     
                     Picker("반", selection: $selectedClass) {
                         ForEach(AppConstants.School.classes, id: \.self) { classNumber in
-                            Text("\(classNumber)반").tag(classNumber)
+                            Text(String(format: NSLocalizedString(LocalizationKeys.classX, comment: ""), classNumber)).tag(classNumber)
                         }
                     }
                     .pickerStyle(WheelPickerStyle())
@@ -142,25 +142,25 @@ struct InitialSetupView: View {
                 .foregroundColor(.appPrimary)
             
             VStack(spacing: 8) {
-                Text("알림 설정")
+                Text(NSLocalizedString(LocalizationKeys.notificationSetup, comment: ""))
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                Text("수업 시작 10분 전에 알림을 받으시겠습니까?")
+                Text(NSLocalizedString(LocalizationKeys.notificationQuestion, comment: ""))
                     .bodyStyle()
                     .multilineTextAlignment(.center)
             }
             
             VStack(spacing: 16) {
-                Toggle("수업 알림 받기", isOn: $notificationsEnabled)
+                Toggle(NSLocalizedString(LocalizationKeys.receiveClassNotifications, comment: ""), isOn: $notificationsEnabled)
                     .toggleStyle(SwitchToggleStyle(tint: .appPrimary))
                 
                 if notificationsEnabled {
-                    Text("✓ 각 교시 수업 10분 전에 알림을 받습니다")
+                    Text(NSLocalizedString(LocalizationKeys.notificationInfo, comment: ""))
                         .captionStyle()
                         .foregroundColor(.successColor)
                 } else {
-                    Text("나중에 설정에서 변경할 수 있습니다")
+                    Text(NSLocalizedString(LocalizationKeys.settingsLater, comment: ""))
                         .captionStyle()
                         .foregroundColor(.secondary)
                 }
@@ -172,7 +172,7 @@ struct InitialSetupView: View {
     private var bottomButtons: some View {
         HStack {
             if currentStep > 0 {
-                Button("이전") {
+                Button(NSLocalizedString(LocalizationKeys.previous, comment: "")) {
                     withAnimation {
                         currentStep -= 1
                     }
@@ -182,7 +182,7 @@ struct InitialSetupView: View {
             
             Spacer()
             
-            Button(currentStep == totalSteps - 1 ? "완료" : "다음") {
+            Button(currentStep == totalSteps - 1 ? NSLocalizedString(LocalizationKeys.complete, comment: "") : NSLocalizedString(LocalizationKeys.next, comment: "")) {
                 if currentStep == totalSteps - 1 {
                     completeSetup()
                 } else {

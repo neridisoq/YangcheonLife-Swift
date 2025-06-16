@@ -14,7 +14,6 @@ struct YangcheonLifeApp: App {
     @StateObject private var scheduleService = ScheduleService.shared
     @StateObject private var wifiService = WiFiService.shared
     @StateObject private var notificationService = NotificationService.shared
-    @StateObject private var liveActivityManager = LiveActivityManager.shared
     
     // Firebase는 lazy로 초기화하여 AppDelegate에서 Firebase.configure() 호출 후에 생성되도록 함
     private var firebaseService: FirebaseService {
@@ -29,7 +28,6 @@ struct YangcheonLifeApp: App {
                 .environmentObject(wifiService)
                 .environmentObject(notificationService)
                 .environmentObject(firebaseService)
-                .environmentObject(liveActivityManager)
                 .onAppear {
                     setupApp()
                 }

@@ -10,6 +10,8 @@
 	<false/>
 	<key>NSHotspotConfigurationUsageDescription</key>
 	<string>Wi-Fi 연결 기능을 사용하기 위해 권한이 필요합니다.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Wi-Fi 연결을 위해 위치 정보가 필요합니다.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>

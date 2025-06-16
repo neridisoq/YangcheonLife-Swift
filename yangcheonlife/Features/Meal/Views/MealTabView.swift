@@ -21,7 +21,7 @@ struct MealTabView: View {
             
             // 로딩 인디케이터
             if isLoading {
-                LoadingView(message: "급식 정보 로딩 중...", showBackground: false)
+                LoadingView(message: NSLocalizedString(LocalizationKeys.loadingMealInfo, comment: ""), showBackground: false)
             }
             
             // 에러 상태
@@ -32,6 +32,9 @@ struct MealTabView: View {
             }
         }
         .ignoresSafeArea(.all, edges: .top)
+        .onAppear {
+            updateLiveActivityOnTabLoad()
+        }
     }
     
     // MARK: - Private Methods
@@ -42,6 +45,13 @@ struct MealTabView: View {
         isLoading = true
         
         // WebView 새로고침은 MealWebView에서 처리
+    }
+    
+    /// 탭 로드시 라이브 액티비티 업데이트
+    private func updateLiveActivityOnTabLoad() {
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.updateLiveActivity()
+        }
     }
 }
 
@@ -70,7 +80,7 @@ struct MealWebView: UIViewRepresentable {
             webView.load(request)
         } else {
             hasError = true
-            errorMessage = "잘못된 급식 URL입니다."
+            errorMessage = NSLocalizedString(LocalizationKeys.invalidMealURL, comment: "")
         }
         
         return webView
@@ -131,9 +141,9 @@ enum MealError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .loadFailed(let message):
-            return "급식 정보를 불러올 수 없습니다: \(message)"
+            return String(format: NSLocalizedString(LocalizationKeys.mealLoadingFailed, comment: ""), message)
         case .invalidURL:
-            return "급식 페이지 URL이 올바르지 않습니다."
+            return NSLocalizedString(LocalizationKeys.invalidMealURL, comment: "")
         }
     }
 }

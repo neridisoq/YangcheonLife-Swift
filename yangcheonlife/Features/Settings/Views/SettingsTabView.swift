@@ -7,7 +7,6 @@ struct SettingsTabView: View {
     
     // MARK: - ViewModel
     @StateObject private var viewModel = SettingsTabViewModel()
-    @StateObject private var liveActivityManager = LiveActivityManager.shared
     
     @State private var showConfirmationAlert = false
     @State private var confirmationMessage = ""
@@ -42,7 +41,7 @@ struct SettingsTabView: View {
             }
             .confirmationAlert(
                 isPresented: $showConfirmationAlert,
-                title: "확인",
+                title: NSLocalizedString(LocalizationKeys.confirm, comment: ""),
                 message: confirmationMessage,
                 onConfirm: {
                     pendingAction?()
@@ -59,62 +58,105 @@ struct SettingsTabView: View {
     @ViewBuilder
     private var liveActivitySection: some View {
         if #available(iOS 18.0, *) {
-            Section("라이브 액티비티") {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Live Activity / Dynamic Island 표시")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                    Text("현재 수업, 다음 수업, 남은 시간을 Dynamic Island와 잠금 화면에서 확인")
-                        .font(.caption)
+            Section(NSLocalizedString(LocalizationKeys.liveActivity, comment: "")) {
+            VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(NSLocalizedString(LocalizationKeys.liveActivityDisplay, comment: ""))
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                        
+                        if #available(iOS 18.0, *), viewModel.isLiveActivityRunning {
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 8, height: 8)
+                                Text(NSLocalizedString(LocalizationKeys.running, comment: ""))
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(.green)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.green.opacity(0.15))
+                            .cornerRadius(8)
+                        }
+                    }
+                    
+                    Text(NSLocalizedString(LocalizationKeys.liveActivityDescription, comment: ""))
+                        .font(.footnote)
                         .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
-
-                
-                if liveActivityManager.isActivityRunning {
-                    Text("실행 중")
-                        .font(.caption)
-                        .foregroundColor(.green)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.green.opacity(0.1))
-                        .cornerRadius(8)
-                }
-            }
-            
-            HStack {
-                if !liveActivityManager.isActivityRunning {
-                    Button("시작하기") {
-                        startLiveActivity()
+                if #available(iOS 18.0, *) {
+                    if !viewModel.isLiveActivityRunning {
+                        Button(action: {
+                            startLiveActivity()
+                        }) {
+                            HStack {
+                                Image(systemName: "play.circle.fill")
+                                    .font(.title3)
+                                Text(NSLocalizedString(LocalizationKeys.start, comment: ""))
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.orange)
+                            .cornerRadius(10)
+                        }
+                    } else {
+                        Button(action: {
+                            stopLiveActivity()
+                        }) {
+                            HStack {
+                                Image(systemName: "stop.circle.fill")
+                                    .font(.title3)
+                                Text(NSLocalizedString(LocalizationKeys.stop, comment: ""))
+                                    .fontWeight(.semibold)
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.red)
+                            .cornerRadius(10)
+                        }
                     }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color.orange)
-                    .cornerRadius(10)
                 } else {
-                    Button("중지하기") {
-                        stopLiveActivity()
+                    VStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.title2)
+                            .foregroundColor(.orange)
+                        Text(NSLocalizedString(LocalizationKeys.iosVersionRequired, comment: ""))
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
                     }
-                    .foregroundColor(.orange)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, 16)
                     .background(Color.orange.opacity(0.1))
                     .cornerRadius(10)
                 }
             }
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.clear)
-            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
+            .background(Color(.systemGray6))
+            .cornerRadius(12)
+        }
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Color.clear)
         }
     }
     
     /// 기본 설정 섹션
     private var basicSettingsSection: some View {
-        Section("기본 설정") {
+        Section(NSLocalizedString(LocalizationKeys.basicSettings, comment: "")) {
             // 학년/반 설정
-            NavigationLink("학년 및 반 설정") {
+            NavigationLink(NSLocalizedString(LocalizationKeys.gradeClassSettings, comment: "")) {
                 ClassGradeSettingsView(
                     defaultGrade: $viewModel.defaultGrade,
                     defaultClass: $viewModel.defaultClass,
@@ -123,23 +165,23 @@ struct SettingsTabView: View {
             }
             
             // 과목 선택
-            NavigationLink("탐구/기초 과목 선택") {
+            NavigationLink(NSLocalizedString(LocalizationKeys.subjectSelection, comment: "")) {
                 SubjectSelectionView()
             }
             
             // WiFi 연결
-            NavigationLink("학교 WiFi 연결") {
+            NavigationLink(NSLocalizedString(LocalizationKeys.wifiConnection, comment: "")) {
                 WiFiConnectionView()
             }
             
             // WiFi 제안 기능
-            Toggle("WiFi 제안 기능", isOn: $viewModel.wifiSuggestionEnabled)
+            Toggle(NSLocalizedString(LocalizationKeys.wifiSuggestion, comment: ""), isOn: $viewModel.wifiSuggestionEnabled)
                 .onChange(of: viewModel.wifiSuggestionEnabled) { isEnabled in
                     viewModel.saveWifiSuggestionEnabled(isEnabled)
                 }
             
             // 시간표 셀 배경색
-            ColorPicker("시간표 셀 색상", selection: $viewModel.cellBackgroundColor)
+            ColorPicker(NSLocalizedString(LocalizationKeys.scheduleCellColor, comment: ""), selection: $viewModel.cellBackgroundColor)
                 .onChange(of: viewModel.cellBackgroundColor) { newColor in
                     viewModel.saveCellBackgroundColor(newColor)
                 }
@@ -148,15 +190,15 @@ struct SettingsTabView: View {
     
     /// 알림 설정 섹션
     private var notificationSettingsSection: some View {
-        Section("알림 설정") {
+        Section(NSLocalizedString(LocalizationKeys.notificationSettings, comment: "")) {
             // 수업 알림 토글
-            Toggle("수업 알림", isOn: $viewModel.notificationsEnabled)
+            Toggle(NSLocalizedString(LocalizationKeys.classNotification, comment: ""), isOn: $viewModel.notificationsEnabled)
                 .onChange(of: viewModel.notificationsEnabled) { isEnabled in
                     handleNotificationToggle(isEnabled)
                 }
             
             // 체육 수업 알림
-            Toggle("체육 수업 알림", isOn: $viewModel.physicalEducationAlertEnabled)
+            Toggle(NSLocalizedString(LocalizationKeys.peNotification, comment: ""), isOn: $viewModel.physicalEducationAlertEnabled)
                 .onChange(of: viewModel.physicalEducationAlertEnabled) { isEnabled in
                     handlePhysicalEducationAlertToggle(isEnabled)
                 }
@@ -164,7 +206,7 @@ struct SettingsTabView: View {
             // 체육 알림 시간 설정
             if viewModel.physicalEducationAlertEnabled {
                 DatePicker(
-                    "체육 알림 시간",
+                    NSLocalizedString(LocalizationKeys.peNotificationTime, comment: ""),
                     selection: $viewModel.physicalEducationAlertTime,
                     displayedComponents: .hourAndMinute
                 )
@@ -181,7 +223,7 @@ struct SettingsTabView: View {
             
             // 알림 테스트 버튼
             if viewModel.notificationsEnabled {
-                Button("알림 테스트") {
+                Button(NSLocalizedString(LocalizationKeys.testNotification, comment: "")) {
                     Task {
                         await NotificationService.shared.sendTestNotification()
                     }
@@ -193,49 +235,49 @@ struct SettingsTabView: View {
     
     /// 앱 정보 섹션
     private var appInfoSection: some View {
-        Section("앱 정보") {
+        Section(NSLocalizedString(LocalizationKeys.appInfo, comment: "")) {
             HStack {
-                Text("버전")
+                Text(NSLocalizedString(LocalizationKeys.version, comment: ""))
                 Spacer()
                 Text(AppConstants.App.version)
                     .foregroundColor(.secondary)
             }
             
             HStack {
-                Text("앱 이름")
+                Text(NSLocalizedString(LocalizationKeys.appName, comment: ""))
                 Spacer()
                 Text(AppConstants.App.name)
                     .foregroundColor(.secondary)
             }
             
             HStack {
-                Text("개발")
+                Text(NSLocalizedString(LocalizationKeys.developer, comment: ""))
                 Spacer()
-                Text("30526 진우현")
+                Text(NSLocalizedString(LocalizationKeys.developerName, comment: ""))
                     .foregroundColor(.secondary)
             }
             
-            Link("개인정보처리방침", destination: URL(string: AppConstants.ExternalLinks.privacyPolicy)!)
-            Link("학교 홈페이지", destination: URL(string: AppConstants.ExternalLinks.schoolWebsite)!)
+            Link(NSLocalizedString(LocalizationKeys.privacyPolicy, comment: ""), destination: URL(string: AppConstants.ExternalLinks.privacyPolicy)!)
+            Link(NSLocalizedString(LocalizationKeys.schoolWebsite, comment: ""), destination: URL(string: AppConstants.ExternalLinks.schoolWebsite)!)
         }
     }
     
     /// 지원 섹션
     private var supportSection: some View {
-        Section("지원") {
+        Section(NSLocalizedString(LocalizationKeys.support, comment: "")) {
             Button(action: sendEmail) {
                 HStack {
-                    Text("개발자에게 이메일 보내기")
+                    Text(NSLocalizedString(LocalizationKeys.sendEmailToDeveloper, comment: ""))
                     Spacer()
                     Image(systemName: "envelope")
                         .foregroundColor(.secondary)
                 }
             }
             
-            Link("개발자 인스타그램", destination: URL(string: AppConstants.ExternalLinks.developerInstagram)!)
+            Link(NSLocalizedString(LocalizationKeys.developerInstagram, comment: ""), destination: URL(string: AppConstants.ExternalLinks.developerInstagram)!)
             
             // 고급 설정
-            NavigationLink("고급 설정") {
+            NavigationLink(NSLocalizedString(LocalizationKeys.advancedSettings, comment: "")) {
                 AdvancedSettingsView(viewModel: viewModel)
             }
         }
@@ -263,7 +305,7 @@ struct SettingsTabView: View {
             }
         } else {
             // 알림 비활성화
-            confirmationMessage = "모든 수업 알림이 비활성화됩니다. 계속하시겠습니까?"
+            confirmationMessage = NSLocalizedString(LocalizationKeys.allNotificationsDisabled, comment: "")
             pendingAction = {
                 viewModel.saveNotificationsEnabled(false)
                 UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -307,7 +349,7 @@ struct SettingsTabView: View {
     
     /// 권한 없음 알림 표시
     private func showPermissionAlert() {
-        confirmationMessage = "알림 권한이 필요합니다. 설정에서 알림을 허용해주세요."
+        confirmationMessage = NSLocalizedString(LocalizationKeys.notificationPermissionRequired, comment: "")
         pendingAction = {
             if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(settingsUrl)
@@ -331,16 +373,30 @@ struct SettingsTabView: View {
     /// Live Activity 시작
     @available(iOS 18.0, *)
     private func startLiveActivity() {
-        liveActivityManager.startLiveActivity(
+        LiveActivityManager.shared.startLiveActivity(
             grade: viewModel.defaultGrade,
             classNumber: viewModel.defaultClass
         )
+        // UI 상태 즉시 업데이트
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.viewModel.objectWillChange.send()
+        }
     }
     
     /// Live Activity 중지
     @available(iOS 18.0, *)
     private func stopLiveActivity() {
-        liveActivityManager.stopLiveActivity()
+        LiveActivityManager.shared.stopLiveActivity()
+        // UI 상태 즉시 업데이트
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.viewModel.objectWillChange.send()
+        }
+    }
+    
+    /// Live Activity 업데이트
+    @available(iOS 18.0, *)
+    private func updateLiveActivity() {
+        LiveActivityManager.shared.updateLiveActivity()
     }
 }
 

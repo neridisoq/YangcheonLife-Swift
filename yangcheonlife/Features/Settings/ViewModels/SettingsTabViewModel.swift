@@ -15,6 +15,14 @@ class SettingsTabViewModel: ObservableObject {
     @Published var cellBackgroundColor: Color = .currentPeriodBackground
     @Published var wifiSuggestionEnabled: Bool = true
     
+    /// 라이브액티비티 실행 상태
+    var isLiveActivityRunning: Bool {
+        if #available(iOS 18.0, *) {
+            return LiveActivityManager.shared.isActivityRunning
+        }
+        return false
+    }
+    
     // MARK: - Private Properties
     private let userDefaults = UserDefaults.standard
     private let iCloudSync = iCloudSyncService.shared
@@ -49,34 +57,22 @@ class SettingsTabViewModel: ObservableObject {
     
     /// 학년 저장
     func saveDefaultGrade(_ grade: Int) {
-        let oldGrade = defaultGrade
         defaultGrade = grade
         userDefaults.set(grade, forKey: AppConstants.UserDefaultsKeys.defaultGrade)
         
         // iCloud 동기화
         iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.defaultGrade, syncKey: iCloudSyncService.SyncKeys.defaultGrade, value: grade)
         
-        // Firebase 토픽 구독 업데이트
-        if oldGrade != grade && defaultClass > 0 {
-            FirebaseService.shared.switchTopic(to: grade, classNumber: defaultClass)
-        }
-        
         updateSharedUserDefaults()
     }
     
     /// 반 저장
     func saveDefaultClass(_ classNumber: Int) {
-        let oldClass = defaultClass
         defaultClass = classNumber
         userDefaults.set(classNumber, forKey: AppConstants.UserDefaultsKeys.defaultClass)
         
         // iCloud 동기화
         iCloudSync.syncSetting(localKey: AppConstants.UserDefaultsKeys.defaultClass, syncKey: iCloudSyncService.SyncKeys.defaultClass, value: classNumber)
-        
-        // Firebase 토픽 구독 업데이트
-        if oldClass != classNumber && defaultGrade > 0 {
-            FirebaseService.shared.switchTopic(to: defaultGrade, classNumber: classNumber)
-        }
         
         updateSharedUserDefaults()
     }

@@ -12,17 +12,16 @@ struct ClassActivityAttributes: ActivityAttributes {
         var currentClass: ClassInfo?
         /// 다음 수업 정보
         var nextClass: ClassInfo?
-        /// 현재 시간대 시작 시각 (Date)
-        var startDate: Date
-        /// 현재 시간대 종료 시각 (Date)
-        var endDate: Date
-        /// 마지막 업데이트 시간
-        var lastUpdated: Date
+        /// 현재 시간대 시작 시각 (TimeInterval since 1970)
+        var startDate: TimeInterval
+        /// 현재 시간대 종료 시각 (TimeInterval since 1970)
+        var endDate: TimeInterval
+        /// 마지막 업데이트 시간 (TimeInterval since 1970)
+        var lastUpdated: TimeInterval
     }
     
-    /// 학년, 반 정보 (변경되지 않는 속성)
-    var grade: Int
-    var classNumber: Int
+    /// 학교 식별자 (빈 값이지만 ActivityKit에서 필요)
+    var schoolId: String = "yangcheon"
     
     /// More Frequent Updates 지원 설정
     public var prefersFrequentUpdates: Bool {
@@ -32,15 +31,28 @@ struct ClassActivityAttributes: ActivityAttributes {
 
 /// 수업 상태 열거형
 enum ClassStatus: String, Codable, CaseIterable {
-    case beforeSchool = "등교전"
-    case inClass = "수업중"
-    case breakTime = "쉬는시간"
-    case lunchTime = "점심시간"
-    case preClass = "수업전"
-    case afterSchool = "하교후"
+    case beforeSchool = "beforeSchool"
+    case inClass = "inClass"
+    case breakTime = "breakTime"
+    case lunchTime = "lunchTime"
+    case preClass = "preClass"
+    case afterSchool = "afterSchool"
     
     var displayText: String {
-        return self.rawValue
+        switch self {
+        case .beforeSchool:
+            return "등교전"
+        case .inClass:
+            return "수업중"
+        case .breakTime:
+            return "쉬는시간"
+        case .lunchTime:
+            return "점심시간"
+        case .preClass:
+            return "수업전"
+        case .afterSchool:
+            return "하교후"
+        }
     }
     
     var emoji: String {

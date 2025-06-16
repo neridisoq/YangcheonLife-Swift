@@ -21,19 +21,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     // 씬이 포어그라운드로 진입할 때 호출
     func sceneWillEnterForeground(_ scene: UIScene) {
         print("🔄 Scene will enter foreground - 라이브 액티비티 업데이트")
-        LiveActivityManager.shared.updateLiveActivity()
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.updateLiveActivity()
+        }
     }
     
     // 씬이 활성화될 때 호출
     func sceneDidBecomeActive(_ scene: UIScene) {
         print("🔄 Scene did become active - 라이브 액티비티 업데이트")
-        LiveActivityManager.shared.updateLiveActivity()
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.updateLiveActivity()
+        }
         WidgetCenter.shared.reloadAllTimelines()
     }
     
     // 씬이 백그라운드로 이동할 때 호출
     func sceneDidEnterBackground(_ scene: UIScene) {
         print("🔄 Scene did enter background - 라이브 액티비티 최종 업데이트")
-        LiveActivityManager.shared.updateLiveActivity()
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.updateLiveActivity()
+        }
     }
 }

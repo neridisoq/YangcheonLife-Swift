@@ -13,6 +13,11 @@ class WiFiService: NSObject, ObservableObject {
     @Published var lastConnectionResult: WiFiConnectionResult?
     @Published var hasLocationPermission = false
     
+    /// 위치권한 상태 확인
+    var locationAuthorizationStatus: CLAuthorizationStatus {
+        return locationManager.authorizationStatus
+    }
+    
     // MARK: - Private Properties
     private let locationManager = CLLocationManager()
     
@@ -201,7 +206,7 @@ class WiFiService: NSObject, ObservableObject {
         guard hasLocationPermission else {
             let result = WiFiConnectionResult(
                 isSuccess: false,
-                message: "WiFi 연결을 위해 위치 권한이 필요합니다. 설정에서 위치 권한을 허용해주세요.",
+                message: NSLocalizedString(LocalizationKeys.locationPermissionRequiredForWiFi, comment: ""),
                 connectionType: type
             )
             

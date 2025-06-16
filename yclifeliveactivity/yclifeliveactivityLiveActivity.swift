@@ -18,11 +18,12 @@ struct ClassLiveActivity: Widget {
                 .activitySystemActionForegroundColor(Color.primary)
         } dynamicIsland: { context in
             DynamicIsland {
+                // Expanded View
                 DynamicIslandExpandedRegion(.leading) {
                     ClassStatusView(status: context.state.currentStatus)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    TimeRemainingView(startDate: context.state.startDate, endDate: context.state.endDate)
+                    TimeRemainingView(startDate: Date(timeIntervalSince1970: context.state.startDate), endDate: Date(timeIntervalSince1970: context.state.endDate))
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     ClassInfoView(
@@ -32,17 +33,35 @@ struct ClassLiveActivity: Widget {
                     )
                 }
             } compactLeading: {
+                // Compact Leading
                 Text(context.state.currentStatus.emoji)
                     .font(.caption2)
             } compactTrailing: {
-                // Apple 정책 준수: 간결한 분 단위 표시로 공간 절약
-                Text(context.state.endDate, style: .timer)
-                    .font(.caption2)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+                // Compact Trailing - 00:00에서 멈추도록 수정
+                TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                    let now = timeline.date
+                    let endDate = Date(timeIntervalSince1970: context.state.endDate)
+                    
+                    if now >= endDate {
+                        // 시간이 지나면 00:00으로 고정
+                        Text("00:00")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    } else {
+                        // 아직 시간이 남아있으면 카운트다운
+                        Text(endDate, style: .timer)
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                }
             } minimal: {
+                // Minimal
                 Text(context.state.currentStatus.emoji)
             }
             .keylineTint(Color.blue)
@@ -110,20 +129,39 @@ struct ClassLiveActivityView: View {
             
             // Apple 정책 준수: 시스템 내장 시간 표시 사용  
             VStack(spacing: 4) {
-                // 간결한 타이머 형식으로 공간 절약
-                Text(context.state.endDate, style: .timer)
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                // 간결한 타이머 형식으로 공간 절약 - 00:00에서 멈추도록 수정
+                TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                    let now = timeline.date
+                    let endDate = Date(timeIntervalSince1970: context.state.endDate)
+                    
+                    if now >= endDate {
+                        // 시간이 지나면 00:00으로 고정
+                        Text("00:00")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    } else {
+                        // 아직 시간이 남아있으면 카운트다운
+                        Text(endDate, style: .timer)
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.primary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
+                }
                 
                 // TimelineView로 진행바 계산
                 TimelineView(.periodic(from: .now, by: 1)) { timeline in
                     let now = timeline.date
-                    let totalDuration = context.state.endDate.timeIntervalSince(context.state.startDate)
-                    let elapsed = now.timeIntervalSince(context.state.startDate)
+                    let startDate = Date(timeIntervalSince1970: context.state.startDate)
+                    let endDate = Date(timeIntervalSince1970: context.state.endDate)
+                    let totalDuration = endDate.timeIntervalSince(startDate)
+                    let elapsed = now.timeIntervalSince(startDate)
                     let progress = min(max(elapsed / totalDuration, 0), 1)
                     
                     ProgressView(value: progress)
@@ -271,17 +309,32 @@ struct TimeRemainingView: View {
     let endDate: Date
     
     var body: some View {
-        // Apple 정책 준수: 간결한 타이머 형식 사용
+        // Apple 정책 준수: 간결한 타이머 형식 사용 - 00:00에서 멈추도록 수정
         VStack(spacing: 2) {
             Text("⏱️")
                 .font(.title3)
             
-            Text(endDate, style: .timer)
-                .font(.caption2)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+            TimelineView(.periodic(from: .now, by: 1)) { timeline in
+                let now = timeline.date
+                
+                if now >= endDate {
+                    // 시간이 지나면 00:00으로 고정
+                    Text("00:00")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                } else {
+                    // 아직 시간이 남아있으면 카운트다운
+                    Text(endDate, style: .timer)
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+            }
         }
     }
 }

@@ -152,8 +152,10 @@ class ScheduleTabViewModel: ObservableObject {
         let currentPeriod = TimeUtility.getCurrentPeriodNumber()
         if previousPeriod != currentPeriod {
             print("📚 [PeriodChange] Period changed from \(previousPeriod ?? -1) to \(currentPeriod ?? -1)")
-            DispatchQueue.main.async {
-                LiveActivityManager.shared.updateOnClassPeriodChange()
+            if #available(iOS 18.0, *) {
+                DispatchQueue.main.async {
+                    LiveActivityManager.shared.updateOnClassPeriodChange()
+                }
             }
         }
     }

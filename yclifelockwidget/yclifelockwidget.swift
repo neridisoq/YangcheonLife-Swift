@@ -24,20 +24,10 @@ struct YclifeLockWidget: Widget {
 
 struct LockWidgetProvider: TimelineProvider {
     func placeholder(in context: Context) -> LockWidgetEntry {
-        // Show sample data in placeholder
         let currentDate = Date()
-        let calendar = Calendar.current
-        let sampleClass = LockClassInfo(
-            subject: "수학",
-            classroom: "301호",
-            period: 3,
-            startTime: calendar.date(bySettingHour: 10, minute: 20, second: 0, of: currentDate) ?? currentDate,
-            endTime: calendar.date(bySettingHour: 11, minute: 10, second: 0, of: currentDate) ?? currentDate
-        )
-        
         return LockWidgetEntry(
             date: currentDate,
-            displayMode: .nextClass(sampleClass),
+            displayMode: .noInfo,
             grade: 3,
             classNumber: 5
         )
@@ -193,7 +183,7 @@ struct CircularWidgetView: View {
                 Image(systemName: "calendar")
                     .font(.system(size: 16))
                     .foregroundColor(.secondary)
-                Text("수업")
+                Text("수업없음")
                     .font(.system(size: 8))
                     .foregroundColor(.secondary)
             }
@@ -245,7 +235,7 @@ struct RectangularWidgetView: View {
                     .font(.system(size: 14))
                     .foregroundColor(.secondary)
                 
-                Text("수업 정보 없음")
+                Text("수업없음")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary)
             }
@@ -273,7 +263,7 @@ struct InlineWidgetView: View {
                 .font(.system(size: 12))
                 
         case .noInfo:
-            Text("수업 정보 없음")
+            Text("수업없음")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
         }
@@ -340,11 +330,10 @@ class LockWidgetDataService {
         let hour = calendar.component(.hour, from: currentDate)
         let weekday = calendar.component(.weekday, from: currentDate)
         
-        // For testing purposes, always show something even on weekends
-        // Comment out weekend check temporarily
-        // if weekday == 1 || weekday == 7 {
-        //     return .noInfo
-        // }
+        // Weekends: no classes
+        if weekday == 1 || weekday == 7 {
+            return .noInfo
+        }
         
         // Get schedule data
         let sharedDefaults = SharedUserDefaults.shared.userDefaults
@@ -366,14 +355,8 @@ class LockWidgetDataService {
             }
         }
         
-        // Fallback: show sample data for testing
-        return .nextClass(LockClassInfo(
-            subject: "수학",
-            classroom: "301호",
-            period: 3,
-            startTime: calendar.date(bySettingHour: 10, minute: 20, second: 0, of: currentDate) ?? currentDate,
-            endTime: calendar.date(bySettingHour: 11, minute: 10, second: 0, of: currentDate) ?? currentDate
-        ))
+        // No schedule data: no classes
+        return .noInfo
     }
     
     private func getNextClass(from scheduleData: ScheduleData, at date: Date) -> LockClassInfo? {

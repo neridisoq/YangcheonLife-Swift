@@ -15,7 +15,6 @@ struct AdvancedSettingsView: View {
     // MARK: - Environment Objects
     @EnvironmentObject var scheduleService: ScheduleService
     @EnvironmentObject var notificationService: NotificationService
-    @EnvironmentObject var liveActivityManager: LiveActivityManager
     
     // MARK: - State
     @State private var showResetAlert = false
@@ -29,31 +28,31 @@ struct AdvancedSettingsView: View {
     var body: some View {
         List {
             // 데이터 관리 섹션
-            Section("데이터 관리") {
-                Button("모든 설정 초기화") {
+            Section(NSLocalizedString(LocalizationKeys.dataManagement, comment: "")) {
+                Button(NSLocalizedString(LocalizationKeys.resetAllSettings, comment: "")) {
                     showResetAlert = true
                 }
                 .foregroundColor(.errorColor)
                 
-                Button("설정 데이터 내보내기") {
+                Button(NSLocalizedString(LocalizationKeys.exportSettings, comment: "")) {
                     exportSettings()
                 }
                 .foregroundColor(.appPrimary)
                 
-                Button("설정 데이터 불러오기") {
+                Button(NSLocalizedString(LocalizationKeys.importSettings, comment: "")) {
                     showImportSheet = true
                 }
                 .foregroundColor(.appPrimary)
             }
             
             // 캐시 관리 섹션
-            Section("캐시 관리") {
-                Button("시간표 캐시 삭제") {
+            Section(NSLocalizedString(LocalizationKeys.cacheManagement, comment: "")) {
+                Button(NSLocalizedString(LocalizationKeys.clearScheduleCache, comment: "")) {
                     clearScheduleCache()
                 }
                 .foregroundColor(.appPrimary)
                 
-                Button("모든 알림 제거") {
+                Button(NSLocalizedString(LocalizationKeys.removeAllNotifications, comment: "")) {
                     Task {
                         await notificationService.removeAllNotifications()
                     }
@@ -62,70 +61,75 @@ struct AdvancedSettingsView: View {
             }
             
             // 디버그 정보 섹션
-            Section("디버그 정보") {
+            Section(NSLocalizedString(LocalizationKeys.debugInfo, comment: "")) {
                 HStack {
-                    Text("현재 시간표 데이터")
+                    Text(NSLocalizedString(LocalizationKeys.currentScheduleData, comment: ""))
                     Spacer()
-                    Text(scheduleService.currentScheduleData != nil ? "있음" : "없음")
+                    Text(scheduleService.currentScheduleData != nil ? NSLocalizedString(LocalizationKeys.exists, comment: "") : NSLocalizedString(LocalizationKeys.none, comment: ""))
                         .foregroundColor(.secondary)
                 }
                 
                 HStack {
-                    Text("알림 권한")
+                    Text(NSLocalizedString(LocalizationKeys.notificationPermission, comment: ""))
                     Spacer()
-                    Text(notificationService.isAuthorized ? "허용" : "거부")
+                    Text(notificationService.isAuthorized ? NSLocalizedString(LocalizationKeys.allowed, comment: "") : NSLocalizedString(LocalizationKeys.denied, comment: ""))
                         .foregroundColor(notificationService.isAuthorized ? .successColor : .errorColor)
                 }
                 
                 HStack {
-                    Text("Live Activity 상태")
+                    Text(NSLocalizedString(LocalizationKeys.liveActivityStatus, comment: ""))
                     Spacer()
-                    Text(liveActivityManager.isActivityRunning ? "실행 중" : "중지됨")
-                        .foregroundColor(liveActivityManager.isActivityRunning ? .successColor : .secondary)
+                    if #available(iOS 18.0, *) {
+                        Text(LiveActivityManager.shared.isActivityRunning ? NSLocalizedString(LocalizationKeys.running, comment: "") : NSLocalizedString(LocalizationKeys.stopped, comment: ""))
+                            .foregroundColor(LiveActivityManager.shared.isActivityRunning ? .successColor : .secondary)
+                    } else {
+                        Text(NSLocalizedString(LocalizationKeys.ios18Required, comment: ""))
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
-                Button("알림 권한 상태 새로고침") {
+                Button(NSLocalizedString(LocalizationKeys.refreshNotificationPermission, comment: "")) {
                     notificationService.checkAuthorizationStatus()
                 }
                 .foregroundColor(.appPrimary)
             }
             
             // Live Activity 테스트 섹션
-            Section("Live Activity 테스트") {
-                Button("Live Activity 시작 테스트") {
+            Section(NSLocalizedString(LocalizationKeys.liveActivityTest, comment: "")) {
+                Button(NSLocalizedString(LocalizationKeys.startLiveActivityTest, comment: "")) {
                     testStartLiveActivity()
                 }
                 .foregroundColor(.appPrimary)
                 
-                Button("Live Activity 중지 테스트") {
+                Button(NSLocalizedString(LocalizationKeys.stopLiveActivityTest, comment: "")) {
                     testStopLiveActivity()
                 }
                 .foregroundColor(.warningColor)
                 
-                Button("Live Activity 권한 확인") {
+                Button(NSLocalizedString(LocalizationKeys.checkLiveActivityPermission, comment: "")) {
                     checkLiveActivityPermissions()
                 }
                 .foregroundColor(.appPrimary)
             }
         }
-        .navigationTitle("고급 설정")
+        .navigationTitle(NSLocalizedString(LocalizationKeys.advancedSettings, comment: ""))
         .navigationBarTitleDisplayMode(.inline)
         .confirmationAlert(
             isPresented: $showResetAlert,
-            title: "모든 설정 초기화",
-            message: "모든 설정이 기본값으로 되돌아갑니다. 이 작업은 되돌릴 수 없습니다.",
-            confirmTitle: "초기화",
+            title: NSLocalizedString(LocalizationKeys.resetAllSettingsTitle, comment: ""),
+            message: NSLocalizedString(LocalizationKeys.resetAllSettingsMessage, comment: ""),
+            confirmTitle: NSLocalizedString(LocalizationKeys.reset, comment: ""),
             onConfirm: {
                 resetAllSettings()
             }
         )
-        .alert("설정 데이터", isPresented: $showExportAlert) {
-            Button("복사하기") {
+        .alert(NSLocalizedString(LocalizationKeys.settingsData, comment: ""), isPresented: $showExportAlert) {
+            Button(NSLocalizedString(LocalizationKeys.copy, comment: "")) {
                 UIPasteboard.general.string = exportedData
             }
-            Button("확인", role: .cancel) { }
+            Button(NSLocalizedString(LocalizationKeys.ok, comment: ""), role: .cancel) { }
         } message: {
-            Text("설정 데이터가 생성되었습니다. 복사하여 백업하세요.")
+            Text(NSLocalizedString(LocalizationKeys.settingsDataGenerated, comment: ""))
         }
         .sheet(isPresented: $showImportSheet) {
             ImportDataView(
@@ -144,9 +148,9 @@ struct AdvancedSettingsView: View {
                 if let result = importResult {
                     switch result {
                     case .success:
-                        return AlertItem(id: "success", title: "성공", message: "설정 데이터를 성공적으로 불러왔습니다.")
+                        return AlertItem(id: "success", title: NSLocalizedString(LocalizationKeys.success, comment: ""), message: NSLocalizedString(LocalizationKeys.importSuccessMessage, comment: ""))
                     case .failure(let error):
-                        return AlertItem(id: "failure", title: "실패", message: "설정 데이터 불러오기에 실패했습니다.\n\(error)")
+                        return AlertItem(id: "failure", title: NSLocalizedString(LocalizationKeys.failed, comment: ""), message: String(format: NSLocalizedString(LocalizationKeys.importFailedMessage, comment: ""), error))
                     }
                 }
                 return nil
@@ -158,7 +162,7 @@ struct AdvancedSettingsView: View {
             Alert(
                 title: Text(item.title),
                 message: Text(item.message),
-                dismissButton: .default(Text("확인"))
+                dismissButton: .default(Text(NSLocalizedString(LocalizationKeys.ok, comment: "")))
             )
         }
     }
@@ -182,13 +186,13 @@ struct AdvancedSettingsView: View {
     private func importSettings(_ jsonString: String) {
         do {
             guard let data = jsonString.data(using: .utf8) else {
-                importResult = .failure("잘못된 데이터 형식입니다.")
+                importResult = .failure("Invalid data format")
                 return
             }
             
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             guard let dictionary = jsonObject as? [String: Any] else {
-                importResult = .failure("JSON 형식이 올바르지 않습니다.")
+                importResult = .failure("Invalid JSON format")
                 return
             }
             
@@ -198,10 +202,10 @@ struct AdvancedSettingsView: View {
                 showImportSheet = false
                 importData = ""
             } else {
-                importResult = .failure("설정 데이터 형식이 올바르지 않거나 버전이 호환되지 않습니다.")
+                importResult = .failure("Invalid settings data format or incompatible version")
             }
         } catch {
-            importResult = .failure("JSON 파싱 실패: \(error.localizedDescription)")
+            importResult = .failure("JSON parsing failed: \(error.localizedDescription)")
         }
     }
     
@@ -247,7 +251,11 @@ struct AdvancedSettingsView: View {
         print("   - 학년: \(grade), 반: \(classNumber)")
         
         if grade > 0 && classNumber > 0 {
-            liveActivityManager.startLiveActivity(grade: grade, classNumber: classNumber)
+            if #available(iOS 18.0, *) {
+                LiveActivityManager.shared.startLiveActivity(grade: grade, classNumber: classNumber)
+            } else {
+                print("❌ iOS 18.0 이상이 필요합니다.")
+            }
         } else {
             print("❌ 유효하지 않은 학년/반 정보. 설정에서 학년/반을 먼저 설정하세요.")
         }
@@ -256,13 +264,21 @@ struct AdvancedSettingsView: View {
     /// Live Activity 중지 테스트
     private func testStopLiveActivity() {
         print("🧪 Live Activity 수동 중지 테스트")
-        liveActivityManager.stopLiveActivity()
+        if #available(iOS 18.0, *) {
+            LiveActivityManager.shared.stopLiveActivity()
+        } else {
+            print("❌ iOS 18.0 이상이 필요합니다.")
+        }
     }
     
     /// Live Activity 권한 확인
     private func checkLiveActivityPermissions() {
         print("🧪 Live Activity 권한 상태 확인")
-        print("   - 현재 실행 상태: \(liveActivityManager.isActivityRunning)")
+        if #available(iOS 18.0, *) {
+            print("   - 현재 실행 상태: \(LiveActivityManager.shared.isActivityRunning)")
+        } else {
+            print("   - iOS 18.0 이상이 필요합니다.")
+        }
         
         // LiveActivityManager의 메서드를 통해 확인
         let grade = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
@@ -293,18 +309,18 @@ struct ImportDataView: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("설정 데이터 불러오기")
+                Text(NSLocalizedString(LocalizationKeys.importSettingsData, comment: ""))
                     .font(.title2)
                     .fontWeight(.bold)
                     .padding(.horizontal)
                 
-                Text("내보내기로 생성한 JSON 데이터를 붙여넣으세요.")
+                Text(NSLocalizedString(LocalizationKeys.importInstructions, comment: ""))
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.horizontal)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("JSON 데이터")
+                    Text(NSLocalizedString(LocalizationKeys.jsonData, comment: ""))
                         .font(.headline)
                         .padding(.horizontal)
                     
@@ -322,13 +338,13 @@ struct ImportDataView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") {
+                    Button(NSLocalizedString(LocalizationKeys.cancel, comment: "")) {
                         onCancel()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("불러오기") {
+                    Button(NSLocalizedString(LocalizationKeys.import, comment: "")) {
                         onImport(importData)
                     }
                     .disabled(importData.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
