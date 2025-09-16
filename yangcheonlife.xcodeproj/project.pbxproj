@@ -706,8 +706,6 @@
 				0925B2D52DF90513000D18BB /* NotificationServiceExtension */,
 			);
 			name = NotificationServiceExtension;
-			packageProductDependencies = (
-			);
 			productName = NotificationServiceExtension;
 			productReference = 0925B2D42DF90513000D18BB /* NotificationServiceExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -754,8 +752,6 @@
 				098ECF6C2DE6C2CB0036C2CE /* yclifemainwidget */,
 			);
 			name = yclifemainwidgetExtension;
-			packageProductDependencies = (
-			);
 			productName = yclifemainwidgetExtension;
 			productReference = 098ECF692DE6C2CB0036C2CE /* yclifemainwidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -776,8 +772,6 @@
 				098ECF822DE6C3760036C2CE /* yclifelockwidget */,
 			);
 			name = yclifelockwidgetExtension;
-			packageProductDependencies = (
-			);
 			productName = yclifelockwidgetExtension;
 			productReference = 098ECF7F2DE6C3760036C2CE /* yclifelockwidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -798,8 +792,6 @@
 				098ECFC42DE6CC710036C2CE /* yclifeliveactivity */,
 			);
 			name = yclifeliveactivityExtension;
-			packageProductDependencies = (
-			);
 			productName = yclifeliveactivityExtension;
 			productReference = 098ECFC12DE6CC710036C2CE /* yclifeliveactivityExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -820,8 +812,6 @@
 				098ED0272DE747440036C2CE /* yclifemealwidget */,
 			);
 			name = yclifemealwidgetExtension;
-			packageProductDependencies = (
-			);
 			productName = yclifemealwidgetExtension;
 			productReference = 098ED0242DE747440036C2CE /* yclifemealwidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -941,13 +931,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-yangcheonlife/Pods-yangcheonlife-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-yangcheonlife/Pods-yangcheonlife-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
