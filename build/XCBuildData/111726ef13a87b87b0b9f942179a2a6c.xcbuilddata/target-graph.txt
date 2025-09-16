@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'yangcheonlife' in project 'yangcheonlife'
-➜ Explicit dependency on target 'yclifewidgetExtension' in project 'yangcheonlife'
-Target 'yclifewidgetExtension' in project 'yangcheonlife' (no dependencies)

@@ -35,15 +35,6 @@ class AppUpdateService: ObservableObject {
         checkAppStoreVersion()
     }
     
-    /// 강제 업데이트가 필요한지 확인
-    func isForceUpdateRequired() -> Bool {
-        // 버전 4.0 이하는 강제 업데이트 (예시)
-        let currentVersionNumber = versionStringToNumber(currentVersion)
-        let minimumVersionNumber = versionStringToNumber("4.0")
-        
-        return currentVersionNumber < minimumVersionNumber
-    }
-    
     /// 앱스토어로 이동 (메인 앱에서만 사용 가능)
     func openAppStore() {
         // 위젯 확장에서는 URL 열기 기능 사용 불가
@@ -96,7 +87,7 @@ class AppUpdateService: ObservableObject {
         let latestVersionNumber = versionStringToNumber(storeVersion)
         
         updateAvailable = latestVersionNumber > currentVersionNumber
-        updateRequired = isForceUpdateRequired()
+        updateRequired = latestVersionNumber > currentVersionNumber
         
         print("📱 현재 버전: \(currentVersion) (\(currentVersionNumber))")
         print("📱 앱스토어 버전: \(storeVersion) (\(latestVersionNumber))")
