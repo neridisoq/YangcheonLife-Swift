@@ -41,6 +41,7 @@ class ScheduleTabViewModel: ObservableObject {
         setupInitialValues()
         loadCellBackgroundColor()
         setupColorChangeNotification()
+        setupGradeClassChangeNotification()
     }
     
     deinit {
@@ -250,5 +251,28 @@ class ScheduleTabViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    /// 학년반 변경 알림 설정
+    private func setupGradeClassChangeNotification() {
+        NotificationCenter.default.publisher(for: NSNotification.Name("GradeClassChanged"))
+            .sink { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.handleGradeClassChange()
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    /// 학년반 변경 처리
+    private func handleGradeClassChange() {
+        // 설정 재로드
+        setupInitialValues()
+        
+        // displayGrade, displayClass 업데이트
+        displayGrade = actualGrade > 0 ? actualGrade : 1
+        displayClass = actualClass > 0 ? actualClass : 1
+        
+        print("📚 [GradeClassChange] Grade/Class updated to \(displayGrade)-\(displayClass)")
     }
 }

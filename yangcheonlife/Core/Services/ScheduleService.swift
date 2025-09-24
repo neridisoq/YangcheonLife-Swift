@@ -129,6 +129,18 @@ class ScheduleService: ObservableObject {
         }
     }
     
+    /// 강제 새로고침
+    func forceRefresh() {
+        let grade = userDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultGrade)
+        let classNumber = userDefaults.integer(forKey: AppConstants.UserDefaultsKeys.defaultClass)
+        
+        guard grade > 0 && classNumber > 0 else { return }
+        
+        Task {
+            await loadSchedule(grade: grade, classNumber: classNumber, forceRefresh: true)
+        }
+    }
+    
     // MARK: - Private Methods
     
     /// 로컬 시간표 데이터 로드

@@ -15,30 +15,48 @@ struct ClassGradeSettingsView: View {
                     Text(String(format: NSLocalizedString("GradeP", comment: ""), grade)).tag(grade)
                 }
             }
+            .onChange(of: defaultGrade) { newGrade in
+                saveGradeClassSettings(grade: newGrade, classNumber: defaultClass)
+            }
             
             Picker(NSLocalizedString("Class", comment: ""), selection: $defaultClass) {
                 ForEach(1..<12) { classNumber in
                     Text(String(format: NSLocalizedString("ClassP", comment: ""), classNumber)).tag(classNumber)
                 }
             }
+            .onChange(of: defaultClass) { newClass in
+                saveGradeClassSettings(grade: defaultGrade, classNumber: newClass)
+            }
         }
         .navigationBarTitle(NSLocalizedString("ClassSettings", comment: ""), displayMode: .inline)
-        .onDisappear {
-            let _ = UserDefaults.standard.integer(forKey: "defaultGrade")
-            let _ = UserDefaults.standard.integer(forKey: "defaultClass")
-            UserDefaults.standard.set(defaultGrade, forKey: "defaultGrade")
-            UserDefaults.standard.set(defaultClass, forKey: "defaultClass")
-            if notificationsEnabled {
-                Task {
-                    await ScheduleService.shared.updateNotifications(grade: defaultGrade, classNumber: defaultClass)
-                }
-            } else {
-                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
+    
+    // MARK: - 학년반 설정 저장 메서드
+    private func saveGradeClassSettings(grade: Int, classNumber: Int) {
+        // UserDefaults에 즉시 저장
+        UserDefaults.standard.set(grade, forKey: "defaultGrade")
+        UserDefaults.standard.set(classNumber, forKey: "defaultClass")
+        
+        // 알림 업데이트
+        if notificationsEnabled {
+            Task {
+                await ScheduleService.shared.updateNotifications(grade: grade, classNumber: classNumber)
             }
-            
-            SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
-            WidgetCenter.shared.reloadAllTimelines()
+        } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         }
+        
+        // SharedUserDefaults 동기화
+        SharedUserDefaults.shared.synchronizeFromStandardUserDefaults()
+        
+        // 다른 뷰들에게 변경사항 알림
+        NotificationCenter.default.post(name: NSNotification.Name("GradeClassChanged"), object: nil)
+        
+        // 위젯 업데이트
+        WidgetCenter.shared.reloadAllTimelines()
+        
+        // ScheduleService에 강제 새로고침 요청
+        ScheduleService.shared.forceRefresh()
     }
 }
 
