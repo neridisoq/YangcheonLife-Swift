@@ -17,7 +17,6 @@ struct SettingsTabView: View {
         NavigationView {
             List {
                 // Live Activity 제어 섹션
-                liveActivitySection
                 
                 // 기본 설정 섹션
                 basicSettingsSection

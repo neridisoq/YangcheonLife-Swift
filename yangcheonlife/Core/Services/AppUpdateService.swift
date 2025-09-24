@@ -178,7 +178,7 @@ struct UpdateAnnouncementView: View {
                     .foregroundColor(.appPrimary)
                 
                 VStack(spacing: 12) {
-                    Text("양천고 라이프 4.0")
+                    Text("양천고 라이프 4.1")
                         .font(.title)
                         .fontWeight(.bold)
                     

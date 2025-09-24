@@ -8,8 +8,8 @@ public struct AppConstants {
     // MARK: - 앱 정보
     struct App {
         static let name = "양천고 라이프"
-        static let version = "4.0"
-        static let bundleIdentifier = "com.yangcheon.life"
+        static let version = "4.1"
+        static let bundleIdentifier = "com.helgisnw.yangcheonlife"
     }
     
     // MARK: - API 관련
@@ -76,7 +76,7 @@ public struct AppConstants {
     
     // MARK: - 위젯 관련
     struct Widget {
-        static let groupIdentifier = "group.com.yangcheon.life"
+        static let groupIdentifier = "group.com.helgisnw.yangcheonlife"
         static let refreshInterval: TimeInterval = 600 // 10분
     }
     
